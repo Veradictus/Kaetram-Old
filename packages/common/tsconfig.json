@@ -1,0 +1,10 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "module": "esnext",
+        "target": "esnext",
+        "rootDir": "./",
+        "baseUrl": "./"
+    },
+    "files": ["./types/index.d.ts"]
+}
