@@ -1,0 +1,4 @@
+packages/server/dist
+packages/client/dist
+packages/client/js/lib
+packages/client/data/**/*
