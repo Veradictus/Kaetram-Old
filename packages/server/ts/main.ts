@@ -14,7 +14,7 @@ class Main {
     constructor() {
         log.info('Initializing ' + config.name + ' game engine...');
 
-        this.webSocket = new WebSocket(config.host, config.port, config.gver);
+        this.webSocket = new WebSocket(config.host, config.httpPort, config.gver);
         this.database = new Database(config.database).getDatabase();
         this.parser = new Parser();
         this.world = null;
@@ -31,8 +31,6 @@ class Main {
                 if (!config.allowConnectionsToggle) this.world.allowConnections = true;
 
                 let host = config.host === '0.0.0.0' ? 'localhost' : config.host;
-
-                log.notice('Connect locally via http://' + host + ':9000');
             };
 
             this.world = new World(this.webSocket, this.database);

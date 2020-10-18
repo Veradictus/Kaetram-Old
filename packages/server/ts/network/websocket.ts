@@ -30,7 +30,7 @@ class WebSocket extends Socket {
         this.ips = {};
 
         let readyWebSocket = (port: number) => {
-            log.info('Server is now listening on: ' + port);
+            log.info('Server is now listening on: ' + config.port);
 
             if (this.webSocketReadyCallback) this.webSocketReadyCallback();
         };
@@ -47,34 +47,7 @@ class WebSocket extends Socket {
                 readyWebSocket(port);
             });
 
-        this.io = new SocketIO(this.httpServer);
-        this.io.on('connection', (socket: any) => {
-            if (socket.handshake.headers['cf-connecting-ip'])
-                socket.conn.remoteAddress = socket.handshake.headers['cf-connecting-ip'];
-
-            log.info('Received connection from: ' + socket.conn.remoteAddress);
-
-            let client = new Connection(this.createId(), socket, this);
-
-            socket.on('client', (data: any) => {
-                if (data.gVer !== this.version) {
-                    client.sendUTF8('updated');
-                    client.close(
-                        'Wrong client version - expected ' + this.version + ' received ' + data.gVer
-                    );
-                }
-
-                if (this.connectionCallback) this.connectionCallback(client);
-
-                this.addConnection(client);
-            });
-        });
-
-        if (!config.websocketEnabled) return;
-
-        log.info('Initializing secondary websocket.');
-
-        this.ws = new WS.Server({ port: config.websocketPort });
+        this.ws = new WS.Server({ port: config.port });
 
         this.ws.on('connection', (socket: any, request: any) => {
             let mappedAddress = request.socket.remoteAddress,
