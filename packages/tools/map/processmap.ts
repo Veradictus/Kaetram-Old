@@ -374,8 +374,14 @@ export default class ProcessMap {
     handleProperty(property: string, value: number, id: number): void {
         const { map } = this;
         if (property === 'c' || property === 'o') {
+            if (id === 2960 || id === 2961 || id === 2962) {
+                console.log(property);
+                console.log(value);
+                console.log(id);
+            }
+
             collisions[id] = true;
-            
+
             this.map.tileCollisions.push(id);
         }
 
