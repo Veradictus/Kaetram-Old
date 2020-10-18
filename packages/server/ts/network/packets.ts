@@ -202,7 +202,7 @@ Packets.MinigameOpcode = {
 Packets.RegionOpcode = {
     Render: 0,
     Modify: 1,
-    Collision: 2,
+    Collisions: 2,
     Update: 3,
     Reset: 4
 };

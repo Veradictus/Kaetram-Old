@@ -65,6 +65,8 @@ class Region {
                 if (!entity.achievementsLoaded) return;
 
                 this.sendRegion(entity, regionId);
+                
+                this.sendCollisions(entity);
             }
         });
 
@@ -208,10 +210,8 @@ class Region {
             const tile = tileData[i],
                 index = dynamicTiles.indexes.indexOf(tile.index);
 
-            if (index > -1) {
+            if (index > -1)
                 tileData[i].data = dynamicTiles.data[index];
-                tileData[i].isCollision = dynamicTiles.collisions[index];
-            }
         }
 
         // Send dynamic tiles independently
@@ -221,7 +221,6 @@ class Region {
 
                 tileData[i].index = dynamicTiles.indexes[i];
                 tileData[i].data = dynamicTiles.data[i];
-                tileData[i].isCollision = dynamicTiles.collisions[i];
 
                 const data = dynamicTiles.objectData,
                     index = tileData[i].index;
@@ -233,17 +232,18 @@ class Region {
                 }
             }
 
-        if (player.connection.rawWebSocket)
-            for (let i in tileData) {
-                tileData[i].position = this.map.indexToGridPosition(tileData[i].index);
-                delete tileData[i].index;
-            }
-
-        console.log(tileData.length);
+        for (let i in tileData) {
+            tileData[i].position = this.map.indexToGridPosition(tileData[i].index);
+            delete tileData[i].index;
+        }
 
         //No need to send empty data...
         if (tileData.length > 0)
             player.send(new Messages.Region(Packets.RegionOpcode.Render, tileData, force));
+    }
+
+    sendCollisions(player: Player) {
+        player.send(new Messages.Region(Packets.RegionOpcode.Collisions, this.map.tileCollisions))
     }
 
     // TODO - Format dynamic tiles to follow same structure as `getRegionData()`
@@ -255,7 +255,6 @@ class Region {
 
         dynamicTiles.indexes.push.apply(dynamicTiles.indexes, trees.indexes);
         dynamicTiles.data.push.apply(dynamicTiles.data, trees.data);
-        dynamicTiles.collisions.push.apply(dynamicTiles.collisions, trees.collisions);
 
         if (trees.objectData) dynamicTiles.objectData = trees.objectData;
 
@@ -415,8 +414,6 @@ class Region {
                     for (let x = bounds.startX; x < bounds.endX; x++) {
                         let index = this.gridPositionToIndex(x - 1, y),
                             tileData = this.clientMap.data[index],
-                            isCollision =
-                                this.clientMap.collisions.indexOf(index) > -1 || !tileData,
                             objectId: any;
 
                         if (tileData !== 0) {
@@ -435,8 +432,6 @@ class Region {
                         };
 
                         if (tileData) info.data = tileData;
-
-                        if (isCollision) info.isCollision = isCollision;
 
                         if (objectId) {
                             info.isObject = !!objectId;

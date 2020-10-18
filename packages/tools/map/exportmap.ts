@@ -12,6 +12,7 @@ export interface MapData {
     width: number;
     height: number;
     collisions: number[];
+    tileCollisions: number[];
     version: number;
 
     lights?: any[];
@@ -67,15 +68,14 @@ class ExportMap {
 
     handleMap(data: MapData): void {
         const worldClientJSON = '../../server/data/map/world_client.json',
-            worldServerJSON = '../../server/data/map/world_server.json',
-            clientMapJSON = '../../client/data/maps/map.json';
+            worldServerJSON = '../../server/data/map/world_server.json';
 
         const worldClient = this.parse(data, worldClientJSON, 'client');
 
         this.parse(data, worldServerJSON, 'server');
-        this.parse(data, clientMapJSON, 'info', worldClient);
+        //this.parse(data, clientMapJSON, 'info', worldClient);
 
-        this.copyTilesets();
+        //this.copyTilesets();
     }
 
     parse(data: MapData, destination: string, mode: string, worldClient?: MapData): MapData {

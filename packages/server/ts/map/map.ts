@@ -32,6 +32,7 @@ class Map {
     height: number;
 
     collisions: any;
+    tileCollisions: any;
     chestAreas: any;
     chests: any;
     tilesets: any;
@@ -80,6 +81,7 @@ class Map {
         this.width = map.width;
         this.height = map.height;
         this.collisions = map.collisions;
+        this.tileCollisions = map.tileCollisions;
         this.chestAreas = map.chestAreas;
         this.chests = map.chests;
 

@@ -24,6 +24,7 @@ export default class ProcessMap {
             width: 0,
             height: 0,
             collisions: [],
+            tileCollisions: [],
             version: new Date().getTime()
         };
         const { map } = this;
@@ -372,7 +373,11 @@ export default class ProcessMap {
 
     handleProperty(property: string, value: number, id: number): void {
         const { map } = this;
-        if (property === 'c' || property === 'o') collisions[id] = true;
+        if (property === 'c' || property === 'o') {
+            collisions[id] = true;
+            
+            this.map.tileCollisions.push(id);
+        }
 
         if (this.mode === 'client' || this.mode === 'info') {
             if (property === 'v') map.high.push(id);
