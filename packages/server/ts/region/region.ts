@@ -236,8 +236,6 @@ class Region {
             delete tileData[i].index;
         }
 
-        this.sendTilesetInfo(player);
-
         //No need to send empty data...
         if (tileData.length > 0)
             player.send(new Messages.Region(Packets.RegionOpcode.Render, tileData, force));

@@ -212,6 +212,8 @@ class Incoming {
         this.world.region.handle(this.player);
         this.world.region.push(this.player);
 
+        this.world.region.sendTilesetInfo(this.player);
+
         this.player.sendEquipment();
 
         this.player.loadProfessions();
@@ -347,7 +349,24 @@ class Incoming {
         if (!this.player || this.player.dead) return;
 
         switch (opcode) {
-            case Packets.MovementOpcode.Request:
+            case Packets.MovementOpcode.Move:
+                let rawX = parseFloat(message.shift()) / 16,
+                    rawY = parseFloat(message.shift()) / 16,
+                    gridX = Math.ceil(rawX),
+                    gridY = Math.ceil(rawY);
+
+                console.log(gridX + ' ' + gridY);
+
+                if (!this.preventNoClip(gridX, gridY)) {
+                    console.log('No clipping lol.');
+                    return;
+                }
+
+                this.player.setPosition(gridX, gridY);
+
+                break;
+
+            /*case Packets.MovementOpcode.Request:
                 let requestX = message.shift(),
                     requestY = message.shift();
 
@@ -466,7 +485,7 @@ class Incoming {
                 /**
                  * Just used to prevent player from following entities in combat.
                  * This is primarily for the 'hold-position' functionality.
-                 */
+                 *//*
 
                 this.player.frozen = message.shift();
 
@@ -477,7 +496,7 @@ class Incoming {
 
                 log.debug(`Zoning detected, direction: ${direction}.`);
 
-                break;
+                break;*/
         }
     }
 
