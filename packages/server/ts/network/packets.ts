@@ -202,11 +202,9 @@ Packets.MinigameOpcode = {
 Packets.RegionOpcode = {
     Render: 0,
     Modify: 1,
-    Collisions: 2,
+    Tileset: 2,
     Update: 3,
-    Reset: 4,
-    Polygons: 5,
-    High: 6
+    Reset: 4
 };
 
 Packets.OverlayOpcode = {

@@ -236,21 +236,33 @@ class Region {
             delete tileData[i].index;
         }
 
+        this.sendTilesetInfo(player);
+
         //No need to send empty data...
         if (tileData.length > 0)
             player.send(new Messages.Region(Packets.RegionOpcode.Render, tileData, force));
-
-        this.sendTilesetInfo(player);
     }
 
     sendTilesetInfo(player: Player) {
         let tileCollisions = this.map.tileCollisions,
             polygonCollisions = ClientMap.polygons,
-            high = ClientMap.high;
+            high = ClientMap.high,
+            tilesetData = {};
 
-        player.send(new Messages.Region(Packets.RegionOpcode.Collisions, tileCollisions));
-        player.send(new Messages.Region(Packets.RegionOpcode.Polygons, polygonCollisions));
-        player.send(new Messages.Region(Packets.RegionOpcode.High, high));
+
+        for (let i in this.map.tileCollisions)
+            tilesetData[tileCollisions[i]] = { collision: true };
+
+        for (let i in ClientMap.polygons)
+            tilesetData[i] = { polygon: true, polygons: polygonCollisions[i] };
+
+        for (let i in ClientMap.high)
+            if (high[i] in tilesetData)
+                tilesetData[high[i]].high = true;
+            else
+                tilesetData[high[i]] = { high: true }
+
+        player.send(new Messages.Region(Packets.RegionOpcode.Tileset, tilesetData));
     }
 
     // TODO - Format dynamic tiles to follow same structure as `getRegionData()`
