@@ -1,12 +1,12 @@
 /* global module */
 
 import WebSocket from './websocket';
-import { SocketIO } from 'socket.io';
 import log from '../util/log';
+import WS from 'ws';
 
 class Connection {
     public id: string;
-    public socket: SocketIO;
+    public socket: WS
 
     private server: WebSocket;
     public rawWebSocket: boolean;
@@ -14,7 +14,7 @@ class Connection {
     listenCallback: Function;
     closeCallback: Function;
 
-    constructor(id: string, socket: SocketIO, server: WebSocket, rawWebSocket?: boolean) {
+    constructor(id: string, socket: WS, server: WebSocket, rawWebSocket?: boolean) {
         this.id = id;
         this.socket = socket;
         this.server = server;

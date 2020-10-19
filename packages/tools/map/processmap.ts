@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { MapData } from './exportmap';
 
 const collisions = {},
-    entities = {};
+      entities = {};
 
 let mobsFirstGid = -1;
 
@@ -20,11 +20,14 @@ export default class ProcessMap {
     parse(): MapData {
         const { mode } = this.options;
 
+        // TODO - Prevent duplicates
+
         this.map = {
             width: 0,
             height: 0,
             collisions: [],
             tileCollisions: [],
+            polygons: {},
             version: new Date().getTime()
         };
         const { map } = this;
@@ -123,13 +126,13 @@ export default class ProcessMap {
                     if (tile.animation && mode === 'info')
                         this.handleAnimation(id, tileset.firstgid, tile);
                     else
-                        _.each(tile.properties, (data) => {
+                        _.each(tile.properties, (data: any) => {
                             this.handleProperty(
                                 data.name,
                                 this.isValid(parseInt(data.value, 10))
                                     ? parseInt(data.value, 10)
                                     : data.value,
-                                id
+                                id, tile.objectgroup
                             );
                         });
                 });
@@ -371,18 +374,42 @@ export default class ProcessMap {
         return map;
     }
 
-    handleProperty(property: string, value: number, id: number): void {
+    /**
+     * The way Tiled processes polygons is by using the first point
+     * as the pivot point around where the rest of the shape is drawn.
+     * This can create issues if we start at different point on the shape,
+     * so the solution is to append the offset to each point.
+     */
+
+    handlePolygon(polygon: any, offsetX: number, offsetY: number) {
+        let formattedPolygons = [];
+
+        _.each(polygon, (p: any) => {
+            formattedPolygons.push({
+                x: p.x + offsetX,
+                y: p.y + offsetY
+            })
+        });
+
+        return formattedPolygons;
+    }
+
+    handleProperty(property: string, value: number, id: number, objectGroup: any): void {
         const { map } = this;
+
+        if (objectGroup && objectGroup.objects)
+            _.each(objectGroup.objects, (object: any) => {
+
+                if (!(id in this.map.polygons))
+                    this.map.polygons[id] = this.handlePolygon(object.polygon, object.x, object.y);
+            });
+
         if (property === 'c' || property === 'o') {
-            if (id === 2960 || id === 2961 || id === 2962) {
-                console.log(property);
-                console.log(value);
-                console.log(id);
+
+            if (!(id in this.map.polygons)) {
+                collisions[id] = true;
+                this.map.tileCollisions.push(id);
             }
-
-            collisions[id] = true;
-
-            this.map.tileCollisions.push(id);
         }
 
         if (this.mode === 'client' || this.mode === 'info') {

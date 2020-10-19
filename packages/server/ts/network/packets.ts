@@ -204,7 +204,9 @@ Packets.RegionOpcode = {
     Modify: 1,
     Collisions: 2,
     Update: 3,
-    Reset: 4
+    Reset: 4,
+    Polygons: 5,
+    High: 6
 };
 
 Packets.OverlayOpcode = {

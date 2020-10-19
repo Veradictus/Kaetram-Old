@@ -4,7 +4,6 @@ import config from '../../config';
 
 import Connection from './connection';
 import WS from 'ws';
-import SocketIO from 'socket.io';
 import http from 'http';
 import https from 'https';
 import Utils from '../util/utils';
@@ -15,7 +14,6 @@ class WebSocket extends Socket {
     ips: {};
 
     httpServer: http.Server | https.Server;
-    io: SocketIO;
     ws: WS.Server;
 
     public connectionCallback: any;

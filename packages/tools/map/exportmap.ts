@@ -13,6 +13,7 @@ export interface MapData {
     height: number;
     collisions: number[];
     tileCollisions: number[];
+    polygons: any;
     version: number;
 
     lights?: any[];

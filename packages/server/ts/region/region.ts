@@ -10,6 +10,7 @@ import Entity from '../game/entity/entity';
 import Map from '../map/map';
 import Regions from '../map/regions';
 import World from '../game/world';
+import ClientMap from '../../data/map/world_client.json'
 import config from '../../config';
 import log from '../util/log';
 
@@ -65,8 +66,6 @@ class Region {
                 if (!entity.achievementsLoaded) return;
 
                 this.sendRegion(entity, regionId);
-                
-                this.sendCollisions(entity);
             }
         });
 
@@ -240,10 +239,18 @@ class Region {
         //No need to send empty data...
         if (tileData.length > 0)
             player.send(new Messages.Region(Packets.RegionOpcode.Render, tileData, force));
+
+        this.sendTilesetInfo(player);
     }
 
-    sendCollisions(player: Player) {
-        player.send(new Messages.Region(Packets.RegionOpcode.Collisions, this.map.tileCollisions))
+    sendTilesetInfo(player: Player) {
+        let tileCollisions = this.map.tileCollisions,
+            polygonCollisions = ClientMap.polygons,
+            high = ClientMap.high;
+
+        player.send(new Messages.Region(Packets.RegionOpcode.Collisions, tileCollisions));
+        player.send(new Messages.Region(Packets.RegionOpcode.Polygons, polygonCollisions));
+        player.send(new Messages.Region(Packets.RegionOpcode.High, high));
     }
 
     // TODO - Format dynamic tiles to follow same structure as `getRegionData()`

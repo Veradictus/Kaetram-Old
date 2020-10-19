@@ -18,6 +18,7 @@ import Entity from '../game/entity/entity';
 import map from '../../data/map/world_server.json';
 import Spawns from '../../data/spawns.json';
 import ClientMap from '../../data/map/world_client.json';
+import log from '../util/log';
 
 class Map {
     world: World;
