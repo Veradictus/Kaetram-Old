@@ -362,12 +362,70 @@ class Map {
         return index in this.plateau;
     }
 
+    // To be deprecated...
     isColliding(x: number, y: number) {
         if (this.isOutOfBounds(x, y)) return false;
 
         let tileIndex = this.gridPositionToIndex(x, y);
 
         return this.collisions.indexOf(tileIndex) > -1;
+    }
+
+    /**
+     * Formats polygon shape to tileIndex and determines if player is in there.
+     */
+
+    formatPolygon(gridX: number, gridY: number, polygonShape: any) {
+        let newPolygon = [];
+
+        for (let i in polygonShape)
+            newPolygon.push({
+                x: gridX + (polygonShape[i].x / 16),
+                y: gridY + (polygonShape[i].y / 16)
+            });
+
+        return newPolygon;
+    }
+
+    isInside(rawX: number, rawY: number, gridX: number, gridY: number, polygonShape: any) {
+        polygonShape = this.formatPolygon(gridX, gridY, polygonShape);
+
+        for (let i = 0, j = polygonShape.length - 1; i < polygonShape.length; j = i++) {
+            let xi = polygonShape[i].x, yi = polygonShape[i].y,
+                xj = polygonShape[j].x, yj = polygonShape[j].y;
+
+            let intersect = ((yi > rawY) != (yj > rawY)) &&
+                (rawX < (xj - xi) * (rawY - yi) / (yj - yi) + xi)
+
+            if (intersect)
+                return true;
+        }
+
+        return false;
+    }
+
+    isCollision(rawX: number, rawY: number, gridX: number, gridY: number) {
+        let tileIndex = this.gridPositionToIndex(gridX, gridY);
+
+        if (this.collisions.indexOf(tileIndex) > -1)
+            return rawX > gridX && rawX < gridX + 1 && rawY > gridY && rawY < gridY + 1;
+
+        let tileData = ClientMap.data[tileIndex],
+            isInside = (tile: any) => {
+                if (tile in ClientMap.polygons)
+                    return this.isInside(rawX, rawY, gridX, gridY, ClientMap.polygons[tile]);
+            };
+
+        let isColliding = false;
+
+        if (tileData instanceof Array)
+            for (let i in tileData)
+                if (isInside(tileData[i]))
+                    isColliding = true;
+        else
+            isColliding = isInside(tileData);
+
+        return isColliding;
     }
 
     /* For preventing NPCs from roaming in null areas. */

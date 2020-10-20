@@ -352,13 +352,11 @@ class Incoming {
             case Packets.MovementOpcode.Move:
                 let rawX = parseFloat(message.shift()) / 16,
                     rawY = parseFloat(message.shift()) / 16,
-                    gridX = Math.ceil(rawX),
-                    gridY = Math.ceil(rawY);
+                    gridX = Math.floor(rawX),
+                    gridY = Math.floor(rawY);
 
-                console.log(gridX + ' ' + gridY);
-
-                if (!this.preventNoClip(gridX, gridY)) {
-                    console.log('No clipping lol.');
+                if (this.world.map.isCollision(rawX, rawY, gridX, gridY)) {
+                    
                     return;
                 }
 
