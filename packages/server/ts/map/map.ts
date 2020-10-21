@@ -6,6 +6,7 @@ import Regions from './regions';
 import Utils from '../util/utils';
 import Modules from '../util/modules';
 import Objects from '../util/objects';
+import Constants from '../util/constants';
 import PVPAreas from './areas/pvpareas';
 import MusicAreas from './areas/musicareas';
 import ChestAreas from './areas/chestareas';
@@ -395,7 +396,7 @@ class Map {
                 xj = polygonShape[j].x, yj = polygonShape[j].y;
 
             let intersect = ((yi > rawY) != (yj > rawY)) &&
-                (rawX < (xj - xi) * (rawY - yi) / (yj - yi) + xi)
+                (rawX < (xj - xi) * (rawY - yi) / (yj - yi) + xi);
 
             if (intersect)
                 return true;

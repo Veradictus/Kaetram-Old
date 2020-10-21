@@ -11,6 +11,7 @@ import Utils from '../util/utils';
 import Player from '../game/entity/character/player/player';
 import World from '../game/world';
 import log from '../util/log';
+import Constants from '../util/constants';
 import config from '../../config';
 import Character from '../game/entity/character/character';
 
@@ -355,8 +356,11 @@ class Incoming {
                     gridX = Math.floor(rawX),
                     gridY = Math.floor(rawY);
 
+                rawX += Constants.POSITION_OFFSET;
+                rawY += Constants.POSITION_OFFSET;
+
                 if (this.world.map.isCollision(rawX, rawY, gridX, gridY)) {
-                    
+                    log.debug('Detected no clipping.');
                     return;
                 }
 
@@ -375,6 +379,7 @@ class Incoming {
 
                 break;
 
+                
             case Packets.MovementOpcode.Started:
                 let selectedX = message.shift(),
                     selectedY = message.shift(),
