@@ -46,7 +46,7 @@ class Equipment {
     }
 
     getData() {
-        return {
+        let data: any = {
             type: this.getType(),
             name: Items.idToName(this.id),
             string: Items.idToString(this.id),
@@ -55,6 +55,13 @@ class Equipment {
             abilityLevel: this.abilityLevel,
             power: Items.getLevelRequirement(this.name)
         };
+
+        if (Items.hasOffset(this.id)) {
+            data.offsetX = Items.getOffsetX(this.id);
+            data.offsetY = Items.getOffsetY(this.id);
+        }
+
+        return data;
     }
 
     getString() {

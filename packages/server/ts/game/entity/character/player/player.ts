@@ -266,7 +266,7 @@ class Player extends Character {
             ring = data.ring,
             boots = data.boots;
 
-        this.setPosition(data.x, data.y);
+        this.setPosition(data.x, data.y, data.floatX, data.floatY);
         this.setArmour(armour[0], armour[1], armour[2], armour[3]);
         this.setWeapon(weapon[0], weapon[1], weapon[2], weapon[3]);
         this.setPendant(pendant[0], pendant[1], pendant[2], pendant[3]);
@@ -459,8 +459,8 @@ class Player extends Character {
         let info = {
             instance: this.instance,
             username: Utils.formatUsername(this.username),
-            x: this.x,
-            y: this.y,
+            x: this.floatX,
+            y: this.floatY,
             kind: this.kind,
             rights: this.rights,
             hitPoints: this.hitPoints.getData(),
@@ -702,8 +702,8 @@ class Player extends Character {
             this.region,
             new Messages.Teleport({
                 id: this.instance,
-                x: x,
-                y: y,
+                x: x * 16 + 8,
+                y: y * 16,
                 withAnimation: animate
             })
         );
@@ -997,7 +997,7 @@ class Player extends Character {
         };
     }
 
-    setPosition(x: number, y: number) {
+    setPosition(x: number, y: number, floatX?: number, floatY?: number) {
         if (this.dead) return;
 
         if (this.map.isOutOfBounds(x, y)) {

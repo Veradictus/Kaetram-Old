@@ -16,6 +16,14 @@ export default {
         return id in this.Plugins;
     },
 
+    hasOffset(id: number) {
+        if (!(id in this.Ids))
+            return false;
+
+        if (this.Ids[id].offsetX && this.Ids[id].offsetY)
+            return true;
+    },
+
     getPlugin(id: number) {
         if (this.hasPlugin(id)) return this.Plugins[id];
 
@@ -220,5 +228,13 @@ export default {
     getManaFactor(id: number) {
         if (id in this.Ids) return this.Ids[id].healsMana;
         return 0;
+    },
+
+    getOffsetX(id: number) {
+        return this.Ids[id].offsetX;
+    },
+
+    getOffsetY(id: number) {
+        return this.Ids[id].offsetY;
     }
 };
