@@ -17,11 +17,13 @@ import World from '../../../world';
 import Entity from '../../entity';
 import Map from '../../../../map/map';
 import Area from '../../../../map/area';
+import Doors from './doors';
 
 class Handler {
     player: Player;
     world: World;
     map: Map;
+    doors: Doors;
 
     updateTicks: number;
     updateInterval: any;
@@ -64,6 +66,12 @@ class Handler {
         }, 400);
 
         this.player.onMovement((x: number, y: number) => {
+            if (this.player.doors.lastDestX !== x && this.player.doors.lastDestY !== y) {
+                this.player.doors.lastDestX = -1;
+                this.player.doors.lastDestY = -1;
+            }
+
+
             this.player.checkRegions();
 
             this.detectMusic(x, y);
@@ -71,7 +79,9 @@ class Handler {
             this.detectLights(x, y);
             this.detectAchievements(x, y);
             this.detectCamera(x, y);
-            this.detectClipping(x, y);
+            //this.detectClipping(x, y);
+
+            this.detectDoor(x, y);
         });
 
         this.player.onDeath(() => {
@@ -271,6 +281,26 @@ class Handler {
         if (!isColliding) return;
 
         this.player.incoming.handleNoClip(x, y);
+    }
+
+    detectDoor(x: number, y: number) {
+        if (this.player.doors.lastDestX === x && this.player.doors.lastDestY === y)
+            return;
+
+        if (!this.map.isDoor(x, y))
+            return;
+
+        let door = this.player.doors.getDoor(x, y);
+
+        if (door && this.player.doors.getStatus(door) === 'closed')
+            return;
+
+        let destination = this.map.getDoorDestination(x, y);
+
+        this.player.doors.lastDestX = destination.x;
+        this.player.doors.lastDestY = destination.y;
+
+        this.player.teleport(destination.x, destination.y, true);
     }
 
     handlePoison() {

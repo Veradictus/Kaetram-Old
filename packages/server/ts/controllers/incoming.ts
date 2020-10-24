@@ -353,7 +353,7 @@ class Incoming {
             case Packets.MovementOpcode.Move:
                 let rawX = parseFloat(message.shift()) / 16,
                     rawY = parseFloat(message.shift()) / 16,
-                    gridX = Math.floor(rawX),
+                    gridX = Math.ceil(rawX),
                     gridY = Math.floor(rawY);
 
                 rawX += Constants.POSITION_OFFSET;

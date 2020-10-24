@@ -14,6 +14,9 @@ class Doors {
     public regions: Regions;
 
     public doors: any;
+    
+    public lastDestX: number;
+    public lastDestY: number;
 
     constructor(player: Player) {
         this.world = player.world;
