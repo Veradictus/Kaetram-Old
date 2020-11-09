@@ -13,6 +13,10 @@ class Entity {
 
     public x: number;
     public y: number;
+
+    public floatX: number;
+    public floatY: number;
+
     public oldX: number;
     public oldY: number;
 
@@ -38,8 +42,13 @@ class Entity {
         this.type = type;
         this.instance = instance;
 
+        // Position relative to the grid
         this.x = x;
         this.y = y;
+
+        // Floating-point position
+        this.floatX = x * 16 + 8;
+        this.floatY = x * 16 + 8;
 
         this.oldX = x;
         this.oldY = y;
@@ -95,9 +104,12 @@ class Entity {
         return x > y ? x : y;
     }
 
-    setPosition(x: number, y: number) {
+    setPosition(x: number, y: number, floatX?: number, floatY?: number) {
         this.x = x;
         this.y = y;
+
+        this.floatX = floatX || x * 16 + 8;
+        this.floatY = floatY || y * 16 + 8;
 
         if (this.setPositionCallback) this.setPositionCallback();
     }

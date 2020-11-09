@@ -18,6 +18,7 @@ import MobData from '../../data/mobs.json';
 import AbilityData from '../../data/abilities.json';
 import ShopsData from '../../data/shops.json';
 import ObjectData from '../../data/objects.json';
+import SpriteData from '../../data/sprites.json';
 
 class Parser {
     private readyCallback: () => void;
@@ -131,6 +132,11 @@ class Parser {
                 lumberjacking: value.lumberjacking || 0,
                 mining: value.mining || 0
             };
+
+            if (key in SpriteData) {
+                Items.Data[key].offsetX = SpriteData[key].offsetX;
+                Items.Data[key].offsetY = SpriteData[key].offsetY;
+            }
 
             Items.Ids[value.id] = Items.Data[key];
 

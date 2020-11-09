@@ -351,20 +351,20 @@ class Incoming {
 
         switch (opcode) {
             case Packets.MovementOpcode.Move:
-                let rawX = parseFloat(message.shift()) / 16,
-                    rawY = parseFloat(message.shift()) / 16,
-                    gridX = Math.ceil(rawX),
-                    gridY = Math.floor(rawY);
+                let floatX = parseFloat(message.shift()) / 16,
+                    floatY = parseFloat(message.shift()) / 16,
+                    gridX = Math.floor(floatX),
+                    gridY = Math.floor(floatY);
 
-                rawX += Constants.POSITION_OFFSET;
-                rawY += Constants.POSITION_OFFSET;
+                floatX += Constants.POSITION_OFFSET;
+                floatY += Constants.POSITION_OFFSET;
 
-                if (this.world.map.isCollision(rawX, rawY, gridX, gridY)) {
+                if (this.world.map.isCollision(floatX, floatY, gridX, gridY)) {
                     log.debug('Detected no clipping.');
                     return;
                 }
 
-                this.player.setPosition(gridX, gridY);
+                this.player.setPosition(gridX, gridY, floatX, floatY);
 
                 break;
 
