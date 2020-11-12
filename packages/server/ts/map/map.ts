@@ -32,6 +32,7 @@ class Map {
     clientMap: any;
     width: number;
     height: number;
+    tileSize: number;
 
     collisions: any;
     tileCollisions: any;
@@ -82,6 +83,8 @@ class Map {
 
         this.width = map.width;
         this.height = map.height;
+        this.tileSize = map.tilesize;
+
         this.collisions = map.collisions;
         this.tileCollisions = map.tileCollisions;
         this.chestAreas = map.chestAreas;
@@ -227,8 +230,8 @@ class Map {
             y = Math.floor(tileIndex / this.width);
 
         return {
-            x: x,
-            y: y
+            gridX: x,
+            gridY: y
         };
     }
 
@@ -260,12 +263,12 @@ class Map {
     }
 
     inTutorialArea(entity: Entity) {
-        if (entity.x === -1 || entity.y === -1) return true;
+        if (entity.gridX === -1 || entity.gridY === -1) return true;
 
         return (
-            this.inArea(entity.x, entity.y, 370, 36, 10, 10) ||
-            this.inArea(entity.x, entity.y, 312, 11, 25, 22) ||
-            this.inArea(entity.x, entity.y, 399, 18, 20, 15)
+            this.inArea(entity.gridX, entity.gridY, 370, 36, 10, 10) ||
+            this.inArea(entity.gridX, entity.gridY, 312, 11, 25, 22) ||
+            this.inArea(entity.gridX, entity.gridY, 399, 18, 20, 15)
         );
     }
 
@@ -309,7 +312,7 @@ class Map {
     getObjectId(tileIndex: number) {
         let position = this.indexToGridPosition(tileIndex + 1);
 
-        return position.x + '-' + position.y;
+        return position.gridX + '-' + position.gridY;
     }
 
     getObject(x: number, y: number, data: any) {
@@ -335,7 +338,7 @@ class Map {
     idToPosition(id: string) {
         let split = id.split('-');
 
-        return { x: parseInt(split[0]), y: parseInt(split[1]) };
+        return { gridX: parseInt(split[0]), gridY: parseInt(split[1]) };
     }
 
     isDoor(x: number, y: number) {

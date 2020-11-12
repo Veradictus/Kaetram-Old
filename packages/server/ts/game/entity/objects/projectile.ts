@@ -38,8 +38,8 @@ class Projectile extends Entity {
     }
 
     setStart(x: number, y: number) {
-        this.x = x;
-        this.y = y;
+        this.gridX = x;
+        this.gridY = y;
     }
 
     /**
@@ -49,8 +49,8 @@ class Projectile extends Entity {
     setTarget(target: Entity) {
         this.target = target;
 
-        this.destX = target.x;
-        this.destY = target.y;
+        this.destX = target.gridX;
+        this.destY = target.gridY;
     }
 
     setStaticTarget(x: number, y: number) {

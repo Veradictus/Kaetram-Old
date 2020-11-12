@@ -193,8 +193,8 @@ class Character extends Entity {
     }
 
     setPosition(x: number, y: number) {
-        this.previousX = this.x;
-        this.previousY = this.y;
+        this.previousX = this.gridX;
+        this.previousY = this.gridY;
 
         super.setPosition(x, y);
 

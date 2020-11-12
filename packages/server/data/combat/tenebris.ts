@@ -63,14 +63,14 @@ class Tenebris extends Combat {
     spawnTenbris() {
         var self = this;
 
-        self.world.spawnMob(104, self.character.x, self.character.y);
+        self.world.spawnMob(104, self.character.gridX, self.character.gridY);
     }
 
     spawnIllusions() {
         var self = this;
 
-        self.illusions.push(self.world.spawnMob(105, self.character.x + 1, self.character.y + 1));
-        self.illusions.push(self.world.spawnMob(105, self.character.x - 1, self.character.y + 1));
+        self.illusions.push(self.world.spawnMob(105, self.character.gridX + 1, self.character.gridY + 1));
+        self.illusions.push(self.world.spawnMob(105, self.character.gridX - 1, self.character.gridY + 1));
 
         _.each(self.illusions, (illusion: Mob) => {
             illusion.onDeath(() => {
@@ -88,8 +88,8 @@ class Tenebris extends Combat {
             regionId: self.character.region,
             message: new Messages.Teleport({
                 id: self.character.instance,
-                x: self.character.x,
-                y: self.character.y,
+                x: self.character.gridX,
+                y: self.character.gridY,
                 withAnimation: true
             })
         });

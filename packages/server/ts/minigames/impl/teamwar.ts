@@ -118,7 +118,7 @@ class TeamWar extends Minigame {
 
     inLobby(player: Player) {
         // TODO - Update these when new lobby is available.
-        return player.x > 0 && player.x < 10 && player.y > 10 && player.y < 0;
+        return player.gridX > 0 && player.gridX < 10 && player.gridY > 10 && player.gridY < 0;
     }
 
     // Used for radius

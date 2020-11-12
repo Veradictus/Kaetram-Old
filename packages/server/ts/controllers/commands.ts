@@ -58,7 +58,7 @@ class Commands {
             case 'coords':
                 this.player.send(
                     new Messages.Notification(Packets.NotificationOpcode.Text, {
-                        message: 'x: ' + this.player.x + ' y: ' + this.player.y
+                        message: 'x: ' + this.player.gridX + ' y: ' + this.player.gridY
                     })
                 );
 
@@ -203,7 +203,7 @@ class Commands {
 
                 if (!dCount) dCount = 1;
 
-                this.world.dropItem(id, dCount, this.player.x, this.player.y);
+                this.world.dropItem(id, dCount, this.player.gridX, this.player.gridY);
 
                 return;
 
@@ -230,7 +230,7 @@ class Commands {
                 username = blocks.join(' ');
                 player = this.world.getPlayerByName(username);
 
-                if (player) player.teleport(this.player.x, this.player.y);
+                if (player) player.teleport(this.player.gridX, this.player.gridY);
 
                 return;
 
@@ -238,7 +238,7 @@ class Commands {
                 username = blocks.join(' ');
                 player = this.world.getPlayerByName(username);
 
-                if (player) this.player.teleport(player.x, player.y);
+                if (player) this.player.teleport(player.gridX, player.gridY);
 
                 return;
 
@@ -252,7 +252,7 @@ class Commands {
             case 'mob':
                 let npcId = parseInt(blocks.shift());
 
-                this.world.spawnMob(npcId, this.player.x, this.player.y);
+                this.world.spawnMob(npcId, this.player.gridX, this.player.gridY);
 
                 return;
 
@@ -286,7 +286,7 @@ class Commands {
 
             case 'teleall':
                 _.each(this.world.players, (player) => {
-                    player.teleport(this.player.x, this.player.y);
+                    player.teleport(this.player.gridX, this.player.gridY);
                 });
 
                 return;

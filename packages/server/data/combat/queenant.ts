@@ -122,7 +122,7 @@ class QueenAnt extends Combat {
         self.lastSpawn = new Date().getTime();
 
         for (var i = 0; i < self.minionCount; i++)
-            self.minions.push(self.world.spawnMob(13, self.character.x, self.character.y));
+            self.minions.push(self.world.spawnMob(13, self.character.gridX, self.character.gridY));
 
         _.each(self.minions, (minion: Mob) => {
             minion.aggressive = true;

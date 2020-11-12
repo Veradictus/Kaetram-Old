@@ -244,8 +244,8 @@ class API {
 
         return {
             serverId: config.serverId,
-            x: player.x,
-            y: player.y,
+            x: player.gridX,
+            y: player.gridY,
             experience: player.experience,
             level: player.level,
             hitPoints: player.hitPoints,

@@ -45,8 +45,8 @@ class Mob extends Character {
 
     area: Area;
 
-    constructor(id: number, instance: string, x: number, y: number, world?: World) {
-        super(id, 'mob', instance, x, y);
+    constructor(id: number, instance: string, gridX: number, gridY: number, world?: World) {
+        super(id, 'mob', instance, gridX, gridY);
 
         if (!Mobs.exists(id)) return;
 
@@ -69,7 +69,7 @@ class Mob extends Character {
         this.attackRate = this.data.attackRate;
         this.movementSpeed = this.data.movementSpeed;
 
-        this.spawnLocation = [x, y];
+        this.spawnLocation = [gridX, gridY];
 
         this.dead = false;
         this.boss = false;
@@ -140,7 +140,7 @@ class Mob extends Character {
     return() {
         this.clearTarget();
         this.resetPosition();
-        this.setPosition(this.x, this.y);
+        this.setPosition(this.gridX, this.gridY);
     }
 
     isRanged() {
@@ -148,11 +148,11 @@ class Mob extends Character {
     }
 
     distanceToSpawn() {
-        return this.getCoordDistance(this.spawnLocation[0], this.spawnLocation[1]);
+        return this.getGridDistance(this.spawnLocation[0], this.spawnLocation[1]);
     }
 
     isAtSpawn() {
-        return this.x === this.spawnLocation[0] && this.y === this.spawnLocation[1];
+        return this.gridX === this.spawnLocation[0] && this.gridY === this.spawnLocation[1];
     }
 
     isOutsideSpawn() {
@@ -161,7 +161,7 @@ class Mob extends Character {
 
     addToChestArea(chestAreas: any) {
         let area = _.find(chestAreas, (area: Area) => {
-            return area.contains(this.x, this.y);
+            return area.contains(this.gridX, this.gridY);
         });
 
         if (area) area.addEntity(this);

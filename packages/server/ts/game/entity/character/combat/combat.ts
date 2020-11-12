@@ -164,7 +164,7 @@ class Combat {
             if (this.onSameTile()) {
                 let newPosition = this.getNewPosition();
 
-                this.move(this.character, newPosition.x, newPosition.y);
+                this.move(this.character, newPosition.gridX, newPosition.gridY);
             }
 
             if (this.character.hasTarget() && !this.inProximity()) {
@@ -220,8 +220,8 @@ class Combat {
             message: new Messages.Combat(Packets.CombatOpcode.Sync, {
                 attackerId: this.character.instance, //irrelevant
                 targetId: this.character.instance, //can be the same since we're acting on an entity.
-                x: this.character.x,
-                y: this.character.y
+                x: this.character.gridX,
+                y: this.character.gridY
             })
         });
     }
@@ -273,8 +273,8 @@ class Combat {
             regionId: this.character.region,
             message: new Messages.Movement(Packets.MovementOpcode.Move, {
                 id: this.character.instance,
-                x: this.character.x,
-                y: this.character.y,
+                x: this.character.gridX,
+                y: this.character.gridY,
                 forced: false,
                 teleport: false
             })
@@ -291,8 +291,8 @@ class Combat {
         if (!this.character.target || this.character.type !== 'mob') return;
 
         return (
-            this.character.x === this.character.target.x &&
-            this.character.y === this.character.target.y
+            this.character.gridX === this.character.target.gridX &&
+            this.character.gridY === this.character.target.gridY
         );
     }
 
@@ -302,16 +302,16 @@ class Combat {
 
     getNewPosition() {
         let position = {
-            x: this.character.x,
-            y: this.character.y
+            gridX: this.character.gridX,
+            gridY: this.character.gridY
         };
 
         let random = Utils.randomInt(0, 3);
 
-        if (random === 0) position.x++;
-        else if (random === 1) position.y--;
-        else if (random === 2) position.x--;
-        else if (random === 3) position.y++;
+        if (random === 0) position.gridX++;
+        else if (random === 1) position.gridY--;
+        else if (random === 2) position.gridX--;
+        else if (random === 3) position.gridY++;
 
         return position;
     }
@@ -455,7 +455,7 @@ class Combat {
             target = this.character.target;
 
         return (
-            Utils.getDistance(spawnPoint[0], spawnPoint[1], target.x, target.y) >
+            Utils.getDistance(spawnPoint[0], spawnPoint[1], target.gridX, target.gridY) >
             this.character.spawnDistance
         );
     }

@@ -358,7 +358,7 @@ class Region {
 
         if (!entity) return regionsChanged;
 
-        let regionId = region ? region : this.mapRegions.regionIdFromPosition(entity.x, entity.y);
+        let regionId = region ? region : this.mapRegions.regionIdFromPosition(entity.gridX, entity.gridY);
 
         if (entity.instanced) regionId = Region.regionIdToInstance(entity, regionId);
 

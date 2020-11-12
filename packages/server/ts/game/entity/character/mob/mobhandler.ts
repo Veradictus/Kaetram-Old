@@ -64,7 +64,7 @@ class MobHandler {
                 if (distance < this.mob.maxRoamingDistance) return;
 
                 // No need to move mobs to the same position as theirs.
-                if (newX === this.mob.x && newY === this.mob.y) return;
+                if (newX === this.mob.gridX && newY === this.mob.gridY) return;
 
                 // We don't want mobs randomly roaming while in combat.
                 if (this.mob.combat.started) return;

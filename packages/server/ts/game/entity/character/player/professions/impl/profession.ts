@@ -124,10 +124,10 @@ class Profession {
 
         let position = this.map.idToPosition(this.targetId);
 
-        if (position.x > this.player.x) return Modules.Orientation.Right;
-        else if (position.x < this.player.x) return Modules.Orientation.Left;
-        else if (position.y > this.player.y) return Modules.Orientation.Down;
-        else position.y < this.player.y;
+        if (position.gridX > this.player.gridX) return Modules.Orientation.Right;
+        else if (position.gridX < this.player.gridX) return Modules.Orientation.Left;
+        else if (position.gridY > this.player.gridY) return Modules.Orientation.Down;
+        else position.gridY < this.player.gridY;
         return Modules.Orientation.Up;
     }
 

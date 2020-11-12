@@ -448,7 +448,7 @@ class Player extends Character {
             this.connection.close('Player: ' + this.username + ' is banned.');
         }
 
-        if (this.x <= 0 || this.y <= 0) this.sendToSpawn();
+        if (this.gridX <= 0 || this.gridY <= 0) this.sendToSpawn();
 
         if (this.hitPoints.getHitPoints() < 0) this.hitPoints.setHitPoints(this.getMaxHitPoints());
 
@@ -459,8 +459,8 @@ class Player extends Character {
         let info = {
             instance: this.instance,
             username: Utils.formatUsername(this.username),
-            x: this.floatX,
-            y: this.floatY,
+            x: this.x,
+            y: this.y,
             kind: this.kind,
             rights: this.rights,
             hitPoints: this.hitPoints.getData(),
@@ -476,7 +476,7 @@ class Player extends Character {
             movementSpeed: this.getMovementSpeed()
         };
 
-        this.regionPosition = [this.x, this.y];
+        this.regionPosition = [this.gridX, this.gridY];
 
         /**
          * Send player data to client here
@@ -911,11 +911,11 @@ class Player extends Character {
 
         _.each(this.map.treeIndexes, (index: number) => {
             let position = this.map.indexToGridPosition(index + 1),
-                treeRegion = this.regions.regionIdFromPosition(position.x, position.y);
+                treeRegion = this.regions.regionIdFromPosition(position.gridX, position.gridY);
 
             if (!this.regions.isSurrounding(this.region, treeRegion)) return;
 
-            let objectId = this.map.getPositionObject(position.x, position.y),
+            let objectId = this.map.getPositionObject(position.gridX, position.gridY),
                 cursor = this.map.getCursor(index, objectId);
 
             tiles.indexes.push(index);
@@ -1128,8 +1128,8 @@ class Player extends Character {
             type: this.type,
             id: this.instance,
             name: Utils.formatUsername(this.username),
-            x: this.x,
-            y: this.y,
+            x: this.gridX,
+            y: this.gridY,
             rights: this.rights,
             level: this.level,
             pvp: this.pvp,
@@ -1256,8 +1256,8 @@ class Player extends Character {
     sendToSpawn() {
         let position = this.getSpawn();
 
-        this.x = position.x;
-        this.y = position.y;
+        this.gridX = position.x;
+        this.gridY = position.y;
     }
 
     sendMessage(playerName: string, message: string) {
@@ -1402,11 +1402,11 @@ class Player extends Character {
     checkRegions() {
         if (!this.regionPosition) return;
 
-        let diffX = Math.abs(this.regionPosition[0] - this.x),
-            diffY = Math.abs(this.regionPosition[1] - this.y);
+        let diffX = Math.abs(this.regionPosition[0] - this.gridX),
+            diffY = Math.abs(this.regionPosition[1] - this.gridY);
 
         if (diffX >= 10 || diffY >= 10) {
-            this.regionPosition = [this.x, this.y];
+            this.regionPosition = [this.gridX, this.gridY];
 
             if (this.regionCallback) this.regionCallback();
         }
@@ -1426,7 +1426,7 @@ class Player extends Character {
 
     walkRandomly() {
         setInterval(() => {
-            this.setPosition(this.x + Utils.randomInt(-5, 5), this.y + Utils.randomInt(-5, 5));
+            this.setPosition(this.gridX + Utils.randomInt(-5, 5), this.gridY + Utils.randomInt(-5, 5));
         }, 2000);
     }
 

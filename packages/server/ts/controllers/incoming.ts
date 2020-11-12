@@ -222,7 +222,7 @@ class Incoming {
         this.player.loadQuests();
         this.player.loadBank();
 
-        if (this.world.map.isOutOfBounds(this.player.x, this.player.y))
+        if (this.world.map.isOutOfBounds(this.player.gridX, this.player.gridY))
             this.player.setPosition(50, 89);
 
         if (this.player.userAgent !== userAgent) {
@@ -351,8 +351,8 @@ class Incoming {
 
         switch (opcode) {
             case Packets.MovementOpcode.Move:
-                let floatX = parseFloat(message.shift()) / 16,
-                    floatY = parseFloat(message.shift()) / 16,
+                let floatX = parseFloat(message.shift()) / this.world.map.tileSize,
+                    floatY = parseFloat(message.shift()) / this.world.map.tileSize,
                     gridX = Math.floor(floatX),
                     gridY = Math.floor(floatY);
 
@@ -721,8 +721,8 @@ class Incoming {
                     this.world.dropItem(
                         id,
                         count ? count : 1,
-                        this.player.x,
-                        this.player.y,
+                        this.player.gridX,
+                        this.player.gridY,
                         ability,
                         abilityLevel
                     );
@@ -814,7 +814,7 @@ class Incoming {
             ignoreId: this.player.instance
         });
 
-        this.player.send(new Messages.Respawn(this.player.instance, this.player.x, this.player.y));
+        this.player.send(new Messages.Respawn(this.player.instance, this.player.gridX, this.player.gridY));
 
         this.player.revertPoints();
     }
@@ -977,11 +977,11 @@ class Incoming {
     }
 
     handleCamera(message: Array<any>) {
-        log.info(this.player.x + ' ' + this.player.y);
+        log.info(this.player.gridX + ' ' + this.player.gridY);
         console.log(message);
 
         this.player.cameraArea = null;
-        this.player.handler.detectCamera(this.player.x, this.player.y);
+        this.player.handler.detectCamera(this.player.gridX, this.player.gridY);
     }
 
     /**
@@ -1036,8 +1036,8 @@ class Incoming {
             'We have detected no-clipping in your client. Please submit a bug report.'
         );
 
-        x = this.player.previousX < 0 ? this.player.x : this.player.previousX;
-        y = this.player.previousY < 0 ? this.player.y : this.player.previousY;
+        x = this.player.previousX < 0 ? this.player.gridX : this.player.previousX;
+        y = this.player.previousY < 0 ? this.player.gridY : this.player.previousY;
 
         if (this.world.map.isColliding(x, y)) {
             let spawn = this.player.getSpawn();

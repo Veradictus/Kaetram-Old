@@ -52,8 +52,8 @@ class SkeletonKing extends Combat {
 
     spawnMinions() {
         var self = this,
-            x = self.character.x,
-            y = self.character.y;
+            x = self.character.gridX,
+            y = self.character.gridY;
 
         self.lastSpawn = new Date().getTime();
 

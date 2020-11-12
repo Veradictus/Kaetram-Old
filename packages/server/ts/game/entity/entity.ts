@@ -5,6 +5,7 @@ import Items from '../../util/items';
 import NPCs from '../../util/npcs';
 import Combat from './character/combat/combat';
 import Player from './character/player/player';
+import Map from '../../../data/map/world_server.json'
 
 class Entity {
     public id: number;
@@ -14,8 +15,8 @@ class Entity {
     public x: number;
     public y: number;
 
-    public floatX: number;
-    public floatY: number;
+    public gridX: number;
+    public gridY: number;
 
     public oldX: number;
     public oldY: number;
@@ -37,21 +38,21 @@ class Entity {
     customScale: any;
     roaming: any;
 
-    constructor(id: number, type: string, instance: string, x?: number, y?: number) {
+    constructor(id: number, type: string, instance: string, gridX?: number, gridY?: number) {
         this.id = id;
         this.type = type;
         this.instance = instance;
 
-        // Position relative to the grid
-        this.x = x;
-        this.y = y;
-
         // Floating-point position
-        this.floatX = x * 16 + 8;
-        this.floatY = x * 16 + 8;
+        this.x = this.getFloatPosition(gridX);
+        this.y = this.getFloatPosition(gridY);
 
-        this.oldX = x;
-        this.oldY = y;
+        // Position relative to the grid
+        this.gridX = gridX;
+        this.gridY = gridY;
+
+        this.oldX = gridX;
+        this.oldY = gridY;
 
         this.combat = null;
 
@@ -91,32 +92,36 @@ class Entity {
     /****************************/
 
     getDistance(entity: Entity) {
-        let x = Math.abs(this.x - entity.x),
-            y = Math.abs(this.y - entity.y);
+        let x = Math.abs(this.x - entity.y),
+            y = Math.abs(this.x - entity.y);
 
         return x > y ? x : y;
     }
 
-    getCoordDistance(toX: number, toY: number) {
-        let x = Math.abs(this.x - toX),
-            y = Math.abs(this.y - toY);
+    getGridDistance(toX: number, toY: number) {
+        let x = Math.abs(this.gridX - toX),
+            y = Math.abs(this.gridY - toY);
 
         return x > y ? x : y;
     }
 
-    setPosition(x: number, y: number, floatX?: number, floatY?: number) {
-        this.x = x;
-        this.y = y;
+    setPosition(gridX: number, gridY: number, floatX?: number, floatY?: number) {
+        this.gridX = gridX;
+        this.gridY = gridY;
 
-        this.floatX = floatX || x * 16 + 8;
-        this.floatY = floatY || y * 16 + 8;
+        this.x = floatX || this.getFloatPosition(gridX);
+        this.y = floatY || this.getFloatPosition(gridY);
 
         if (this.setPositionCallback) this.setPositionCallback();
     }
 
     updatePosition() {
-        this.oldX = this.x;
-        this.oldY = this.y;
+        this.oldX = this.gridX;
+        this.oldY = this.gridY;
+    }
+
+    getFloatPosition(floatValue) {
+        return floatValue * Map.tilesize + (Map.tilesize / 2);
     }
 
     /**
@@ -137,7 +142,7 @@ class Entity {
     }
 
     isNonDiagonal(entity: Entity) {
-        return this.isAdjacent(entity) && !(entity.x !== this.x && entity.y !== this.y);
+        return this.isAdjacent(entity) && !(entity.gridX !== this.gridX && entity.gridY !== this.gridY);
     }
 
     hasSpecialAttack() {
@@ -210,8 +215,8 @@ class Entity {
                 id: this.instance,
                 string: string,
                 name: name,
-                x: this.x,
-                y: this.y
+                x: this.gridX,
+                y: this.gridY
             };
 
         if (this.specialState) data.nameColour = this.getNameColour();

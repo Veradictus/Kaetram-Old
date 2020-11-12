@@ -48,7 +48,7 @@ class Handler {
     load() {
         this.updateInterval = setInterval(() => {
             this.detectAggro();
-            this.detectPVP(this.player.x, this.player.y);
+            this.detectPVP(this.player.gridX, this.player.gridY);
 
             if (this.updateTicks % 4 === 0)
                 // Every 4 (1.6 seconds) update ticks.

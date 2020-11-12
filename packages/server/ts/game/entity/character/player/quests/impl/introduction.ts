@@ -63,7 +63,7 @@ class Introduction extends Quest {
                 return;
             }
 
-            if (!this.verifyDoor(this.player.x, this.player.y))
+            if (!this.verifyDoor(this.player.gridX, this.player.gridY))
                 this.player.notify('You are not supposed to go through here.');
             else {
                 this.progress('door');

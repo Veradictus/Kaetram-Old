@@ -248,8 +248,8 @@ class World {
         if (!character) return;
 
         if (character.type === 'mob') {
-            let deathX = character.x,
-                deathY = character.y;
+            let deathX = character.gridX,
+                deathY = character.gridY;
 
             if (lastAttacker) character.lastAttacker = lastAttacker;
 
@@ -277,8 +277,8 @@ class World {
 
         if (!attacker || !target) return null;
 
-        let startX = attacker.x,
-            startY = attacker.y,
+        let startX = attacker.gridX,
+            startY = attacker.gridY,
             type = attacker.getProjectile(),
             hit = null,
             projectile = new Projectile(type, Utils.generateInstance());
@@ -317,11 +317,11 @@ class World {
 
             if (isItem) info = Items.getData(key);
 
-            position.x++;
+            position.gridX++;
 
             if (!info || info === 'null') {
                 if (this.debug)
-                    log.info('Unknown object spawned at: ' + position.x + ' ' + position.y);
+                    log.info('Unknown object spawned at: ' + position.gridX + ' ' + position.gridY);
 
                 return;
             }
@@ -329,7 +329,7 @@ class World {
             let instance = Utils.generateInstance();
 
             if (isMob) {
-                let mob = new Mob(info.id, instance, position.x, position.y, this);
+                let mob = new Mob(info.id, instance, position.gridX, position.gridY, this);
 
                 mob.static = true;
 
@@ -361,10 +361,10 @@ class World {
                 this.addMob(mob);
             }
 
-            if (isNpc) this.addNPC(new NPC(info.id, instance, position.x, position.y));
+            if (isNpc) this.addNPC(new NPC(info.id, instance, position.gridX, position.gridY));
 
             if (isItem) {
-                let item = this.createItem(info.id, instance, position.x, position.y);
+                let item = this.createItem(info.id, instance, position.gridX, position.gridY);
                 item.static = true;
                 this.addItem(item);
             }
@@ -375,7 +375,7 @@ class World {
 
     spawnChests() {
         _.each(this.map.chests, (info: any) => {
-            this.spawnChest(info.i, info.x, info.y, info.achievement, true);
+            this.spawnChest(info.i, info.gridX, info.gridY, info.achievement, true);
         });
 
         log.info('Spawned ' + Object.keys(this.chests).length + ' static chests');
@@ -411,13 +411,13 @@ class World {
 
             this.removeChest(chest);
 
-            if (config.debug) log.info(`Opening chest at x: ${chest.x}, y: ${chest.y}`);
+            if (config.debug) log.info(`Opening chest at x: ${chest.gridX}, y: ${chest.gridY}`);
 
             let item = chest.getItem();
 
             if (!item) return;
 
-            this.dropItem(Items.stringToId(item.string), item.count, chest.x, chest.y);
+            this.dropItem(Items.stringToId(item.string), item.count, chest.gridX, chest.gridY);
 
             if (player && chest.achievement) player.finishAchievement(parseInt(chest.achievement));
         });
@@ -484,7 +484,7 @@ class World {
             });
 
             let position = this.map.idToPosition(key),
-                regionId = this.map.regions.regionIdFromPosition(position.x, position.y);
+                regionId = this.map.regions.regionIdFromPosition(position.gridX, position.gridY);
 
             this.region.updateRegions(regionId);
 
@@ -506,7 +506,7 @@ class World {
             });
 
             let position = this.map.idToPosition(key),
-                regionId = this.map.regions.regionIdFromPosition(position.x, position.y);
+                regionId = this.map.regions.regionIdFromPosition(position.gridX, position.gridY);
 
             this.region.updateRegions(regionId);
 
@@ -543,7 +543,7 @@ class World {
 
         if (!(id in this.trees)) this.trees[id] = {};
 
-        this.search(position.x + 1, position.y, id, this.trees, 'tree');
+        this.search(position.gridX + 1, position.gridY, id, this.trees, 'tree');
 
         this.cutTrees[id] = {
             data: {},
@@ -570,7 +570,7 @@ class World {
             }
         });
 
-        let regionId = this.map.regions.regionIdFromPosition(position.x, position.y);
+        let regionId = this.map.regions.regionIdFromPosition(position.gridX, position.gridY);
 
         this.region.updateRegions(regionId);
 
@@ -689,8 +689,8 @@ class World {
 
         if (entity.type !== 'projectile') this.region.handle(entity, region);
 
-        if (entity.x > 0 && entity.y > 0)
-            this.getGrids().addToEntityGrid(entity, entity.x, entity.y);
+        if (entity.gridX > 0 && entity.gridY > 0)
+            this.getGrids().addToEntityGrid(entity, entity.gridX, entity.gridY);
 
         entity.onSetPosition(() => {
             this.getGrids().updateEntityPosition(entity);
@@ -712,8 +712,8 @@ class World {
                     {
                         message: new Messages.Movement(Packets.MovementOpcode.Move, {
                             id: entity.instance,
-                            x: entity.x,
-                            y: entity.y,
+                            x: entity.gridX,
+                            y: entity.gridY,
                             forced: false,
                             teleport: false
                         })
@@ -791,7 +791,7 @@ class World {
 
         if (entity.instance in this.items) delete this.items[entity.instance];
 
-        this.getGrids().removeFromEntityGrid(entity, entity.x, entity.y);
+        this.getGrids().removeFromEntityGrid(entity, entity.gridX, entity.gridY);
 
         this.region.remove(entity);
     }
