@@ -273,7 +273,7 @@ class Map {
     }
 
     nearLight(light: any, x: number, y: number) {
-        let diff = Math.round(light.distance / 16),
+        let diff = Math.round(light.distance / this.tileSize),
             startX = light.x - this.zoneWidth - diff,
             startY = light.y - this.zoneHeight - diff,
             endX = light.x + this.zoneWidth + diff,
@@ -384,8 +384,8 @@ class Map {
 
         for (let i in polygonShape)
             newPolygon.push({
-                x: gridX + (polygonShape[i].x / 16),
-                y: gridY + (polygonShape[i].y / 16)
+                x: gridX + (polygonShape[i].x / this.tileSize),
+                y: gridY + (polygonShape[i].y / this.tileSize)
             });
 
         return newPolygon;
@@ -414,7 +414,7 @@ class Map {
         if (this.collisions.indexOf(tileIndex) > -1)
             return rawX > gridX && rawX < gridX + 1 && rawY > gridY && rawY < gridY + 1;
 
-        let tileData = ClientMap.data[tileIndex],
+        let tileData: any = ClientMap.data[tileIndex],
             isInside = (tile: any) => {
                 if (tile in ClientMap.polygons)
                     return this.isInside(rawX, rawY, gridX, gridY, ClientMap.polygons[tile]);

@@ -201,8 +201,14 @@ class Region {
     }
 
     sendRegion(player: Player, region: string, force?: boolean) {
-        const tileData = this.getRegionData(region, player, force),
-            dynamicTiles = this.getDynamicTiles(player);
+        const tileData = this.getRegionData(region, player, force);
+
+        let dynamicTiles;// = this.getDynamicTiles(player);
+
+        dynamicTiles = {
+            indexes: [],
+            objectData: []
+        }
 
         // Send dynamic tiles alongside the region
         for (let i = 0; i < tileData.length; i++) {
@@ -235,6 +241,8 @@ class Region {
             tileData[i].position = this.map.indexToGridPosition(tileData[i].index);
             delete tileData[i].index;
         }
+        
+        console.log(tileData);
 
         //No need to send empty data...
         if (tileData.length > 0)
@@ -422,10 +430,25 @@ class Region {
         if (!player) return data;
 
         this.mapRegions.forEachSurroundingRegion(region, (regionId: string) => {
+            console.log(regionId);
             if (!player.hasLoadedRegion(regionId) || force) {
                 player.loadRegion(regionId);
 
                 const bounds = this.getRegionBounds(regionId);
+
+
+
+                if (regionId === '1-2') {
+                    log.debug('------------');
+                    console.log('1-2');
+                    console.log(bounds);
+                }
+                
+                if (regionId === '1-3') {
+                    log.debug('------------');
+                    console.log('1-3');
+                    console.log(bounds);
+                }
 
                 for (let y = bounds.startY; y < bounds.endY; y++) {
                     for (let x = bounds.startX; x < bounds.endX; x++) {
@@ -433,7 +456,7 @@ class Region {
                             tileData = this.clientMap.data[index],
                             objectId: any;
 
-                        if (tileData !== 0) {
+                        /*if (tileData !== 0) {
                             if (tileData instanceof Array) {
                                 for (let j = 0; j < tileData.length; j++) {
                                     if (this.map.isObject(tileData[j])) {
@@ -442,13 +465,17 @@ class Region {
                                     }
                                 }
                             } else if (this.map.isObject(tileData)) objectId = tileData;
-                        }
+                        }*/
 
+                        if (!tileData)
+                            continue;
+
+                        log.debug('Adding: ' + tileData + ' region: ' + regionId);
+                        
                         const info: any = {
-                            index: index
+                            index: index,
+                            data: tileData
                         };
-
-                        if (tileData) info.data = tileData;
 
                         if (objectId) {
                             info.isObject = !!objectId;
@@ -464,6 +491,7 @@ class Region {
             }
         });
 
+        console.log(data);
         return data;
     }
 

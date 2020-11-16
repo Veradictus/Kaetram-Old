@@ -364,6 +364,10 @@ class Incoming {
                     return;
                 }
 
+                log.debug('Setting Position:');
+                log.debug(`GridX: ${gridX} - GridY: ${gridY}`);
+                log.debug(`FloatX: ${floatX} - FloatY: ${floatY}`);
+
                 this.player.setPosition(gridX, gridY, floatX, floatY);
 
                 break;

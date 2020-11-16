@@ -702,8 +702,8 @@ class Player extends Character {
             this.region,
             new Messages.Teleport({
                 id: this.instance,
-                x: x * 16 + 8,
-                y: y * 16,
+                x: this.getFloatPosition(x),
+                y: this.getFloatPosition(y),
                 withAnimation: animate
             })
         );
