@@ -339,7 +339,7 @@ class Commands {
                 let getTileIndex = this.world.map.gridPositionToIndex(getTileX, getTileY);
 
                 log.info('Tile Index: ' + getTileIndex);
-                log.info('Tile Info: ' + this.world.map.clientMap.data[getTileIndex]);
+                //log.info('Tile Info: ' + this.world.map.clientMap.data[getTileIndex]);
                 log.info('Actual Index: ' + this.world.map.getActualTileIndex(getTileIndex));
                 log.info('Tree? ' + this.world.map.getTree(getTileX, getTileY));
 

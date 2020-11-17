@@ -29,7 +29,6 @@ class Map {
     grids: Grids;
 
     version: number;
-    clientMap: any;
     width: number;
     height: number;
     tileSize: number;
@@ -75,8 +74,6 @@ class Map {
 
     load() {
         this.version = map.version || 0;
-
-        this.clientMap = ClientMap;
 
         this.width = map.width;
         this.height = map.height;
@@ -276,7 +273,7 @@ class Map {
 
     getPositionObject(x: number, y: number) {
         let index = this.gridPositionToIndex(x, y),
-            tiles: any = this.clientMap.data[index],
+            tiles: any = ClientMap.data[index],
             objectId: any;
 
         if (tiles instanceof Array)
@@ -305,7 +302,7 @@ class Map {
 
     getObject(x: number, y: number, data: any) {
         let index = this.gridPositionToIndex(x, y) - 1,
-            tiles = this.clientMap.data[index];
+            tiles: any = ClientMap.data[index];
 
         if (tiles instanceof Array) for (let i in tiles) if (tiles[i] in data) return tiles[i];
 
@@ -347,7 +344,7 @@ class Map {
     }
 
     isOutOfBounds(x: number, y: number) {
-        return x < 0 || x >= this.width || y < 0 || y >= this.height;
+        return x < 0 || x > this.width || y < 0 || y > this.height;
     }
 
     isPlateau(index: number) {
@@ -426,7 +423,7 @@ class Map {
 
         let tileIndex = this.gridPositionToIndex(x, y);
 
-        return this.clientMap.data[tileIndex] === 0;
+        return ClientMap.data[tileIndex] === 0;
     }
 
     getPlateauLevel(x: number, y: number) {

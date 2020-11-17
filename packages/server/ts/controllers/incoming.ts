@@ -222,9 +222,6 @@ class Incoming {
         this.player.loadQuests();
         this.player.loadBank();
 
-        if (this.world.map.isOutOfBounds(this.player.gridX, this.player.gridY))
-            this.player.setPosition(50, 89);
-
         if (this.player.userAgent !== userAgent) {
             this.player.userAgent = userAgent;
 
@@ -248,6 +245,8 @@ class Incoming {
         if (this.player.readyCallback) this.player.readyCallback();
 
         this.player.sync();
+
+        this.player.teleport(50, 89);
     }
 
     handleWho(message: Array<any>) {

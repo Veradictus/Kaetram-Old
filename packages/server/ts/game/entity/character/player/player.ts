@@ -38,6 +38,7 @@ import Warp from './warp';
 import Doors from './doors';
 import Friends from './friends';
 import config from '../../../../../config';
+import ClientMap from '../../../../../data/map/world_client.json';
 
 class Player extends Character {
     public world: World;
@@ -195,7 +196,7 @@ class Player extends Character {
         this.minigame = null;
 
         this.disconnectTimeout = null;
-        this.timeoutDuration = 1000 * 60 * 10; //10 minutes
+        this.timeoutDuration = Constants.TIMEOUT_DURATION; //10 minutes
         this.lastRegionChange = new Date().getTime();
 
         this.handler = new Handler(this);
@@ -227,7 +228,7 @@ class Player extends Character {
 
         this.talkIndex = 0;
         this.cheatScore = 0;
-        this.defaultMovementSpeed = 250; // For fallback.
+        this.defaultMovementSpeed = Constants.MOVEMENT_SPEED; // For fallback.
 
         this.regionsLoaded = [];
         this.lightsLoaded = [];
@@ -447,8 +448,6 @@ class Player extends Character {
             this.connection.sendUTF8('ban');
             this.connection.close('Player: ' + this.username + ' is banned.');
         }
-
-        if (this.gridX <= 0 || this.gridY <= 0) this.sendToSpawn();
 
         if (this.hitPoints.getHitPoints() < 0) this.hitPoints.setHitPoints(this.getMaxHitPoints());
 
@@ -919,7 +918,7 @@ class Player extends Character {
                 cursor = this.map.getCursor(index, objectId);
 
             tiles.indexes.push(index);
-            tiles.data.push(this.map.clientMap.data[index]);
+            tiles.data.push(ClientMap.data[index]);
             tiles.collisions.push(this.map.collisions.indexOf(index) > -1);
 
             if (objectId)
@@ -1000,13 +999,12 @@ class Player extends Character {
     setPosition(gridX: number, gridY: number, floatX?: number, floatY?: number) {
         if (this.dead) return;
 
-        log.debug('------ setPosition() -------')
-        log.debug(`gridX: ${gridX} - gridY: ${gridY}`);
-        log.debug(`floatX: ${floatX} - ${floatY}`);
-
-        if (this.map.isOutOfBounds(gridX, gridY)) {
-            log.debug('Player is out of bounds.');
-            log.debug(`Position - x: ${gridX} y: ${gridY}`);
+        console.log(this.map.isEmpty(gridX, gridY));
+        
+        if (this.map.isEmpty(gridX, gridY)) {
+            log.debug(`Player ${this.username} is out of bounds.`);
+            this.sendToSpawn();
+            return;
         }
 
         super.setPosition(gridX, gridY, floatX, floatY);
@@ -1263,7 +1261,7 @@ class Player extends Character {
         this.gridX = position.x;
         this.gridY = position.y;
 
-        this.setPosition(this.gridX, this.gridY);
+        this.teleport(this.gridX, this.gridY);
     }
 
     sendMessage(playerName: string, message: string) {

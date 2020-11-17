@@ -28,8 +28,6 @@ class Region {
     map: Map;
     mapRegions: Regions;
 
-    clientMap: any;
-
     world: World;
 
     regions: any;
@@ -46,8 +44,6 @@ class Region {
     constructor(world: World) {
         this.map = world.map;
         this.mapRegions = world.map.regions;
-
-        this.clientMap = this.map.clientMap;
 
         this.world = world;
 
@@ -80,32 +76,10 @@ class Region {
                 log.info('Entity - ' + entity.username + ' is incoming into region - ' + regionId);
         });
 
-        fs.watchFile(map, () => {
-            log.info('Received Map Update -> Sending to Players...');
-
-            fs.readFile(map, 'utf8', (error, data) => {
-                if (error) {
-                    log.error('Could not reload the map file...');
-                    return;
-                }
-
-                try {
-                    this.clientMap = JSON.parse(data);
-
-                    this.updateRegions();
-                } catch (e) {
-                    log.error('Could not parse JSON.');
-                }
-            });
-        });
-
         this.load();
     }
 
     load() {
-        this.clientWidth = this.clientMap.width;
-        this.clientHeight = this.clientMap.height;
-
         this.mapRegions.forEachRegion((regionId: string) => {
             this.regions[regionId] = {
                 entities: {},
@@ -241,7 +215,6 @@ class Region {
             tileData[i].position = this.map.indexToGridPosition(tileData[i].index);
             delete tileData[i].index;
         }
-
 
         //No need to send empty data...
         if (tileData.length > 0)
@@ -409,7 +382,7 @@ class Region {
     changeGlobalTile(newTile: any, x: number, y: number) {
         const index = this.gridPositionToIndex(x, y);
 
-        this.clientMap.data[index] = newTile;
+        ClientMap.data[index] = newTile;
 
         this.world.push(Packets.PushOpcode.Broadcast, {
             message: Region.getModify(index, newTile)
@@ -436,7 +409,7 @@ class Region {
                 for (let y = bounds.startY; y < bounds.endY; y++) {
                     for (let x = bounds.startX; x < bounds.endX; x++) {
                         let index = this.gridPositionToIndex(x - 1, y),
-                            tileData = this.clientMap.data[index],
+                            tileData = ClientMap.data[index],
                             objectId: any;
 
                         /*if (tileData !== 0) {
@@ -504,7 +477,7 @@ class Region {
     }
 
     gridPositionToIndex(x: number, y: number) {
-        return y * this.clientWidth + x + 1;
+        return y * ClientMap.width + x + 1;
     }
 
     onAdd(callback: Function) {
