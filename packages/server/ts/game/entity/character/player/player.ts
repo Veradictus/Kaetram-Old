@@ -999,8 +999,6 @@ class Player extends Character {
     setPosition(gridX: number, gridY: number, floatX?: number, floatY?: number) {
         if (this.dead) return;
 
-        console.log(this.map.isEmpty(gridX, gridY));
-        
         if (this.map.isEmpty(gridX, gridY)) {
             log.debug(`Player ${this.username} is out of bounds.`);
             this.sendToSpawn();
