@@ -266,7 +266,7 @@ class Player extends Character {
             ring = data.ring,
             boots = data.boots;
 
-        this.setPosition(data.x, data.y, data.floatX, data.floatY);
+        this.setPosition(data.gridX, data.gridY, data.x, data.y);
         this.setArmour(armour[0], armour[1], armour[2], armour[3]);
         this.setWeapon(weapon[0], weapon[1], weapon[2], weapon[3]);
         this.setPendant(pendant[0], pendant[1], pendant[2], pendant[3]);
@@ -997,22 +997,26 @@ class Player extends Character {
         };
     }
 
-    setPosition(x: number, y: number, floatX?: number, floatY?: number) {
+    setPosition(gridX: number, gridY: number, floatX?: number, floatY?: number) {
         if (this.dead) return;
 
-        if (this.map.isOutOfBounds(x, y)) {
-            x = 50;
-            y = 89;
+        log.debug('------ setPosition() -------')
+        log.debug(`gridX: ${gridX} - gridY: ${gridY}`);
+        log.debug(`floatX: ${floatX} - ${floatY}`);
+
+        if (this.map.isOutOfBounds(gridX, gridY)) {
+            log.debug('Player is out of bounds.');
+            log.debug(`Position - x: ${gridX} y: ${gridY}`);
         }
 
-        super.setPosition(x, y);
+        super.setPosition(gridX, gridY, floatX, floatY);
 
         this.sendToAdjacentRegions(
             this.region,
             new Messages.Movement(Packets.MovementOpcode.Move, {
                 id: this.instance,
-                x: x,
-                y: y,
+                x: gridX,
+                y: gridY,
                 forced: false,
                 teleport: false
             }),
@@ -1160,7 +1164,7 @@ class Player extends Character {
 
         if (!this.finishedTutorial()) return this.getTutorial().getSpawn();
 
-        return { x: 325, y: 87 };
+        return { x: 4, y: 3 };
     }
 
     getHit(target?: Character) {
@@ -1258,6 +1262,8 @@ class Player extends Character {
 
         this.gridX = position.x;
         this.gridY = position.y;
+
+        this.setPosition(this.gridX, this.gridY);
     }
 
     sendMessage(playerName: string, message: string) {

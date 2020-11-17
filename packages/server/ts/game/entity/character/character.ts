@@ -192,13 +192,13 @@ class Character extends Entity {
         return this.maxHitPoints;
     }
 
-    setPosition(x: number, y: number) {
+    setPosition(gridX: number, gridY: number, floatX?: number, floatY?: number) {
         this.previousX = this.gridX;
         this.previousY = this.gridY;
 
-        super.setPosition(x, y);
+        super.setPosition(gridX, gridY, floatX, floatY);
 
-        if (this.movementCallback) this.movementCallback(x, y);
+        if (this.movementCallback) this.movementCallback(gridX, gridY);
     }
 
     setTarget(target: any) {

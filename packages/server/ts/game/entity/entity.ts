@@ -106,11 +106,11 @@ class Entity {
     }
 
     setPosition(gridX: number, gridY: number, floatX?: number, floatY?: number) {
-        this.gridX = gridX;
-        this.gridY = gridY;
-
         this.x = floatX || this.getFloatPosition(gridX);
         this.y = floatY || this.getFloatPosition(gridY);
+        
+        this.gridX = gridX;
+        this.gridY = gridY;
 
         if (this.setPositionCallback) this.setPositionCallback();
     }

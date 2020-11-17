@@ -241,8 +241,7 @@ class Region {
             tileData[i].position = this.map.indexToGridPosition(tileData[i].index);
             delete tileData[i].index;
         }
-        
-        console.log(tileData);
+
 
         //No need to send empty data...
         if (tileData.length > 0)
@@ -429,7 +428,6 @@ class Region {
         if (!player) return data;
 
         this.mapRegions.forEachSurroundingRegion(region, (regionId: string) => {
-            console.log(regionId);
             if (!player.hasLoadedRegion(regionId) || force) {
                 player.loadRegion(regionId);
 
@@ -454,8 +452,6 @@ class Region {
 
                         if (!tileData)
                             continue;
-
-                        log.debug('Adding: ' + tileData + ' region: ' + regionId);
                         
                         const info: any = {
                             index: index,
@@ -476,7 +472,6 @@ class Region {
             }
         });
 
-        console.log(data);
         return data;
     }
 

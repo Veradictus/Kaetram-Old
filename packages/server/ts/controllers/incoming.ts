@@ -351,8 +351,10 @@ class Incoming {
 
         switch (opcode) {
             case Packets.MovementOpcode.Move:
-                let floatX = parseFloat(message.shift()) / this.world.map.tileSize,
-                    floatY = parseFloat(message.shift()) / this.world.map.tileSize,
+                let absoluteX = parseFloat(message.shift()),
+                    absoluteY = parseFloat(message.shift()),
+                    floatX = absoluteX / this.world.map.tileSize,
+                    floatY = absoluteY / this.world.map.tileSize,
                     gridX = Math.floor(floatX),
                     gridY = Math.floor(floatY);
 
@@ -364,11 +366,7 @@ class Incoming {
                     return;
                 }
 
-                log.debug('Setting Position:');
-                log.debug(`GridX: ${gridX} - GridY: ${gridY}`);
-                log.debug(`FloatX: ${floatX} - FloatY: ${floatY}`);
-
-                this.player.setPosition(gridX, gridY, floatX, floatY);
+                this.player.setPosition(gridX, gridY, absoluteX, absoluteY);
 
                 break;
 
