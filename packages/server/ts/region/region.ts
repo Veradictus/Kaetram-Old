@@ -255,7 +255,6 @@ class Region {
             high = ClientMap.high,
             tilesetData = {};
 
-
         for (let i in this.map.tileCollisions)
             tilesetData[tileCollisions[i]] = { collision: true };
 
@@ -435,20 +434,6 @@ class Region {
                 player.loadRegion(regionId);
 
                 const bounds = this.getRegionBounds(regionId);
-
-
-
-                if (regionId === '1-2') {
-                    log.debug('------------');
-                    console.log('1-2');
-                    console.log(bounds);
-                }
-                
-                if (regionId === '1-3') {
-                    log.debug('------------');
-                    console.log('1-3');
-                    console.log(bounds);
-                }
 
                 for (let y = bounds.startY; y < bounds.endY; y++) {
                     for (let x = bounds.startX; x < bounds.endX; x++) {

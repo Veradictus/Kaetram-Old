@@ -52,9 +52,6 @@ class Map {
     rocks: any;
     rockIndexes: any;
 
-    zoneWidth: number;
-    zoneHeight: number;
-
     regionWidth: number;
     regionHeight: number;
 
@@ -107,15 +104,8 @@ class Map {
         this.rocks = map.rocks;
         this.rockIndexes = map.rockIndexes;
 
-        this.zoneWidth = 25;
-        this.zoneHeight = 25;
-
-        /**
-         * These are temporarily hardcoded,
-         * but we will use a dynamic approach.
-         */
-        this.regionWidth = this.width / this.zoneWidth;
-        this.regionHeight = this.height / this.zoneHeight;
+        this.regionWidth = 25;
+        this.regionHeight = 25;
 
         this.areas = {};
 
@@ -224,10 +214,8 @@ class Map {
     }
 
     indexToGridPosition(tileIndex: number) {
-        tileIndex -= 1;
-
-        let x = this.getX(tileIndex + 1, this.width),
-            y = Math.floor(tileIndex / this.width);
+        let x = this.getX(tileIndex, this.width),
+            y = Math.floor((tileIndex - 1) / this.width);
 
         return {
             gridX: x,
@@ -274,10 +262,10 @@ class Map {
 
     nearLight(light: any, x: number, y: number) {
         let diff = Math.round(light.distance / this.tileSize),
-            startX = light.x - this.zoneWidth - diff,
-            startY = light.y - this.zoneHeight - diff,
-            endX = light.x + this.zoneWidth + diff,
-            endY = light.y + this.zoneHeight + diff;
+            startX = light.x - this.regionWidth - diff,
+            startY = light.y - this.regionHeight - diff,
+            endX = light.x + this.regionWidth + diff,
+            endY = light.y + this.regionHeight + diff;
 
         return x > startX && y > startY && x < endX && y < endY;
     }
