@@ -5,7 +5,7 @@ import Items from '../../util/items';
 import NPCs from '../../util/npcs';
 import Combat from './character/combat/combat';
 import Player from './character/player/player';
-import Map from '../../../data/map/world_server.json'
+import Map from '../../../data/map/world.json'
 
 class Entity {
     public id: number;
@@ -121,7 +121,7 @@ class Entity {
     }
 
     getFloatPosition(floatValue) {
-        return floatValue * Map.tilesize + (Map.tilesize / 2);
+        return floatValue * Map.tileSize + (Map.tileSize / 2);
     }
 
     /**

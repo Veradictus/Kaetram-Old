@@ -38,7 +38,6 @@ import Warp from './warp';
 import Doors from './doors';
 import Friends from './friends';
 import config from '../../../../../config';
-import ClientMap from '../../../../../data/map/world_client.json';
 
 class Player extends Character {
     public world: World;
@@ -914,17 +913,15 @@ class Player extends Character {
 
             if (!this.regions.isSurrounding(this.region, treeRegion)) return;
 
-            let objectId = this.map.getPositionObject(position.gridX, position.gridY),
-                cursor = this.map.getCursor(index, objectId);
+            let objectId = this.map.getPositionObject(position.gridX, position.gridY);
 
             tiles.indexes.push(index);
-            tiles.data.push(ClientMap.data[index]);
+            tiles.data.push(this.map.data[index]);
             tiles.collisions.push(this.map.collisions.indexOf(index) > -1);
 
             if (objectId)
                 tiles.objectData[index] = {
-                    isObject: !!objectId,
-                    cursor: cursor
+                    isObject: !!objectId
                 };
         });
 

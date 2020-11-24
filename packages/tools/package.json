@@ -6,7 +6,7 @@
     "license": "MPL-2.0",
     "scripts": {
         "helper": "ts-node map/helper",
-        "map": "cd map && ts-node exportmap data/map.json"
+        "map": "cd map && ./parsemap.ts data/map.json"
     },
     "dependencies": {
         "lodash": "^4.17.20"

@@ -16,9 +16,8 @@ import AchievementAreas from './areas/achievementareas';
 import World from '../game/world';
 import Area from './area';
 import Entity from '../game/entity/entity';
-import map from '../../data/map/world_server.json';
+import map from '../../data/map/world.json';
 import Spawns from '../../data/spawns.json';
-import ClientMap from '../../data/map/world_client.json';
 import log from '../util/log';
 
 class Map {
@@ -28,20 +27,21 @@ class Map {
     regions: Regions;
     grids: Grids;
 
-    version: number;
     width: number;
     height: number;
     tileSize: number;
+    version: number;
+
+    data: any[];
 
     collisions: any;
-    tileCollisions: any;
+    polygons: any;
     chestAreas: any;
     chests: any;
-    tilesets: any;
     lights: any;
+    high: any[];
     plateau: any;
     objects: any;
-    cursors: any;
     doors: any;
     warps: any;
 
@@ -77,20 +77,21 @@ class Map {
 
         this.width = map.width;
         this.height = map.height;
-        this.tileSize = map.tilesize;
+        this.tileSize = map.tileSize;
+
+        this.data = map.data;
 
         this.collisions = map.collisions;
-        this.tileCollisions = map.tileCollisions;
+        this.polygons = map.polygons;
         this.chestAreas = map.chestAreas;
         this.chests = map.chests;
 
         this.loadStaticEntities();
 
-        this.tilesets = map.tilesets;
         this.lights = map.lights;
+        this.high = map.high;
         this.plateau = map.plateau;
         this.objects = map.objects;
-        this.cursors = map.cursors;
         this.warps = map.warps;
 
         // Lumberjacking
@@ -273,7 +274,7 @@ class Map {
 
     getPositionObject(x: number, y: number) {
         let index = this.gridPositionToIndex(x, y),
-            tiles: any = ClientMap.data[index],
+            tiles: any = this.data[index],
             objectId: any;
 
         if (tiles instanceof Array)
@@ -284,16 +285,6 @@ class Map {
         return objectId;
     }
 
-    getCursor(tileIndex: number, tileId: number) {
-        if (tileId in this.cursors) return this.cursors[tileId];
-
-        let cursor = Objects.getCursor(this.getObjectId(tileIndex));
-
-        if (!cursor) return null;
-
-        return cursor;
-    }
-
     getObjectId(tileIndex: number) {
         let position = this.indexToGridPosition(tileIndex + 1);
 
@@ -302,7 +293,7 @@ class Map {
 
     getObject(x: number, y: number, data: any) {
         let index = this.gridPositionToIndex(x, y) - 1,
-            tiles: any = ClientMap.data[index];
+            tiles: any = this.data[index];
 
         if (tiles instanceof Array) for (let i in tiles) if (tiles[i] in data) return tiles[i];
 
@@ -399,10 +390,10 @@ class Map {
         if (this.collisions.indexOf(tileIndex) > -1)
             return rawX > gridX && rawX < gridX + 1 && rawY > gridY && rawY < gridY + 1;
 
-        let tileData: any = ClientMap.data[tileIndex],
+        let tileData: any = this.data[tileIndex],
             isInside = (tile: any) => {
-                if (tile in ClientMap.polygons)
-                    return this.isInside(rawX, rawY, gridX, gridY, ClientMap.polygons[tile]);
+                if (tile in this.polygons)
+                    return this.isInside(rawX, rawY, gridX, gridY, this.polygons[tile]);
             };
 
         let isColliding = false;
@@ -423,7 +414,7 @@ class Map {
 
         let tileIndex = this.gridPositionToIndex(x, y);
 
-        return ClientMap.data[tileIndex] === 0;
+        return this.data[tileIndex] === 0;
     }
 
     getPlateauLevel(x: number, y: number) {
@@ -432,32 +423,6 @@ class Map {
         if (!this.isPlateau(index)) return 0;
 
         return this.plateau[index];
-    }
-
-    getActualTileIndex(tileIndex: number) {
-        let tileset = this.getTileset(tileIndex);
-
-        if (!tileset) return;
-
-        return tileIndex - tileset.firstGID - 1;
-    }
-
-    getTileset(tileIndex: number) {
-        /**
-         if (id > this.tilesets[idx].firstGID - 1 &&
-         id < this.tilesets[idx].lastGID + 1)
-            return this.tilesets[idx];
-         */
-
-        for (let id in this.tilesets)
-            if (this.tilesets.hasOwnProperty(id))
-                if (
-                    tileIndex > this.tilesets[id].firstGID - 1 &&
-                    tileIndex < this.tilesets[id].lastGID + 1
-                )
-                    return this.tilesets[id];
-
-        return null;
     }
 
     getWarpById(id: number) {

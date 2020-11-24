@@ -29,7 +29,6 @@ import Player from './entity/character/player/player';
 import Entity from './entity/entity';
 import WebSocket from '../network/websocket';
 import MongoDB from '../database/mongodb/mongodb';
-import ClientMap from '../../data/map/world_client.json';
 import API from '../network/api';
 
 class World {
@@ -481,7 +480,7 @@ class World {
             if (time - tree.time < Trees.Regrowth[type]) return;
 
             _.each(tree.data, (tile: any) => {
-                ClientMap.data[tile.index] = tile.oldTiles;
+                this.map.data[tile.index] = tile.oldTiles;
             });
 
             let position = this.map.idToPosition(key),
@@ -503,7 +502,7 @@ class World {
             if (time - rock.time < Rocks.Respawn[type]) return;
 
             _.each(rock.data, (tile: any) => {
-                ClientMap.data[tile.index] = tile.oldTiles;
+                this.map.data[tile.index] = tile.oldTiles;
             });
 
             let position = this.map.idToPosition(key),
@@ -553,7 +552,7 @@ class World {
         };
 
         _.each(this.trees[id], (tile: any, key) => {
-            let tiles = ClientMap.data[tile.index];
+            let tiles = this.map.data[tile.index];
 
             // Store the original tiles for respawning.
             this.cutTrees[id].data[key] = {

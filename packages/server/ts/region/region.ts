@@ -10,7 +10,6 @@ import Entity from '../game/entity/entity';
 import Map from '../map/map';
 import Regions from '../map/regions';
 import World from '../game/world';
-import ClientMap from '../../data/map/world_client.json'
 import config from '../../config';
 import log from '../util/log';
 
@@ -222,18 +221,18 @@ class Region {
     }
 
     sendTilesetInfo(player: Player) {
-        let tileCollisions = this.map.tileCollisions,
-            polygonCollisions = ClientMap.polygons,
-            high = ClientMap.high,
+        let tileCollisions = this.map.collisions,
+            polygonCollisions = this.map.polygons,
+            high = this.map.high,
             tilesetData = {};
 
-        for (let i in this.map.tileCollisions)
+        for (let i in this.map.collisions)
             tilesetData[tileCollisions[i]] = { collision: true };
 
-        for (let i in ClientMap.polygons)
+        for (let i in this.map.polygons)
             tilesetData[i] = { polygon: true, polygons: polygonCollisions[i] };
 
-        for (let i in ClientMap.high)
+        for (let i in this.map.high)
             if (high[i] in tilesetData)
                 tilesetData[high[i]].high = true;
             else
@@ -382,7 +381,7 @@ class Region {
     changeGlobalTile(newTile: any, x: number, y: number) {
         const index = this.gridPositionToIndex(x, y);
 
-        ClientMap.data[index] = newTile;
+        this.map.data[index] = newTile;
 
         this.world.push(Packets.PushOpcode.Broadcast, {
             message: Region.getModify(index, newTile)
@@ -409,7 +408,7 @@ class Region {
                 for (let y = bounds.startY; y < bounds.endY; y++) {
                     for (let x = bounds.startX; x < bounds.endX; x++) {
                         let index = this.gridPositionToIndex(x - 1, y),
-                            tileData = ClientMap.data[index],
+                            tileData = this.map.data[index],
                             objectId: any;
 
                         /*if (tileData !== 0) {
@@ -431,13 +430,8 @@ class Region {
                             data: tileData
                         };
 
-                        if (objectId) {
+                        if (objectId)
                             info.isObject = !!objectId;
-
-                            const cursor = this.map.getCursor(info.index, objectId);
-
-                            if (cursor) info.cursor = cursor;
-                        }
 
                         data.push(info);
                     }
@@ -477,7 +471,7 @@ class Region {
     }
 
     gridPositionToIndex(x: number, y: number) {
-        return y * ClientMap.width + x + 1;
+        return y * this.map.width + x + 1;
     }
 
     onAdd(callback: Function) {

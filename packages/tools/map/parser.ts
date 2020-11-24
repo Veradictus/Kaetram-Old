@@ -8,7 +8,7 @@ export default class Parser {
     public map: MapData;
     public data: any;
 
-    constructor(data: MapData) {
+    constructor(data: any) {
         this.data = data;
     }
 
@@ -18,19 +18,35 @@ export default class Parser {
             width: this.data.width,
             height: this.data.height,
             tileSize: this.data.tilewidth,
-
-            depth: 0,
+            version: new Date().getTime(),
 
             data: [],
+
             collisions: [],
             polygons: {},
-
             entities: {},
             staticEntities: {},
 
             plateau: {},
 
-            version: new Date().getTime()
+            lights: [],
+            high: [],
+            objects: [],
+            trees: {},
+            treeIndexes: [],
+            rocks: {},
+            rockIndexes: [],
+            pvpAreas: [],
+            gameAreas: [],
+            doors: {},
+            musicAreas: [],
+            chestAreas: [],
+            chests: [],
+            overlayAreas: [],
+            cameraAreas: [],
+            achievementAreas: [],
+            warps: {},
+            layers: []
         }
 
         this.parseTilesets();
@@ -142,6 +158,10 @@ export default class Parser {
             this.map.collisions.push(tileId);
 
         switch (name) {
+            case 'v':
+                this.map.high.push(tileId);
+                break;
+
             case 'o':
                 this.map.objects.push(tileId);
                 break;
@@ -174,8 +194,8 @@ export default class Parser {
                 return;
 
             if (!this.map.data[index]) this.map.data[index] = value;
-            else if (_.isArray(this.map.data[index])) this.map.data[index].unshift(value);
-            else this.map.data[index] = [value, this.map.data[index]];
+            else if (this.map.data[index] instanceof Array) this.map.data[index].push(value);
+            else this.map.data[index] = [this.map.data[index], value];
         });
 
         this.formatData();
@@ -228,10 +248,10 @@ export default class Parser {
 
                 _.each(cAreas, (area) => {
                     const chestArea = {
-                        x: area.x / this.map.tilesize,
-                        y: area.y / this.map.tilesize,
-                        width: area.width / this.map.tilesize,
-                        height: area.height / this.map.tilesize
+                        x: area.x / this.map.tileSize,
+                        y: area.y / this.map.tileSize,
+                        width: area.width / this.map.tileSize,
+                        height: area.height / this.map.tileSize
                     };
 
                     _.each(area.properties, (property) => {
@@ -249,8 +269,8 @@ export default class Parser {
 
                 _.each(chests, (chest) => {
                     const oChest: { [key: string]: number } = {
-                        x: chest.x / this.map.tilesize,
-                        y: chest.y / this.map.tilesize
+                        x: chest.x / this.map.tileSize,
+                        y: chest.y / this.map.tileSize
                     };
 
                     _.each(chest.properties, (property) => {
@@ -288,10 +308,10 @@ export default class Parser {
 
                 _.each(mAreas, (area) => {
                     const musicArea = {
-                        x: area.x / this.map.tilesize,
-                        y: area.y / this.map.tilesize,
-                        width: area.width / this.map.tilesize,
-                        height: area.height / this.map.tilesize
+                        x: area.x / this.map.tileSize,
+                        y: area.y / this.map.tileSize,
+                        width: area.width / this.map.tileSize,
+                        height: area.height / this.map.tileSize
                     };
 
                     _.each(area.properties, (property) => {
@@ -309,10 +329,10 @@ export default class Parser {
 
                 _.each(pAreas, (area) => {
                     const pvpArea = {
-                        x: area.x / this.map.tilesize,
-                        y: area.y / this.map.tilesize,
-                        width: area.width / this.map.tilesize,
-                        height: area.height / this.map.tilesize
+                        x: area.x / this.map.tileSize,
+                        y: area.y / this.map.tileSize,
+                        width: area.width / this.map.tileSize,
+                        height: area.height / this.map.tileSize
                     };
 
                     this.map.pvpAreas.push(pvpArea);
@@ -327,10 +347,10 @@ export default class Parser {
                 _.each(overlayAreas, (area) => {
                     const oArea = {
                         id: area.id,
-                        x: area.x / this.map.tilesize,
-                        y: area.y / this.map.tilesize,
-                        width: area.width / this.map.tilesize,
-                        height: area.height / this.map.tilesize
+                        x: area.x / this.map.tileSize,
+                        y: area.y / this.map.tileSize,
+                        width: area.width / this.map.tileSize,
+                        height: area.height / this.map.tileSize
                     };
 
                     _.each(area.properties, (property) => {
@@ -351,10 +371,10 @@ export default class Parser {
                 _.each(cameraAreas, (area) => {
                     const cArea = {
                         id: area.id,
-                        x: area.x / this.map.tilesize,
-                        y: area.y / this.map.tilesize,
-                        width: area.width / this.map.tilesize,
-                        height: area.height / this.map.tilesize,
+                        x: area.x / this.map.tileSize,
+                        y: area.y / this.map.tileSize,
+                        width: area.width / this.map.tileSize,
+                        height: area.height / this.map.tileSize,
                         type: area.properties[0].value
                     };
 
@@ -370,10 +390,10 @@ export default class Parser {
                 _.each(achievementAreas, (area) => {
                     const achievementArea = {
                         id: area.id,
-                        x: area.x / this.map.tilesize,
-                        y: area.y / this.map.tilesize,
-                        width: area.width / this.map.tilesize,
-                        height: area.height / this.map.tilesize,
+                        x: area.x / this.map.tileSize,
+                        y: area.y / this.map.tileSize,
+                        width: area.width / this.map.tileSize,
+                        height: area.height / this.map.tileSize,
                         achievement: area.properties[0].value
                     };
 
@@ -388,10 +408,10 @@ export default class Parser {
 
                 _.each(gAreas, (area) => {
                     const gameArea = {
-                        x: area.x / this.map.tilesize,
-                        y: area.y / this.map.tilesize,
-                        width: area.width / this.map.tilesize,
-                        height: area.height / this.map.tilesize
+                        x: area.x / this.map.tileSize,
+                        y: area.y / this.map.tileSize,
+                        width: area.width / this.map.tileSize,
+                        height: area.height / this.map.tileSize
                     };
 
                     this.map.gameAreas.push(gameArea);
@@ -436,6 +456,9 @@ export default class Parser {
     formatData() {
         _.each(this.map.data, (value, index) => {
             if (!value) this.map.data[index] = 0;
+
+            //if (_.isArray(value))
+            //    this.map.data[index] = value.reverse();
         });
     }
 
