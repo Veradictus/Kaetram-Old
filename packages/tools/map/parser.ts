@@ -1,0 +1,464 @@
+import _, { property } from 'lodash';
+import log from '../../server/ts/util/log';
+
+import MapData from './mapdata';
+
+export default class Parser {
+    
+    public map: MapData;
+    public data: any;
+
+    constructor(data: MapData) {
+        this.data = data;
+    }
+
+    parse() {
+
+        this.map = {
+            width: this.data.width,
+            height: this.data.height,
+            tileSize: this.data.tilewidth,
+
+            depth: 0,
+
+            data: [],
+            collisions: [],
+            polygons: {},
+
+            entities: {},
+            staticEntities: {},
+
+            plateau: {},
+
+            version: new Date().getTime()
+        }
+
+        this.parseTilesets();
+        this.parseLayers();
+    }
+
+    parseTilesets() {
+        if (!(this.data.tilesets instanceof Array)) {
+            log.error('Invalid tileset format detected.')
+            return;
+        }
+
+        _.each(this.data.tilesets, tileset => {
+            const name = tileset.name.toLowerCase();
+
+            switch (name) {
+                case 'mobs':
+                    
+                    this.parseEntities(tileset);
+
+                    break;
+
+                default:
+
+                    this.parseTileset(tileset);
+
+                    break;
+            }
+        });
+    }
+
+    parseLayers() {
+        _.each(this.data.layers, layer => {
+
+            switch (layer.type) {
+                case 'tilelayer':
+                    this.parseTileLayer(layer);
+                    break;
+
+                case 'objectlayer':
+                    this.parseObjectLayer(layer);
+                    break;
+            }
+
+        });
+    }
+
+    parseEntities(tileset: any) {
+        
+        _.each(tileset.tiles, tile => {
+            const tileId = this.getTileId(tileset, tile);
+
+            this.map.entities[tileId] = {};
+
+            _.each(tile.properties, property => {
+                this.map.entities[tileId][property.name] = property.value;
+            });
+        });
+    }
+
+    parseStaticEntities(layer: any) {
+        _.each(layer.data, (value, index) => {
+            if (value < 1)
+                return;
+
+            if (value in this.map.entities)
+                this.map.staticEntities[index] = this.map.entities[value];
+        });
+    }
+
+    parsePlateau(layer: any) {
+        const level = parseInt(layer.name.split('plateau')[1]);
+
+        _.each(layer.data, (value, index) => {
+            if (value < 1)
+                return;
+
+            // We skip collisions
+            if (this.map.collisions.indexOf(value) > -1)
+                return;
+            
+            this.map.plateau[index] = level;
+        });
+    }
+
+    parseTileset(tileset: any) {
+
+        _.each(tileset.tiles, tile => {
+            const tileId = this.getTileId(tileset, tile);
+
+            _.each(tile.properties, property => {
+                this.parseProperties(tileId, property, tile.objectgroup);
+            });
+        });
+
+    }
+
+    parseProperties(tileId: number, property: any, objectGroup?: any) {
+        const name = property.name,
+              value = parseInt(property.value, 10) || property.value;
+
+        if (objectGroup && objectGroup.objects)
+            _.each(objectGroup.objects, object => {
+                if (!(tileId in this.map.polygons))
+                    this.map.polygons[tileId] = this.parsePolygon(object.polygon, object.x, object.y);
+            });
+
+        if (this.isColliding(name) && !(tileId in this.map.polygons))
+            this.map.collisions.push(tileId);
+
+        switch (name) {
+            case 'o':
+                this.map.objects.push(tileId);
+                break;
+            
+            case 'tree':
+                this.map.trees[tileId] = value;
+                break;
+
+            case 'rock':
+                this.map.rocks[tileId] = value;
+                break;
+        }
+    }
+
+    parseTileLayer(layer: any) {
+        const name = layer.name.toLowerCase();
+
+        if (name === 'entities') {
+            this.parseStaticEntities(layer);
+            return;
+        }
+
+        if (name.startsWith('plateau')) {
+            this.parsePlateau(layer);
+            return;
+        }
+
+        _.each(layer.data, (value, index) => {
+            if (value < 1)
+                return;
+
+            if (!this.map.data[index]) this.map.data[index] = value;
+            else if (_.isArray(this.map.data[index])) this.map.data[index].unshift(value);
+            else this.map.data[index] = [value, this.map.data[index]];
+        });
+
+        this.formatData();
+    }
+
+    parseObjectLayer(layer: any) {
+        const name = layer.name.toLowerCase();
+
+        switch (name) {
+            case 'doors': {
+                const doors = layer.objects;
+
+                _.each(doors, (door) => {
+                    if (door.properties.length > 2) {
+                        this.map.doors[door.id] = {
+                            o: door.properties[0].value,
+                            tx: parseInt(door.properties[1].value),
+                            ty: parseInt(door.properties[2].value),
+                            x: door.x / 16,
+                            y: door.y / 16
+                        };
+                    }
+                });
+
+                break;
+            }
+
+            case 'warps': {
+                const warps = layer.objects;
+
+                _.each(warps, (warp) => {
+                    this.map.warps[warp.name] = {
+                        x: warp.x / 16,
+                        y: warp.y / 16
+                    };
+
+                    _.each(warp.properties, (property) => {
+                        if (property.name === 'level')
+                            property.value = parseInt(property.value);
+
+                        this.map.warps[warp.name][property.name] = property.value;
+                    });
+                });
+
+                break;
+            }
+
+            case 'chestareas': {
+                const cAreas = layer.objects;
+
+                _.each(cAreas, (area) => {
+                    const chestArea = {
+                        x: area.x / this.map.tilesize,
+                        y: area.y / this.map.tilesize,
+                        width: area.width / this.map.tilesize,
+                        height: area.height / this.map.tilesize
+                    };
+
+                    _.each(area.properties, (property) => {
+                        chestArea['t' + property.name] = property.value;
+                    });
+
+                    this.map.chestAreas.push(chestArea);
+                });
+
+                break;
+            }
+
+            case 'chests': {
+                const chests = layer.objects;
+
+                _.each(chests, (chest) => {
+                    const oChest: { [key: string]: number } = {
+                        x: chest.x / this.map.tilesize,
+                        y: chest.y / this.map.tilesize
+                    };
+
+                    _.each(chest.properties, (property) => {
+                        if (property.name === 'items') oChest.i = property.value.split(',');
+                        else oChest[property.name] = property.value;
+                    });
+
+                    this.map.chests.push(oChest);
+                });
+
+                break;
+            }
+
+            case 'lights': {
+                const lights = layer.objects;
+
+                _.each(lights, (lightObject) => {
+                    const light = {
+                        x: lightObject.x / 16 + 0.5,
+                        y: lightObject.y / 16 + 0.5
+                    };
+
+                    _.each(lightObject.properties, (property) => {
+                        light[property.name] = property.value;
+                    });
+
+                    this.map.lights.push(light);
+                });
+
+                break;
+            }
+
+            case 'music': {
+                const mAreas = layer.objects;
+
+                _.each(mAreas, (area) => {
+                    const musicArea = {
+                        x: area.x / this.map.tilesize,
+                        y: area.y / this.map.tilesize,
+                        width: area.width / this.map.tilesize,
+                        height: area.height / this.map.tilesize
+                    };
+
+                    _.each(area.properties, (property) => {
+                        musicArea[property.name] = property.value;
+                    });
+
+                    this.map.musicAreas.push(musicArea);
+                });
+
+                break;
+            }
+
+            case 'pvp': {
+                const pAreas = layer.objects;
+
+                _.each(pAreas, (area) => {
+                    const pvpArea = {
+                        x: area.x / this.map.tilesize,
+                        y: area.y / this.map.tilesize,
+                        width: area.width / this.map.tilesize,
+                        height: area.height / this.map.tilesize
+                    };
+
+                    this.map.pvpAreas.push(pvpArea);
+                });
+
+                break;
+            }
+
+            case 'overlays': {
+                const overlayAreas = layer.objects;
+
+                _.each(overlayAreas, (area) => {
+                    const oArea = {
+                        id: area.id,
+                        x: area.x / this.map.tilesize,
+                        y: area.y / this.map.tilesize,
+                        width: area.width / this.map.tilesize,
+                        height: area.height / this.map.tilesize
+                    };
+
+                    _.each(area.properties, (property) => {
+                        oArea[property.name] = isNaN(property.value)
+                            ? property.value
+                            : parseFloat(property.value);
+                    });
+
+                    this.map.overlayAreas.push(oArea);
+                });
+
+                break;
+            }
+
+            case 'camera': {
+                const cameraAreas = layer.objects;
+
+                _.each(cameraAreas, (area) => {
+                    const cArea = {
+                        id: area.id,
+                        x: area.x / this.map.tilesize,
+                        y: area.y / this.map.tilesize,
+                        width: area.width / this.map.tilesize,
+                        height: area.height / this.map.tilesize,
+                        type: area.properties[0].value
+                    };
+
+                    this.map.cameraAreas.push(cArea);
+                });
+
+                break;
+            }
+
+            case 'achievements': {
+                const achievementAreas = layer.objects;
+
+                _.each(achievementAreas, (area) => {
+                    const achievementArea = {
+                        id: area.id,
+                        x: area.x / this.map.tilesize,
+                        y: area.y / this.map.tilesize,
+                        width: area.width / this.map.tilesize,
+                        height: area.height / this.map.tilesize,
+                        achievement: area.properties[0].value
+                    };
+
+                    this.map.achievementAreas.push(achievementArea);
+                });
+
+                break;
+            }
+
+            case 'games': {
+                const gAreas = layer.objects;
+
+                _.each(gAreas, (area) => {
+                    const gameArea = {
+                        x: area.x / this.map.tilesize,
+                        y: area.y / this.map.tilesize,
+                        width: area.width / this.map.tilesize,
+                        height: area.height / this.map.tilesize
+                    };
+
+                    this.map.gameAreas.push(gameArea);
+                });
+
+                break;
+            }
+        }
+    }
+
+    /* The way Tiled processes polygons is by using the first point
+     * as the pivot point around where the rest of the shape is drawn.
+     * This can create issues if we start at different point on the shape,
+     * so the solution is to append the offset to each point.
+     */
+
+   parsePolygon(polygon: any, offsetX: number, offsetY: number) {
+       let formattedPolygons = [];
+
+       _.each(polygon, (p: any) => {
+           formattedPolygons.push({
+               x: p.x + offsetX,
+               y: p.y + offsetY
+           })
+       });
+
+       return formattedPolygons;
+   }
+
+    /**
+     * We are generating a map data array without defining preliminary
+     * variables. In other words, we are accessing indexes of the array
+     * ahead of time, so JavaScript engine just fills in values in the array
+     * for us. In this case, it fills in with `null`.
+     * 
+     * An example is accessing index 4 of an empty array and setting value
+     * 5 at that index. Because of this, index 0, 1, 2, 3 are going to be
+     * set to null. We need to get rid of these values before sending data
+     * to the server.
+     */
+
+    formatData() {
+        _.each(this.map.data, (value, index) => {
+            if (!value) this.map.data[index] = 0;
+        });
+    }
+
+    /**
+     * We are using a unified function in case we need to make adjustments
+     * to how we process tiling indexes. An example is not having to go through
+     * all the instances of tileId calculations to modify one variable. This
+     * is just an overall more organized way of doing work.
+     * 
+     * @param tileset A tileset layer that we are parsing.
+     * @param tile The current tile that we are parsing through.
+     * @param offset The offset of the tileIndex.
+     */
+
+    getTileId(tileset: any, tile: any, offset = 0) {
+        return tileset.firstgid + tile.id + offset;
+    }
+
+    getMap(): string {
+        return JSON.stringify(this.map);
+    }
+
+    isColliding(property: string) {
+        return property === 'c' || property === 'o';
+    }
+}
