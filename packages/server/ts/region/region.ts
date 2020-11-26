@@ -10,10 +10,11 @@ import Entity from '../game/entity/entity';
 import Map from '../map/map';
 import Regions from '../map/regions';
 import World from '../game/world';
+import Utils from '../util/utils';
 import config from '../../config';
 import log from '../util/log';
 
-const map = path.resolve(__dirname, '../../data/map/world_client.json');
+const map = path.resolve(__dirname, '../../data/map/world.json');
 
 class Region {
     /**
@@ -76,6 +77,7 @@ class Region {
         });
 
         this.load();
+        this.loadWatcher();
     }
 
     load() {
@@ -90,6 +92,41 @@ class Region {
         this.loaded = true;
 
         log.info('Finished loading regions!');
+    }
+
+    loadWatcher() {
+        let reload = () => {
+            let data = fs.readFileSync(map, {
+                encoding: 'utf8',
+                flag: 'r'
+            });
+
+            if (!data) return;
+
+            try {
+
+                let jsonData = JSON.parse(data),
+                    checksum = Utils.getChecksum(data);
+
+                if (checksum === this.map.checksum)
+                    return;
+
+                this.map.create();
+                this.map.load();
+                
+                log.debug('Successfully loaded new map data.');
+
+                this.updateRegions();
+
+            } catch (e) { log.error('Could not parse new map file.'); log.debug(e); }
+
+        };
+
+        fs.watch(map, (eventType, filename) => {
+            reload();  
+        });
+
+        log.info('Finished loading file watcher!');
     }
 
     addEntityToInstance(entity: Entity, player: Player) {
@@ -169,7 +206,10 @@ class Region {
             this.world.forEachPlayer((player: Player) => {
                 player.regionsLoaded = [];
 
+                player.send(new Messages.Region(Packets.RegionOpcode.Reset));
+                
                 this.sendRegion(player, player.region, true);
+                this.sendTilesetInfo(player);
             });
     }
 

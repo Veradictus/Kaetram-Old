@@ -194,7 +194,7 @@ export default class Parser {
                 return;
 
             if (!this.map.data[index]) this.map.data[index] = value;
-            else if (this.map.data[index] instanceof Array) this.map.data[index].push(value);
+            else if (_.isArray(this.map.data[index])) this.map.data[index].push(value);
             else this.map.data[index] = [this.map.data[index], value];
         });
 
@@ -208,7 +208,7 @@ export default class Parser {
             case 'doors': {
                 const doors = layer.objects;
 
-                _.each(doors, (door) => {
+                _.each(doors, door => {
                     if (door.properties.length > 2) {
                         this.map.doors[door.id] = {
                             o: door.properties[0].value,
@@ -226,7 +226,7 @@ export default class Parser {
             case 'warps': {
                 const warps = layer.objects;
 
-                _.each(warps, (warp) => {
+                _.each(warps, warp => {
                     this.map.warps[warp.name] = {
                         x: warp.x / 16,
                         y: warp.y / 16
@@ -246,7 +246,7 @@ export default class Parser {
             case 'chestareas': {
                 const cAreas = layer.objects;
 
-                _.each(cAreas, (area) => {
+                _.each(cAreas, area => {
                     const chestArea = {
                         x: area.x / this.map.tileSize,
                         y: area.y / this.map.tileSize,
@@ -267,7 +267,7 @@ export default class Parser {
             case 'chests': {
                 const chests = layer.objects;
 
-                _.each(chests, (chest) => {
+                _.each(chests, chest => {
                     const oChest: { [key: string]: number } = {
                         x: chest.x / this.map.tileSize,
                         y: chest.y / this.map.tileSize
@@ -287,7 +287,7 @@ export default class Parser {
             case 'lights': {
                 const lights = layer.objects;
 
-                _.each(lights, (lightObject) => {
+                _.each(lights, lightObject => {
                     const light = {
                         x: lightObject.x / 16 + 0.5,
                         y: lightObject.y / 16 + 0.5
@@ -306,7 +306,7 @@ export default class Parser {
             case 'music': {
                 const mAreas = layer.objects;
 
-                _.each(mAreas, (area) => {
+                _.each(mAreas, area => {
                     const musicArea = {
                         x: area.x / this.map.tileSize,
                         y: area.y / this.map.tileSize,
@@ -327,7 +327,7 @@ export default class Parser {
             case 'pvp': {
                 const pAreas = layer.objects;
 
-                _.each(pAreas, (area) => {
+                _.each(pAreas, area => {
                     const pvpArea = {
                         x: area.x / this.map.tileSize,
                         y: area.y / this.map.tileSize,
@@ -344,7 +344,7 @@ export default class Parser {
             case 'overlays': {
                 const overlayAreas = layer.objects;
 
-                _.each(overlayAreas, (area) => {
+                _.each(overlayAreas, area => {
                     const oArea = {
                         id: area.id,
                         x: area.x / this.map.tileSize,
@@ -368,7 +368,7 @@ export default class Parser {
             case 'camera': {
                 const cameraAreas = layer.objects;
 
-                _.each(cameraAreas, (area) => {
+                _.each(cameraAreas, area => {
                     const cArea = {
                         id: area.id,
                         x: area.x / this.map.tileSize,
@@ -387,7 +387,7 @@ export default class Parser {
             case 'achievements': {
                 const achievementAreas = layer.objects;
 
-                _.each(achievementAreas, (area) => {
+                _.each(achievementAreas, area => {
                     const achievementArea = {
                         id: area.id,
                         x: area.x / this.map.tileSize,
@@ -406,7 +406,7 @@ export default class Parser {
             case 'games': {
                 const gAreas = layer.objects;
 
-                _.each(gAreas, (area) => {
+                _.each(gAreas, area => {
                     const gameArea = {
                         x: area.x / this.map.tileSize,
                         y: area.y / this.map.tileSize,

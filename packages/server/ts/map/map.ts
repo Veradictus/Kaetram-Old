@@ -1,12 +1,12 @@
 /* global module */
 
 import _ from 'lodash';
+import fs from 'fs';
+import path from 'path';
 import Grids from './grids';
 import Regions from './regions';
 import Utils from '../util/utils';
 import Modules from '../util/modules';
-import Objects from '../util/objects';
-import Constants from '../util/constants';
 import PVPAreas from './areas/pvpareas';
 import MusicAreas from './areas/musicareas';
 import ChestAreas from './areas/chestareas';
@@ -16,9 +16,12 @@ import AchievementAreas from './areas/achievementareas';
 import World from '../game/world';
 import Area from './area';
 import Entity from '../game/entity/entity';
-import map from '../../data/map/world.json';
 import Spawns from '../../data/spawns.json';
 import log from '../util/log';
+
+let map: any;
+
+const mapDestination = path.resolve(__dirname, '../../data/map/world.json');
 
 class Map {
     world: World;
@@ -58,6 +61,8 @@ class Map {
 
     staticEntities: any;
 
+    checksum: string;
+
     readyInterval: any;
     readyCallback: Function;
 
@@ -66,10 +71,21 @@ class Map {
 
         this.ready = false;
 
+        this.create();
         this.load();
 
         this.regions = new Regions(this);
         this.grids = new Grids(this);
+    }
+
+    // Creates and populates map based on resources.
+    create() {
+        try {
+            map = JSON.parse(fs.readFileSync(mapDestination, {
+                encoding: 'utf8',
+                flag: 'r'
+            }));
+        } catch (e) { log.error('Could not create map file.'); }
     }
 
     load() {
@@ -105,6 +121,8 @@ class Map {
         this.regionWidth = 25;
         this.regionHeight = 25;
 
+        this.checksum = Utils.getChecksum(JSON.stringify(map));
+
         this.areas = {};
 
         this.loadAreas();
@@ -112,13 +130,14 @@ class Map {
 
         this.ready = true;
 
+        if (this.world.ready)
+            return;
+
         this.readyInterval = setInterval(() => {
-            if (!this.world.ready)
-                if (this.readyCallback) this.readyCallback();
-                else {
-                    clearInterval(this.readyInterval);
-                    this.readyInterval = null;
-                }
+            if (this.readyCallback) this.readyCallback();
+
+            clearInterval(this.readyInterval);
+            this.readyInterval = null;
         }, 50);
     }
 
