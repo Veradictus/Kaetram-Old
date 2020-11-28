@@ -95,38 +95,37 @@ class Region {
     }
 
     loadWatcher() {
-        let reload = () => {
-            let data = fs.readFileSync(map, {
-                encoding: 'utf8',
-                flag: 'r'
-            });
-
-            if (!data) return;
-
-            try {
-
-                let jsonData = JSON.parse(data),
-                    checksum = Utils.getChecksum(data);
-
-                if (checksum === this.map.checksum)
-                    return;
-
-                this.map.create();
-                this.map.load();
-                
-                log.debug('Successfully loaded new map data.');
-
-                this.updateRegions();
-
-            } catch (e) { log.error('Could not parse new map file.'); log.debug(e); }
-
-        };
-
         fs.watch(map, (eventType, filename) => {
-            reload();  
+            this.update();  
         });
 
         log.info('Finished loading file watcher!');
+    }
+
+    update() {
+        let data = fs.readFileSync(map, {
+            encoding: 'utf8',
+            flag: 'r'
+        });
+
+        if (!data) return;
+
+        try {
+
+            let jsonData = JSON.parse(data),
+                checksum = Utils.getChecksum(data);
+
+            if (checksum === this.map.checksum)
+                return;
+
+            this.map.create();
+            this.map.load();
+            
+            log.debug('Successfully loaded new map data.');
+
+            this.updateRegions();
+
+        } catch (e) { log.error('Could not parse new map file.'); log.debug(e); }
     }
 
     addEntityToInstance(entity: Entity, player: Player) {
