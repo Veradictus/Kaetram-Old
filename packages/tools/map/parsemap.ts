@@ -6,6 +6,7 @@ import path from 'path';
 import log from '../../server/ts/util/log';
 
 import MapData from './mapdata';
+import Utils from '../../server/ts/util/utils';
 import Parser from './parser';
 
 const relative = (dir: string): string => path.relative('../../', dir);
@@ -13,19 +14,32 @@ const relative = (dir: string): string => path.relative('../../', dir);
 class ParseMap {
 
     map: string; // The map we are going to parse
+    checksum: string;
 
-    constructor() {
-        this.map = process.argv[2];
+    ready: boolean;
 
-        if (!this.mapValid()) {
-            log.error('Invalid map file specified.');
+    mapCallback: Function;
+
+    constructor(map: string) {
+        this.map = map;
+
+        this.verifyMap();
+    }
+
+    parse() {
+        let data = fs.readFileSync(this.map, {
+            encoding: 'utf8',
+            flag: 'r'
+        });
+
+        if (!data) {
+            log.error('An error has occurred while trying to read the map.');
             return;
         }
 
-        fs.readFile(this.map, (error, data) => {
-            if (error) throw error;
-            this.handle(JSON.parse(data.toString()));
-        });
+        this.handle(JSON.parse(data));
+
+        this.checksum = Utils.getChecksum(data);
     }
 
     handle(data: MapData) {
@@ -36,16 +50,19 @@ class ParseMap {
         
         fs.writeFile(destination, parser.getMap(), error => {
             if (error) throw 'An error has occurred while writing map files.';
-            else log.notice(`[ParseMap] Map successfully saved at ${relative(destination)}`)
+
+            if (this.mapCallback) this.mapCallback(`[ParseMap] Map successfully saved at ${relative(destination)}`);
         });
     }
 
-    mapValid() {
-        return this.map && fs.existsSync(this.map);
+    verifyMap() {
+        this.ready = this.map && fs.existsSync(this.map);
+    }
+
+    onMap(callback: Function) {
+        this.mapCallback = callback;
     }
 
 }
 
 export default ParseMap;
-
-new ParseMap();
