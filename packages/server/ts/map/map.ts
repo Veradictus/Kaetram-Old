@@ -79,9 +79,9 @@ class Map {
     }
 
     // Creates and populates map based on resources.
-    create() {
+    create(jsonData?: any) {
         try {
-            map = JSON.parse(fs.readFileSync(mapDestination, {
+            map = jsonData || JSON.parse(fs.readFileSync(mapDestination, {
                 encoding: 'utf8',
                 flag: 'r'
             }));

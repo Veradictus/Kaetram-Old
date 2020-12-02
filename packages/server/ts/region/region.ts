@@ -118,7 +118,7 @@ class Region {
             if (checksum === this.map.checksum)
                 return;
 
-            this.map.create();
+            this.map.create(jsonData);
             this.map.load();
             
             log.debug('Successfully loaded new map data.');
