@@ -86,7 +86,7 @@ export default class Parser {
                     this.parseTileLayer(layer);
                     break;
 
-                case 'objectlayer':
+                case 'objectgroup':
                     this.parseObjectLayer(layer);
                     break;
             }
