@@ -43,6 +43,11 @@ class Network {
         });
     }
 
+    /**
+     * The primary function that parses through a packets queue,
+     * and sends packets to their respective connection.
+     */
+
     parsePackets() {
         /**
          * This parses through the packet pool and sends them
@@ -119,26 +124,26 @@ class Network {
     }
 
     /**
-     * Push a message to a single player.
+     * Sends a message to a player.
      */
 
-    pushToPlayer(player: any, message: any) {
+    pushToPlayer(player: Player, message: any) {
         if (player && player.instance in this.packets)
             this.packets[player.instance].push(message.serialize());
     }
 
     /**
-     * Specify an array of player instances to send message to
+     * Sends a message to a group of players types.
      */
 
-    pushToPlayers(players: any, message: any) {
+    pushToPlayers(players: Player, message: any) {
         _.each(players, (instance: string) => {
             this.pushToPlayer(this.world.getPlayerByInstance(instance), message);
         });
     }
 
     /**
-     * Send a message to the region the player is currently in.
+     * Sends a message to all players within a region
      */
 
     pushToRegion(regionId: string, message: any, ignoreId?: string) {
@@ -148,12 +153,13 @@ class Network {
 
         _.each(region.players, (instance: string) => {
             if (instance !== ignoreId)
-                this.pushToPlayer(this.world.getEntityByInstance(instance), message);
+                this.pushToPlayer(this.world.getEntityByInstance(instance) as Player, message);
         });
     }
 
     /**
-     * Sends a message to all the surrounding regions of the player.
+     * Sends a message to the regions surrounding the player. The player's
+     * region is also included.
      * G  G  G
      * G  P  G
      * G  G  G

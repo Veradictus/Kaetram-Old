@@ -712,8 +712,8 @@ class World {
                     {
                         message: new Messages.Movement(Packets.MovementOpcode.Move, {
                             id: entity.instance,
-                            x: entity.gridX,
-                            y: entity.gridY,
+                            x: entity.x,
+                            y: entity.y,
                             forced: false,
                             teleport: false
                         })

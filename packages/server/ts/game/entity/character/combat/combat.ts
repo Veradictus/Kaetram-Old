@@ -273,8 +273,8 @@ class Combat {
             regionId: this.character.region,
             message: new Messages.Movement(Packets.MovementOpcode.Move, {
                 id: this.character.instance,
-                x: this.character.gridX,
-                y: this.character.gridY,
+                x: this.character.x,
+                y: this.character.y,
                 forced: false,
                 teleport: false
             })

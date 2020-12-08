@@ -455,7 +455,7 @@ class Player extends Character {
         this.verifyRights();
 
         let info = {
-            instance: this.instance,
+            id: this.instance,
             username: Utils.formatUsername(this.username),
             x: this.x,
             y: this.y,
@@ -1008,8 +1008,8 @@ class Player extends Character {
             this.region,
             new Messages.Movement(Packets.MovementOpcode.Move, {
                 id: this.instance,
-                x: gridX,
-                y: gridY,
+                x: floatX,
+                y: floatY,
                 forced: false,
                 teleport: false
             }),
