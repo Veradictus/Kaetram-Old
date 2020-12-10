@@ -95,7 +95,7 @@ class Region {
     }
 
     loadWatcher() {
-        fs.watch(map, (eventType, filename) => {
+        fs.watch(map, (_eventType, _filename) => {
             this.update();  
         });
 
