@@ -7,6 +7,7 @@ import _ from 'lodash';
 import Packets from '../network/packets';
 import log from '../util/log';
 import crypto from 'crypto';
+import zlib from 'zlib';
 
 export default {
     random(range: number) {
@@ -106,6 +107,30 @@ export default {
         } catch (e) {
             return '';
         }
+    },
+
+    /**
+     * Compresses the data and returns a base64 of it in string format.
+     * 
+     * @param data Any string, generally a JSON string.
+     * @param compression Compression format, can be gzip or zlib
+     */
+
+    compressData(data: string, compression = 'gzip'): string {
+        return compression === 'gzip' ? 
+            zlib.gzipSync(data).toString('base64') : 
+            zlib.deflateSync(data).toString('base64');
+    },
+
+    /**
+     * We get the data size in bytes of `data`. This will be send to the
+     * client as a buffer size variable to decompress the data.
+     * 
+     * @param data The data to calculate the size of, will be stringified.
+     */
+
+    getBufferSize(data: any) {
+        return encodeURI(JSON.stringify(data)).split(/%..|./).length - 1;
     },
 
     /**

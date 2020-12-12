@@ -1,6 +1,7 @@
 /* global module */
 
 import Packets from './packets';
+import Utils from '../util/utils';
 
 const Messages: any = {};
 
@@ -471,16 +472,18 @@ Messages.Minigame = class {
 };
 
 Messages.Region = class {
-    opcode: any;
+    opcode: number;
+    bufferSize: number;
     info: any;
 
     constructor(opcode: any, info: any) {
         this.opcode = opcode;
-        this.info = info;
+        this.bufferSize = Utils.getBufferSize(info);
+        this.info = Utils.compressData(JSON.stringify(info));
     }
 
     serialize() {
-        return [Packets.Region, this.opcode, this.info];
+        return [Packets.Region, this.opcode, this.bufferSize, this.info];
     }
 };
 
