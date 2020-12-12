@@ -1,4 +1,6 @@
 import _, { property } from 'lodash';
+import zlib from 'zlib';
+
 import log from '../../server/ts/util/log';
 
 import MapData from './mapdata';
@@ -189,16 +191,19 @@ export default class Parser {
             return;
         }
 
-        _.each(layer.data, (value, index) => {
-            if (value < 1)
-                return;
+        this.parseTileLayerData(this.getCompressedData(layer.data, layer.compression));
+
+        this.formatData();
+    }
+
+    parseTileLayerData(data: any) {
+        _.each(data, (value, index) => {
+            if (value < 1) return;
 
             if (!this.map.data[index]) this.map.data[index] = value;
             else if (_.isArray(this.map.data[index])) this.map.data[index].push(value);
             else this.map.data[index] = [this.map.data[index], value];
         });
-
-        this.formatData();
     }
 
     parseObjectLayer(layer: any) {
@@ -460,6 +465,56 @@ export default class Parser {
             //if (_.isArray(value))
             //    this.map.data[index] = value.reverse();
         });
+    }
+
+    /**
+     * This function allows us to decompress data from the Tiled editor
+     * map file. Thus far, our parser only supports zlib, gzip, and CSV
+     * in the JSON file-format. Further support is not entirely necessary
+     * but should be considered.
+     * 
+     * @param data The we will be parsing, base64 string format 
+     * for compressed data, and string for uncompressed data.
+     * @param type The type of compression 'zlib', 'gzip', '' are accepted inputs.
+     */
+
+    getCompressedData(data: any, type: string): number[] {
+        if (_.isArray(data))
+            return data;
+
+        let dataBuffer = Buffer.from(data, 'base64'),
+            inflatedData: Buffer;
+
+        switch (type) {
+
+            case 'zlib':
+                inflatedData = zlib.inflateSync(dataBuffer);
+                break;
+
+            case 'gzip':
+                inflatedData = zlib.gunzipSync(dataBuffer);
+                break;
+
+            default:
+                log.error('Invalid compression format detected.');
+                return;
+
+        }
+
+        if (!inflatedData) return;
+
+        let size = this.map.width * this.map.height * 4,
+            layerData: number[] = [];
+
+        if (inflatedData.length !== size) {
+            log.error('Invalid buffer detected while parsing layer.');
+            return;
+        }
+
+        for (var i = 0; i < size; i += 4)
+            layerData.push(inflatedData.readUInt32LE(i));
+
+        return layerData;
     }
 
     /**
