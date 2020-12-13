@@ -38,6 +38,7 @@ class Map {
     data: any[];
 
     collisions: any;
+    animations: any;
     polygons: any;
     chestAreas: any;
     chests: any;
@@ -98,6 +99,7 @@ class Map {
         this.data = map.data;
 
         this.collisions = map.collisions;
+        this.animations = map.animations;
         this.polygons = map.polygons;
         this.chestAreas = map.chestAreas;
         this.chests = map.chests;
@@ -289,6 +291,18 @@ class Map {
 
     isObject(object: any) {
         return this.objects.indexOf(object) > -1;
+    }
+
+    getAnimation(tileData: any): any {
+        if (tileData instanceof Array) {
+            for (let i in tileData)
+                if (tileData[i] in this.animations)
+                    return { tileId: tileData[i], name: this.animations[tileData[i]] };
+        } else
+            if (tileData in this.animations)
+                return { tileId: tileData, name: this.animations[tileData] };
+
+        return null;
     }
 
     getPositionObject(x: number, y: number) {

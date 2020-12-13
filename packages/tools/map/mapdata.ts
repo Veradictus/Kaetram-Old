@@ -10,6 +10,7 @@ export interface MapData {
     polygons: any;
     entities: any;
     staticEntities: any;
+    animations: any;
 
     plateau: any;
 

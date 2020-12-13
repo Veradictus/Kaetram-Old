@@ -447,31 +447,19 @@ class Region {
                 for (let y = bounds.startY; y < bounds.endY; y++) {
                     for (let x = bounds.startX; x < bounds.endX; x++) {
                         let index = this.gridPositionToIndex(x - 1, y),
-                            tileData = this.map.data[index],
-                            objectId: any;
-
-                        /*if (tileData !== 0) {
-                            if (tileData instanceof Array) {
-                                for (let j = 0; j < tileData.length; j++) {
-                                    if (this.map.isObject(tileData[j])) {
-                                        objectId = tileData[j];
-                                        break;
-                                    }
-                                }
-                            } else if (this.map.isObject(tileData)) objectId = tileData;
-                        }*/
+                            tileData = this.map.data[index];
 
                         if (!tileData)
                             continue;
                         
-                        const info: any = {
+                        let info: any = {
                             index: index,
-                            data: tileData
+                            data: tileData,
+                            animation: this.map.getAnimation(tileData)
                         };
 
-                        if (objectId)
-                            info.isObject = !!objectId;
-
+                        if (!info.animation) delete info.animation;
+                        
                         data.push(info);
                     }
                 }

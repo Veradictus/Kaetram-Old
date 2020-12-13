@@ -28,6 +28,7 @@ export default class Parser {
             polygons: {},
             entities: {},
             staticEntities: {},
+            animations: {},
 
             plateau: {},
 
@@ -174,6 +175,10 @@ export default class Parser {
 
             case 'rock':
                 this.map.rocks[tileId] = value;
+                break;
+
+            case 'animation':
+                this.map.animations[tileId] = 'animation-' + value;
                 break;
         }
     }
