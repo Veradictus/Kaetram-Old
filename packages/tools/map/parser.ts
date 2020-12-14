@@ -56,6 +56,13 @@ export default class Parser {
         this.parseLayers();
     }
 
+    /**
+     * We iterate through all the tilesets in the map file.
+     * The `mobs` layer is parsed differently and allows us to
+     * spawn entities later. The rest of the tilesets are parsed
+     * individually and their tile properties are extracted.
+     */
+
     parseTilesets() {
         if (!(this.data.tilesets instanceof Array)) {
             log.error('Invalid tileset format detected.')
@@ -135,6 +142,14 @@ export default class Parser {
         });
     }
 
+    /**
+     * We parse through the elements within a tileset, and handle
+     * each tile's property individually. We then store that
+     * data in the overall map file to be sent to the server.
+     * 
+     * @param tileset The tileset we are iterating through.
+     */
+
     parseTileset(tileset: any) {
 
         _.each(tileset.tiles, tile => {
@@ -146,6 +161,13 @@ export default class Parser {
         });
 
     }
+
+    /**
+     * 
+     * @param tileId The absolute tileId among all tilesets.
+     * @param property The property we are iterating.
+     * @param objectGroup The object group present (useful for collisions).
+     */
 
     parseProperties(tileId: number, property: any, objectGroup?: any) {
         const name = property.name,
@@ -183,6 +205,15 @@ export default class Parser {
         }
     }
 
+    /**
+     * We parse two types of layers separately from the rest.
+     * The entities layer dictates where the entity will spawn.
+     * The plateau layer indicates an imaginary z-index position.
+     * We then decompress the layer data, and parse it.
+     * 
+     * @param layer A tile layer from Tiled map file.
+     */
+
     parseTileLayer(layer: any) {
         const name = layer.name.toLowerCase();
 
@@ -201,6 +232,14 @@ export default class Parser {
         this.formatData();
     }
 
+    /**
+     * We parse through the layer data (after being decompressed if necessary)
+     * then iterate through each index of the array. If the index exists in our
+     * map data, we append it.
+     * 
+     * @param data The raw layer data containing tile ids.
+     */
+
     parseTileLayerData(data: any) {
         _.each(data, (value, index) => {
             if (value < 1) return;
@@ -210,6 +249,13 @@ export default class Parser {
             else this.map.data[index] = [this.map.data[index], value];
         });
     }
+
+    /**
+     * We parse through pre-defined object layers and add them
+     * to the map data.
+     * 
+     * @param layer An object layer from Tiled map.
+     */
 
     parseObjectLayer(layer: any) {
         const name = layer.name.toLowerCase();
@@ -466,9 +512,6 @@ export default class Parser {
     formatData() {
         _.each(this.map.data, (value, index) => {
             if (!value) this.map.data[index] = 0;
-
-            //if (_.isArray(value))
-            //    this.map.data[index] = value.reverse();
         });
     }
 
