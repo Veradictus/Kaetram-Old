@@ -444,30 +444,35 @@ class Region {
 
                 const bounds = this.getRegionBounds(regionId);
 
-                for (let y = bounds.startY; y < bounds.endY; y++) {
-                    for (let x = bounds.startX; x < bounds.endX; x++) {
-                        let index = this.gridPositionToIndex(x - 1, y),
-                            tileData = this.map.data[index];
+                this.forEachGrid(bounds, (x: number, y: number) => {
+                    let index = this.gridPositionToIndex(x - 1, y),
+                    tileData = this.map.data[index];
 
-                        if (!tileData)
-                            continue;
-                        
-                        let info: any = {
-                            index: index,
-                            data: tileData,
-                            animation: this.map.getAnimation(tileData)
-                        };
+                    if (!tileData)
+                        return;
+                    
+                    let info: any = {
+                        index: index,
+                        data: tileData,
+                        animation: this.map.getAnimation(tileData)
+                    };
 
-                        if (!info.animation) delete info.animation;
-                        
-                        data.push(info);
-                    }
-                }
+                    if (!info.animation) delete info.animation;
+
+                    data.push(info);
+                });
+
             }
         });
 
         return data;
     }
+
+    forEachGrid(bounds: any, callback: Function) {
+        for (let y = bounds.startY; y < bounds.endY; y++)
+            for (let x = bounds.startX; x < bounds.endX; x++)
+                callback(x, y)
+    }    
 
     getRegionBounds(regionId: string) {
         const regionCoordinates = this.mapRegions.regionIdToCoordinates(regionId);
