@@ -25,6 +25,7 @@ export default class Parser {
             data: [],
 
             collisions: [],
+            blocking: [],
             polygons: {},
             entities: {},
             staticEntities: {},

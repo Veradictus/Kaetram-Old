@@ -7,6 +7,7 @@ export interface MapData {
     data: any[];
 
     collisions: number[];
+    blocking: number[];
     polygons: any;
     entities: any;
     staticEntities: any;

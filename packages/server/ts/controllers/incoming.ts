@@ -245,8 +245,6 @@ class Incoming {
         if (this.player.readyCallback) this.player.readyCallback();
 
         this.player.sync();
-
-        this.player.teleport(50, 89);
     }
 
     handleWho(message: Array<any>) {
