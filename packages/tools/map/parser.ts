@@ -120,8 +120,7 @@ export default class Parser {
 
     parseStaticEntities(layer: any) {
         _.each(layer.data, (value, index) => {
-            if (value < 1)
-                return;
+            if (value < 1) return;
 
             if (value in this.map.entities)
                 this.map.staticEntities[index] = this.map.entities[value];
@@ -218,6 +217,8 @@ export default class Parser {
     parseTileLayer(layer: any) {
         const name = layer.name.toLowerCase();
 
+        layer.data = this.getLayerData(layer.data, layer.compression);
+
         if (name === 'entities') {
             this.parseStaticEntities(layer);
             return;
@@ -228,7 +229,7 @@ export default class Parser {
             return;
         }
 
-        this.parseTileLayerData(this.getCompressedData(layer.data, layer.compression));
+        this.parseTileLayerData(layer.data);
 
         this.formatData();
     }
@@ -527,7 +528,7 @@ export default class Parser {
      * @param type The type of compression 'zlib', 'gzip', '' are accepted inputs.
      */
 
-    getCompressedData(data: any, type: string): number[] {
+    getLayerData(data: any, type: string): number[] {
         if (_.isArray(data))
             return data;
 
