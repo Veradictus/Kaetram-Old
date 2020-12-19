@@ -101,6 +101,11 @@ class Handler {
         });
 
         this.player.onKill((character: any) => {
+            if (!this.player.quests) {
+                log.warning(`${this.player.username} does not have quests initialized properly.`);
+                return;
+            }
+            
             if (this.player.quests.isAchievementMob(character)) {
                 let achievement = this.player.quests.getAchievementByMob(character);
 
