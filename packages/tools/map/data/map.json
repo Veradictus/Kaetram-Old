@@ -30,7 +30,7 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJzt2DtOG1EUBuDpnc7pyQ5Ch0QTKrOA0JGFuIN9JA0Cso\/4AXmsIwho2ALnas4Ig2xPgRLHud8nHd2xZY9czH\/PPW4aAAD+hJ39tt4trKs+t+4efd+HbfRhv62DhXXV59bdo+\/7sI26Pb9v\/1+Xj5f9Qz\/hf9Ht+X37\/8GLPrPsHqtW2GZ9+\/9rV9hmffv\/a1eozbK5Rf+A1rK5Rf94bjZqmvOoy1y\/jjb9i2BzzuL5v1io26irqJPDpplH\/YzrXzJCpQaRget4\/ndjHUb9GLWvj+N6kq8f9BEqdJb9YpK9Yhx1HvUtr\/cyHyU7p4eb\/rXwd32MZ36WGfgedZQ5KD2lZKK8N87+8kk+qEzJRzdnvIm6KlmIep+ZKO9PM0Nv5YPKDPIMNc3Zo\/SIWZ65uhlkmn1EPqhNd74aZh8p\/1XNR+15q8vNPM9f5g9qM8hclLPVUc4c3SyymzP6JM9d9\/JBZT7nf1Xz7COlXxxnRrqclGxcyAaV+h3P\/pfsIePsI2X2GOZ\/vdeyQeUWM3KSvUTfgCflrHUXdZOreQMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgH\/FI+Lrodo=",
+         "data":"eJzt2kFSG1cQBuCxb+A1McIb5w7eWLElLfA97B05CDv7HrAj9wgbAvgaiQUC53VNv9IrlYTsICoF+r6qV8PMSCov5p\/unnHXAcB22R133eWo685zPR\/\/3\/8inqrBm37tNdtVn7vrN9Z9f1POSh5mZb0vmfgcuSjrdVlfR31uIi8XuS5lh3t6+6Zfw2a76nN3\/ca672\/CdbneB+M+G+dlDSZd9y33n4373MzKdr+saVnfR\/3xyA60Xvzg5+o9f939\/658LNaPh6gnZ5mN47JuyrrIuvBP2Z6WdTvq68lJno\/c3GReIiPqCP9Fveevu\/8PF+rMst9Ytd2Ed1kz9krNuG2u9eipIjezpqbE+Zqb\/czJs2Zm+SvXefZgv8oOd1h3\/7\/vdhOOxvNrvO2Xjpra8Xtzne9M+ox8yxnlU1kHmZfou+I7tQer8wsss+7+f9\/tfdSZe9DMFZGDOB73\/aM8FrXjdqEOREZ+mcx7rcjQ1cLssp+1R0bYpGVzy0PUj6M6U4z6+3+XdWSQ13TM5DGTfFjRIw0n\/W\/U\/utl2X816c\/9mT3YYdaXVb8BP2vZ3PIQ9aPe\/6MPusrZu87j08zL4UJvFc5yxrjM2jNdcv3\/XfY\/5nPiOP+HfPDIxP3\/XTNnfxn3+1eZi2me+7JkZj\/IulDnjcjQ2Wj+jqT2bXE+akutK\/BY7GR\/dN28C5xl7Zjmu49pHq\/vBWvPVTN1nFmq363Ha1+ldvCY1We1tZeqz6tie5O1oV7r8XeXteMm543T3J9lLxXHdyf9jB7n4+8L+eCRqs9q67Uc1\/VeziWfsk4cZ34Omv3ac9V+rGajzcJQT8UTEBn5LWaRst6XNcpnty8zJyfZJ52M53N85ODajMGWqvf+j1k7usxH\/f9YF5mNz1lX2hketkX0XnvZd51mrTjMHmu2oq+CbbHT9Ez1fclV5qNmY\/HdOmyjYTOX7OYcr27AnGdSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJvzL5iIQMU=",
          "encoding":"base64",
          "height":200,
          "id":4,
@@ -72,7 +72,7 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJzt08ENQFAURNHX72+HTlAJKsHaJFbyd1YW5ySTqeBWAV8NrWpszwNvc7qYskUf0NnSxZrt+oDOmS6O7NIHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPzWDaJGDj8=",
+         "data":"eJzt07ENgDAMRUEXwLDJWmQTYBJgDixRoYiGhuZO+nLr5kUAX80lopX7Ak9rdrHkNn1A58gu9typD+iMNWLITfXvTwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACANxdGBwv2",
          "encoding":"base64",
          "height":200,
          "id":12,
@@ -4167,6 +4167,11 @@
          "margin":0,
          "name":"Houses Interior",
          "spacing":0,
+         "terrains":[
+                {
+                 "name":"Walls",
+                 "tile":0
+                }],
          "tilecount":1024,
          "tileheight":32,
          "tiles":[
@@ -7255,31 +7260,8 @@
          "tilewidth":32
         }, 
         {
-         "columns":20,
-         "firstgid":27300,
-         "image":"tilesets\/99_mobs.png",
-         "imageheight":400,
-         "imagewidth":640,
-         "margin":0,
-         "name":"Mobs",
-         "spacing":0,
-         "tilecount":240,
-         "tileheight":32,
-         "tiles":[
-                {
-                 "id":0,
-                 "properties":[
-                        {
-                         "name":"type",
-                         "type":"string",
-                         "value":"skeleton"
-                        }]
-                }],
-         "tilewidth":32
-        }, 
-        {
          "columns":32,
-         "firstgid":27540,
+         "firstgid":27300,
          "image":"tilesets\/25_props.png",
          "imageheight":1024,
          "imagewidth":1024,
@@ -7388,6 +7370,19 @@
                          "value":"f3b"
                         }]
                 }],
+         "tilewidth":32
+        }, 
+        {
+         "columns":20,
+         "firstgid":28324,
+         "image":"tilesets\/99_mobs.png",
+         "imageheight":400,
+         "imagewidth":640,
+         "margin":0,
+         "name":"Mobs",
+         "spacing":0,
+         "tilecount":240,
+         "tileheight":32,
          "tilewidth":32
         }],
  "tilewidth":32,
