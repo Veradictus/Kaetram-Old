@@ -15,7 +15,7 @@ class Cactus extends Combat {
         this.character = character;
 
         this.character.onDamaged((damage: any, attacker: Player) => {
-            if (!attacker || !attacker.armour || attacker.isRanged()) return;
+            if (!attacker || attacker.isRanged()) return;
 
             this.damageAttacker(damage, attacker);
 
@@ -32,7 +32,7 @@ class Cactus extends Combat {
     }
 
     damageAttacker(damage: number, attacker: Player) {
-        if (!attacker || !attacker.armour || attacker.isRanged()) return;
+        if (!attacker || attacker.isRanged()) return;
 
         /**
          * This is the formula for dealing damage when a player
@@ -40,7 +40,7 @@ class Cactus extends Combat {
          * as the armour gets better.
          **/
 
-        let defense = attacker.armour.getDefense(),
+        let defense = attacker.equipment.getDefense(),
             calculatedDamage = Math.floor(damage / 2 - defense * 5);
 
         if (calculatedDamage < 1) return;

@@ -3,12 +3,8 @@
 import _ from 'lodash';
 import log from '../../../../util/log';
 import Character from '../character';
+import Equipments from './equipments/equipments';
 import Incoming from '../../../../controllers/incoming';
-import Armour from './equipment/armour';
-import Weapon from './equipment/weapon';
-import Pendant from './equipment/pendant';
-import Ring from './equipment/ring';
-import Boots from './equipment/boots';
 import Items from '../../../../util/items';
 import Messages from '../../../../network/messages';
 import Formulas from '../../../../util/formulas';
@@ -124,11 +120,7 @@ class Player extends Character {
     public hitPoints: HitPoints;
     public mana: Mana;
 
-    public armour: Armour;
-    public weapon: Weapon;
-    public pendant: Pendant;
-    public ring: Ring;
-    public boots: Boots;
+    public equipment: Equipments;
 
     public cameraArea: Area;
     public overlayArea: Area;
@@ -200,6 +192,7 @@ class Player extends Character {
 
         this.handler = new Handler(this);
 
+        this.equipment = new Equipments(this);
         this.inventory = new Inventory(this, 20);
         this.professions = new Professions(this);
         this.abilities = new Abilities(this);
@@ -248,6 +241,7 @@ class Player extends Character {
         this.orientation = data.orientation;
         this.mapVersion = data.mapVersion;
 
+        this.setPosition(data.gridX, data.gridY, data.x, data.y);
         this.warp.setLastWarp(data.lastWarp);
 
         this.level = Formulas.expToLevel(this.experience);
@@ -260,18 +254,7 @@ class Player extends Character {
 
         this.userAgent = data.userAgent;
 
-        let armour = data.armour,
-            weapon = data.weapon,
-            pendant = data.pendant,
-            ring = data.ring,
-            boots = data.boots;
-
-        this.setPosition(data.gridX, data.gridY, data.x, data.y);
-        this.setArmour(armour[0], armour[1], armour[2], armour[3]);
-        this.setWeapon(weapon[0], weapon[1], weapon[2], weapon[3]);
-        this.setPendant(pendant[0], pendant[1], pendant[2], pendant[3]);
-        this.setRing(ring[0], ring[1], ring[2], ring[3]);
-        this.setBoots(boots[0], boots[1], boots[2], boots[3]);
+        this.equipment.load(data.equipment);
     }
 
     destroy() {
@@ -591,71 +574,6 @@ class Player extends Character {
         new item(id).onUse(this);
     }
 
-    equip(string: string, count: number, ability: number, abilityLevel: number) {
-        let data = Items.getData(string),
-            type,
-            id,
-            power;
-
-        if (!data || data === 'null') return;
-
-        log.debug(`Equipping item - ${[string, count, ability, abilityLevel]}`);
-
-        if (Items.isArmour(string)) type = Modules.Equipment.Armour;
-        else if (Items.isWeapon(string)) type = Modules.Equipment.Weapon;
-        else if (Items.isPendant(string)) type = Modules.Equipment.Pendant;
-        else if (Items.isRing(string)) type = Modules.Equipment.Ring;
-        else if (Items.isBoots(string)) type = Modules.Equipment.Boots;
-
-        id = Items.stringToId(string);
-        power = Items.getLevelRequirement(string);
-
-        switch (type) {
-            case Modules.Equipment.Armour:
-                if (this.hasArmour() && this.armour.id !== 114)
-                    this.inventory.add(this.armour.getItem());
-
-                this.setArmour(id, count, ability, abilityLevel);
-                break;
-
-            case Modules.Equipment.Weapon:
-                if (this.hasWeapon()) this.inventory.add(this.weapon.getItem());
-
-                this.setWeapon(id, count, ability, abilityLevel);
-                break;
-
-            case Modules.Equipment.Pendant:
-                if (this.hasPendant()) this.inventory.add(this.pendant.getItem());
-
-                this.setPendant(id, count, ability, abilityLevel);
-                break;
-
-            case Modules.Equipment.Ring:
-                if (this.hasRing()) this.inventory.add(this.ring.getItem());
-
-                this.setRing(id, count, ability, abilityLevel);
-                break;
-
-            case Modules.Equipment.Boots:
-                if (this.hasBoots()) this.inventory.add(this.boots.getItem());
-
-                this.setBoots(id, count, ability, abilityLevel);
-                break;
-        }
-
-        this.send(
-            new Messages.Equipment(Packets.EquipmentOpcode.Equip, {
-                type: type,
-                name: Items.idToName(id),
-                string: string,
-                count: count,
-                ability: ability,
-                abilityLevel: abilityLevel,
-                power: power
-            })
-        );
-    }
-
     updateRegion(force?: boolean) {
         this.world.region.sendRegion(this, this.region, force);
     }
@@ -874,28 +792,8 @@ class Player extends Character {
         return this.quests.getQuest(Modules.Quests.Introduction);
     }
 
-    getWeaponLevel() {
-        return this.weapon.getLevel();
-    }
-
-    getArmourLevel() {
-        return this.armour.getDefense();
-    }
-
     getLumberjackingLevel() {
         return this.professions.getProfession(Modules.Professions.Lumberjacking).getLevel();
-    }
-
-    getWeaponLumberjackingLevel() {
-        if (!this.hasLumberjackingWeapon()) return -1;
-
-        return this.weapon.lumberjacking;
-    }
-
-    getWeaponMiningLevel() {
-        if (!this.hasMiningWeapon()) return -1;
-
-        return this.weapon.mining;
     }
 
     // We get dynamic trees surrounding the player
@@ -929,7 +827,7 @@ class Player extends Character {
     }
 
     getMovementSpeed() {
-        let itemMovementSpeed = Items.getMovementSpeed(this.armour.name),
+        let itemMovementSpeed = this.equipment.getMovementSpeed(),
             movementSpeed = itemMovementSpeed || this.defaultMovementSpeed;
 
         /*
@@ -945,46 +843,6 @@ class Player extends Character {
     /**
      * Setters
      */
-
-    breakWeapon() {
-        this.notify('Your weapon has been broken.');
-
-        this.setWeapon(-1, 0, 0, 0);
-
-        this.sendEquipment();
-    }
-
-    setArmour(id: number, count: number, ability: number, abilityLevel: number) {
-        if (!id) return;
-
-        this.armour = new Armour(Items.idToString(id), id, count, ability, abilityLevel);
-    }
-
-    setWeapon(id: number, count: number, ability: number, abilityLevel: number) {
-        if (!id) return;
-
-        this.weapon = new Weapon(Items.idToString(id), id, count, ability, abilityLevel);
-
-        if (this.weapon.ranged) this.attackRange = 7;
-    }
-
-    setPendant(id: number, count: number, ability: number, abilityLevel: number) {
-        if (!id) return;
-
-        this.pendant = new Pendant(Items.idToString(id), id, count, ability, abilityLevel);
-    }
-
-    setRing(id: number, count: number, ability: number, abilityLevel: number) {
-        if (!id) return;
-
-        this.ring = new Ring(Items.idToString(id), id, count, ability, abilityLevel);
-    }
-
-    setBoots(id: number, count: number, ability: number, abilityLevel: number) {
-        if (!id) return;
-
-        this.boots = new Boots(Items.idToString(id), id, count, ability, abilityLevel);
-    }
 
     guessPosition(x: number, y: number) {
         this.potentialPosition = {
@@ -1069,51 +927,12 @@ class Player extends Character {
      * Getters
      */
 
-    hasArmour() {
-        return this.armour && this.armour.name !== 'null' && this.armour.id !== -1;
-    }
-
-    hasWeapon() {
-        return this.weapon && this.weapon.name !== 'null' && this.weapon.id !== -1;
-    }
-
-    hasLumberjackingWeapon() {
-        return this.weapon && this.weapon.lumberjacking > 0;
-    }
-
-    hasMiningWeapon() {
-        return this.weapon && this.weapon.mining > 0;
-    }
-
-    hasBreakableWeapon() {
-        return this.weapon && this.weapon.breakable;
-    }
-
-    hasPendant() {
-        return this.pendant && this.pendant.name !== 'null' && this.pendant.id !== -1;
-    }
-
-    hasRing() {
-        return this.ring && this.ring.name !== 'null' && this.ring.id !== -1;
-    }
-
-    hasBoots() {
-        return this.boots && this.boots.name !== 'null' && this.boots.id !== -1;
-    }
-
     hasMaxHitPoints() {
         return this.getHitPoints() >= this.hitPoints.getMaxHitPoints();
     }
 
     hasMaxMana() {
         return this.mana.getMana() >= this.mana.getMaxMana();
-    }
-
-    hasSpecialAttack() {
-        return (
-            this.weapon &&
-            (this.weapon.hasCritical() || this.weapon.hasExplosive() || this.weapon.hasStun())
-        );
     }
 
     canBeStunned() {
@@ -1137,11 +956,7 @@ class Player extends Character {
             hitPoints: this.hitPoints.getData(),
             movementSpeed: this.getMovementSpeed(),
             mana: this.mana.getData(),
-            armour: this.armour.getData(),
-            weapon: this.weapon.getData(),
-            pendant: this.pendant.getData(),
-            ring: this.ring.getData(),
-            boots: this.boots.getData()
+            equipment: this.equipment.getData()
         };
     }
 
@@ -1161,13 +976,14 @@ class Player extends Character {
     }
 
     getHit(target?: Character) {
-        let defaultDamage = Formulas.getDamage(this, target),
-            isSpecial = Utils.randomInt(0, 100) < 30 + this.weapon.abilityLevel * 3;
+        let weapon = this.equipment.getEquipment(Modules.Equipment.Weapon),
+            defaultDamage = Formulas.getDamage(this, target),
+            isSpecial = Utils.randomInt(0, 100) < 30 + weapon.getAbilityLevel() * 3;
 
         if (!isSpecial || !this.hasSpecialAttack())
             return new Hit(Modules.Hits.Damage, defaultDamage);
 
-        switch (this.weapon.ability) {
+        switch (weapon.getAbility()) {
             case Modules.Enchantment.Critical:
                 /**
                  * Still experimental, not sure how likely it is that you're
@@ -1175,7 +991,7 @@ class Player extends Character {
                  * out of hand, it's easier to buff than to nerf..
                  */
 
-                let multiplier = 1.0 + this.weapon.abilityLevel,
+                let multiplier = 1.0 + weapon.getAbilityLevel(),
                     damage = defaultDamage * multiplier;
 
                 return new Hit(Modules.Hits.Critical, damage);
@@ -1192,10 +1008,6 @@ class Player extends Character {
         let time = new Date().getTime();
 
         return this.mute - time > 0;
-    }
-
-    isRanged() {
-        return this.weapon && this.weapon.isRanged();
     }
 
     isDead() {
@@ -1229,15 +1041,7 @@ class Player extends Character {
     }
 
     sendEquipment() {
-        let info = {
-            armour: this.armour.getData(),
-            weapon: this.weapon.getData(),
-            pendant: this.pendant.getData(),
-            ring: this.ring.getData(),
-            boots: this.boots.getData()
-        };
-
-        this.send(new Messages.Equipment(Packets.EquipmentOpcode.Batch, info));
+        this.send(new Messages.Equipment(Packets.EquipmentOpcode.Batch, this.equipment.getData()));
     }
 
     sendProfessions() {
@@ -1294,8 +1098,6 @@ class Player extends Character {
             mana: this.mana.getMana(),
             maxMana: this.mana.getMaxMana(),
             level: this.level,
-            armour: this.armour.getString(),
-            weapon: this.weapon.getData(),
             poison: !!this.poison,
             movementSpeed: this.getMovementSpeed()
         };

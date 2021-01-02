@@ -1,4 +1,5 @@
 import _ from 'lodash';
+
 import Profession from './profession';
 import Messages from '../../../../../../network/messages';
 import Modules from '../../../../../../util/modules';
@@ -6,6 +7,8 @@ import Formulas from '../../../../../../util/formulas';
 import Utils from '../../../../../../util/utils';
 import Trees from '../../../../../../../data/professions/trees';
 import Player from '../../player';
+
+import log from '@kaetram/server/ts/util/log';
 
 class Lumberjacking extends Profession {
     tick: number;
@@ -84,10 +87,11 @@ class Lumberjacking extends Profession {
 
     // TODO
     handle(id: any, treeId: any) {
-        if (!this.player.hasLumberjackingWeapon()) {
-            this.player.notify('You do not have an axe to cut this tree with.');
-            return;
-        }
+        log.notice('Reimplement lumberjacking weapon requirement.');
+        // if (!this.player.hasLumberjackingWeapon()) {
+        //     this.player.notify('You do not have an axe to cut this tree with.');
+        //     return;
+        // }
 
         this.treeId = treeId;
         this.targetId = id;

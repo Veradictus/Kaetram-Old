@@ -2,6 +2,7 @@ import bcryptjs from 'bcryptjs';
 import MongoDB from './mongodb';
 import log from '../../util/log';
 import config from '../../../config';
+import Player from '@kaetram/server/ts/game/entity/character/player/player';
 
 class Creator {
     database: MongoDB;
@@ -70,7 +71,7 @@ class Creator {
             {
                 username: player.username
             },
-            { $set: Creator.getPlayerEquipment(player) },
+            { $set: player.equipment.getData() },
             {
                 upsert: true
             },
@@ -287,43 +288,7 @@ class Creator {
             });
         });
     }
-
-    static getPlayerEquipment(player) {
-        return {
-            username: player.username,
-            armour: [
-                player.armour ? player.armour.getId() : 114,
-                player.armour ? player.armour.getCount() : -1,
-                player.armour ? player.armour.getAbility() : -1,
-                player.armour ? player.armour.getAbilityLevel() : -1
-            ],
-            weapon: [
-                player.weapon ? player.weapon.getId() : -1,
-                player.weapon ? player.weapon.getCount() : -1,
-                player.weapon ? player.weapon.getAbility() : -1,
-                player.weapon ? player.weapon.getAbilityLevel() : -1
-            ],
-            pendant: [
-                player.pendant ? player.pendant.getId() : -1,
-                player.pendant ? player.pendant.getCount() : -1,
-                player.pendant ? player.pendant.getAbility() : -1,
-                player.pendant ? player.pendant.getAbilityLevel() : -1
-            ],
-            ring: [
-                player.ring ? player.ring.getId() : -1,
-                player.ring ? player.ring.getCount() : -1,
-                player.ring ? player.ring.getAbility() : -1,
-                player.ring ? player.ring.getAbilityLevel() : -1
-            ],
-            boots: [
-                player.boots ? player.boots.getId() : -1,
-                player.boots ? player.boots.getCount() : -1,
-                player.boots ? player.boots.getAbility() : -1,
-                player.boots ? player.boots.getAbilityLevel() : -1
-            ]
-        };
-    }
-
+    
     /**
      * Crossed over from the MySQL database. This should be refined
      * fairly soon as it is just unnecessary code for speed development.
@@ -356,36 +321,7 @@ class Creator {
             orientation: player.orientation ? player.orientation : 0,
             lastWarp: player.warp.lastWarp ? player.warp.lastWarp : 0,
             mapVersion: player.mapVersion ? player.mapVersion : 0,
-            armour: [
-                player.armour ? player.armour.getId() : 114,
-                player.armour ? player.armour.getCount() : -1,
-                player.armour ? player.armour.getAbility() : -1,
-                player.armour ? player.armour.getAbilityLevel() : -1
-            ],
-            weapon: [
-                player.weapon ? player.weapon.getId() : -1,
-                player.weapon ? player.weapon.getCount() : -1,
-                player.weapon ? player.weapon.getAbility() : -1,
-                player.weapon ? player.weapon.getAbilityLevel() : -1
-            ],
-            pendant: [
-                player.pendant ? player.pendant.getId() : -1,
-                player.pendant ? player.pendant.getCount() : -1,
-                player.pendant ? player.pendant.getAbility() : -1,
-                player.pendant ? player.pendant.getAbilityLevel() : -1
-            ],
-            ring: [
-                player.ring ? player.ring.getId() : -1,
-                player.ring ? player.ring.getCount() : -1,
-                player.ring ? player.ring.getAbility() : -1,
-                player.ring ? player.ring.getAbilityLevel() : -1
-            ],
-            boots: [
-                player.boots ? player.boots.getId() : -1,
-                player.boots ? player.boots.getCount() : -1,
-                player.boots ? player.boots.getAbility() : -1,
-                player.boots ? player.boots.getAbilityLevel() : -1
-            ]
+            equipment: player.equipment.getData()
         };
     }
 }

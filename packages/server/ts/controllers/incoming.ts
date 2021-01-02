@@ -215,6 +215,7 @@ class Incoming {
 
         this.world.region.sendTilesetInfo(this.player);
 
+        // Maybe move this to later?
         this.player.sendEquipment();
 
         this.player.loadProfessions();
@@ -292,49 +293,7 @@ class Incoming {
                     return;
                 }
 
-                switch (type) {
-                    case 'weapon':
-                        if (!this.player.hasWeapon()) return;
-
-                        this.player.inventory.add(this.player.weapon.getItem());
-                        this.player.setWeapon(-1, -1, -1, -1);
-
-                        break;
-
-                    case 'armour':
-                        if (this.player.hasArmour() && this.player.armour.id === 114) return;
-
-                        this.player.inventory.add(this.player.armour.getItem());
-                        this.player.setArmour(114, 1, -1, -1);
-
-                        break;
-
-                    case 'pendant':
-                        if (!this.player.hasPendant()) return;
-
-                        this.player.inventory.add(this.player.pendant.getItem());
-                        this.player.setPendant(-1, -1, -1, -1);
-
-                        break;
-
-                    case 'ring':
-                        if (!this.player.hasRing()) return;
-
-                        this.player.inventory.add(this.player.ring.getItem());
-                        this.player.setRing(-1, -1, -1, -1);
-
-                        break;
-
-                    case 'boots':
-                        if (!this.player.hasBoots()) return;
-
-                        this.player.inventory.add(this.player.boots.getItem());
-                        this.player.setBoots(-1, -1, -1, -1);
-
-                        break;
-                }
-
-                this.player.send(new Messages.Equipment(Packets.EquipmentOpcode.Unequip, [type]));
+                this.player.equipment.unequip(type);
 
                 break;
         }
@@ -613,7 +572,7 @@ class Incoming {
 
                     this.player.inventory.remove(id, slot.count, slot.index);
 
-                    this.player.equip(string, sCount, ability, abilityLevel);
+                    this.player.equipment.equip(string, sCount, ability, abilityLevel);
                 } else if (slot.edible) {
                     this.player.inventory.remove(id, 1, slot.index);
 

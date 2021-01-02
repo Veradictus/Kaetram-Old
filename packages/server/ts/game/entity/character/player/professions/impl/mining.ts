@@ -1,4 +1,5 @@
 import _ from 'lodash';
+
 import Profession from './profession';
 import Packets from '../../../../../../network/packets';
 import Messages from '../../../../../../network/messages';
@@ -7,6 +8,8 @@ import Formulas from '../../../../../../util/formulas';
 import Utils from '../../../../../../util/utils';
 import Rocks from '../../../../../../../data/professions/rocks';
 import Player from '../../player';
+
+import log from '@kaetram/server/ts/util/log';
 
 class Mining extends Profession {
     tick: number;
@@ -50,10 +53,12 @@ class Mining extends Profession {
 
     // TODO
     handle(id: any, rockId: any) {
-        if (!this.player.hasMiningWeapon()) {
-            this.player.notify('You do not have a pickaxe to mine this rock with.');
-            return;
-        }
+        log.notice('Reimplement mining weapon requirement.');
+
+        // if (!this.player.hasMiningWeapon()) {
+        //     this.player.notify('You do not have a pickaxe to mine this rock with.');
+        //     return;
+        // }
 
         this.rockId = rockId;
         this.targetId = id;

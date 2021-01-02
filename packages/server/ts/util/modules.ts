@@ -9,11 +9,13 @@ let Modules = {
     },
 
     Equipment: {
-        Armour: 0,
-        Weapon: 1,
-        Pendant: 2,
-        Ring: 3,
-        Boots: 4
+        Head: 0,
+        Necklace: 1,
+        Torso: 2,
+        Legs: 3,
+        Ring: 4,
+        Boots: 5,
+        Weapon: 6
     },
 
     Hits: {

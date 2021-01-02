@@ -164,7 +164,7 @@ class Enchant {
             return;
         }
 
-        switch (type) {
+        /*switch (type) {
             case 'armor':
             case 'armorarcher':
                 this.selectedItem.ability = Utils.randomInt(2, 3);
@@ -189,7 +189,7 @@ class Enchant {
 
             case 'boots':
                 break;
-        }
+        }*/
 
         this.selectedItem.abilityLevel = tier;
 

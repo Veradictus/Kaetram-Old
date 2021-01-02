@@ -208,7 +208,7 @@ class Commands {
                 return;
 
             case 'ghost':
-                this.player.equip('ghost', 1, -1, -1);
+                this.player.equipment.equip(666, 1, -1, -1);
 
                 return;
 

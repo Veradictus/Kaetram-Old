@@ -33,7 +33,7 @@ class Slot {
 
         this.string = Items.idToString(this.id);
         this.edible = Items.isEdible(this.id);
-        this.equippable = Items.isEquippable(this.string);
+        this.equippable = Items.isEquippable(this.id);
 
         this.verify();
     }
