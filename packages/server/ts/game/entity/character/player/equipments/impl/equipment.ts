@@ -1,6 +1,6 @@
 /* global module */
 
-import Items from '../../../../../../util/items';
+import Items from '@kaetram/server/ts/util/items';
 
 class Equipment {
 

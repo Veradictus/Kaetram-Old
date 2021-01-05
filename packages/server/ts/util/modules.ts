@@ -15,7 +15,8 @@ let Modules = {
         Legs: 3,
         Ring: 4,
         Boots: 5,
-        Weapon: 6
+        Weapon: 6,
+        Quiver: 7
     },
 
     Hits: {

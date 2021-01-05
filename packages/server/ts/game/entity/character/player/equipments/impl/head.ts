@@ -1,5 +1,5 @@
-import Modules from "@kaetram/server/ts/util/modules";
-import Equipment from "./equipment";
+import Modules from '@kaetram/server/ts/util/modules';
+import Equipment from './equipment';
 
 export default class Head extends Equipment {
 

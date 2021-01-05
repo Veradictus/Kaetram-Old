@@ -1,19 +1,20 @@
 import _ from 'lodash';
 
-import Items from "@kaetram/server/ts/util/items";
-import Modules from "@kaetram/server/ts/util/modules";
+import Items from '@kaetram/server/ts/util/items';
+import Modules from '@kaetram/server/ts/util/modules';
 import Messages from '@kaetram/server/ts/network/messages';
 import Packets from '@kaetram/server/ts/network/packets';
 
-import Player from "../player";
-import Boots from "./impl/boots";
-import Equipment from "./impl/equipment";
-import Head from "./impl/head";
-import Legs from "./impl/legs";
-import Necklace from "./impl/necklace";
-import Ring from "./impl/ring";
-import Torso from "./impl/torso";
-import Weapon from "./impl/weapon";
+import Player from '../player';
+import Boots from './impl/boots';
+import Equipment from './impl/equipment';
+import Head from './impl/head';
+import Legs from './impl/legs';
+import Necklace from './impl/necklace';
+import Ring from './impl/ring';
+import Torso from './impl/torso';
+import Weapon from './impl/weapon';
+import Quiver from './impl/quiver';
 
 export default class Equipments {
 
@@ -34,6 +35,7 @@ export default class Equipments {
     private ring: Ring;
     private boots: Boots;
     private weapon: Weapon;
+    private quiver: Quiver;
 
     constructor(player: Player) {
         this.player = player;
@@ -45,6 +47,7 @@ export default class Equipments {
         this.ring = new Ring(-1, -1, -1);
         this.boots = new Boots(-1, -1, -1);
         this.weapon = new Weapon(-1, -1, -1);
+        this.quiver = new Quiver(-1, -1, -1, -1); // Quiver has a stackable count.
     }
 
     /**
@@ -119,6 +122,9 @@ export default class Equipments {
             case Modules.Equipment.Weapon:
                 return this.weapon;
 
+            case Modules.Equipment.Quiver:
+                return this.quiver;
+
             default:
                 return null;
         }
@@ -145,7 +151,8 @@ export default class Equipments {
 
     getEquipments() {
         return [this.head, this.necklace, this.torso, 
-            this.legs, this.ring, this.boots, this.weapon];
+            this.legs, this.ring, this.boots, this.weapon,
+            this.quiver];
     }
 
     forEachEquipment(callback) {
