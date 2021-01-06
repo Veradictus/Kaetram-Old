@@ -4,7 +4,7 @@ import _ from 'lodash';
 import Container from '../container';
 import Messages from '../../../../../../network/messages';
 import Packets from '../../../../../../network/packets';
-import Constants from './constants';
+import Constants from '@kaetram/server/ts/util/constants';
 import Player from '../../player';
 
 class Inventory extends Container {
@@ -29,7 +29,7 @@ class Inventory extends Container {
         if (!this.canHold(item.id, item.count)) {
             this.owner.send(
                 new Messages.Notification(Packets.NotificationOpcode.Text, {
-                    message: Constants.InventoryFull
+                    message: Constants.Messages.InventoryFull
                 })
             );
             return false;
