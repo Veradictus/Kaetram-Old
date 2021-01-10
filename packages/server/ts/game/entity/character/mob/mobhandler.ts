@@ -67,7 +67,7 @@ class MobHandler {
                 if (newX === this.mob.gridX && newY === this.mob.gridY) return;
 
                 // We don't want mobs randomly roaming while in combat.
-                if (this.mob.combat.started) return;
+                if (this.mob.inCombat()) return;
 
                 /**
                  * An expansion of the plateau level present in BrowserQuest.

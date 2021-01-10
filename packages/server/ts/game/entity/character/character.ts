@@ -137,7 +137,7 @@ class Character extends Entity {
         this.healingInterval = setInterval(() => {
             if (this.dead) return;
 
-            if (this.combat.started) return;
+            if (this.inCombat()) return;
 
             if (this.poison) return;
 
@@ -192,7 +192,7 @@ class Character extends Entity {
         return this.maxHitPoints;
     }
 
-    setPosition(gridX: number, gridY: number, floatX?: number, floatY?: number) {
+    setPosition(gridX: number, gridY: number, floatX?: number, floatY?: number, running?: boolean) {
         this.previousX = this.gridX;
         this.previousY = this.gridY;
 
@@ -301,6 +301,10 @@ class Character extends Entity {
 
     hasTarget() {
         return !(this.target === null);
+    }
+
+    inCombat() {
+        return this.combat && this.combat.isActive();
     }
 
     hasPotentialTarget(potentialTarget: any) {

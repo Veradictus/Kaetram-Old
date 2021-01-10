@@ -291,15 +291,6 @@ class Commands {
 
                 return;
 
-            case 'attackaoe':
-                let radius = parseInt(blocks.shift());
-
-                if (!radius) radius = 1;
-
-                this.player.combat.dealAoE(radius);
-
-                return;
-
             case 'addexp':
                 let exp = parseInt(blocks.shift());
 

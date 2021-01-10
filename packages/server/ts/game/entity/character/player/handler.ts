@@ -50,9 +50,9 @@ class Handler {
             this.detectAggro();
             this.detectPVP(this.player.gridX, this.player.gridY);
 
-            if (this.updateTicks % 4 === 0)
+            //if (this.updateTicks % 4 === 0)
                 // Every 4 (1.6 seconds) update ticks.
-                this.handlePoison();
+            //    this.handlePoison();
 
             if (this.updateTicks % 16 === 0)
                 // Every 16 (6.4 seconds) update ticks.
@@ -70,7 +70,6 @@ class Handler {
                 this.player.doors.lastDestX = -1;
                 this.player.doors.lastDestY = -1;
             }
-
 
             this.player.checkRegions();
 
@@ -94,8 +93,6 @@ class Handler {
              * Handles actions whenever the player
              * instance is hit by 'damage' amount
              */
-
-            if (this.player.combat.isRetaliating()) this.player.combat.begin(attacker);
 
             log.debug(`Player has been hit - damage: ${damage}`);
         });
@@ -219,7 +216,9 @@ class Handler {
             if (character && character.type === 'mob' && this.canEntitySee(character)) {
                 let aggro = character.canAggro(this.player);
 
-                if (aggro) character.combat.begin(this.player);
+
+                log.notice('Aggro not implemented.');
+                //if (aggro) character.combat.begin(this.player);
             }
         });
     }
@@ -309,21 +308,23 @@ class Handler {
     }
 
     handlePoison() {
-        if (!this.player.poison) return;
+        log.notice('handlePoision not implemented.');
 
-        let info: any = this.player.poison.split(':'),
-            timeDiff = new Date().getTime() - info[0];
+        // if (!this.player.poison) return;
 
-        if (timeDiff > info[1]) {
-            this.player.setPoison('');
-            return;
-        }
+        // let info: any = this.player.poison.split(':'),
+        //     timeDiff = new Date().getTime() - info[0];
 
-        let hit = new Hit(Modules.Hits.Poison, info[2]);
+        // if (timeDiff > info[1]) {
+        //     this.player.setPoison('');
+        //     return;
+        // }
 
-        hit.poison = true;
+        // let hit = new Hit(Modules.Hits.Poison, info[2]);
 
-        this.player.combat.hit(this.player, this.player, hit.getData());
+        // hit.poison = true;
+
+        // this.player.combat.hit(this.player, this.player, hit.getData());
     }
 
     canEntitySee(entity: Entity) {

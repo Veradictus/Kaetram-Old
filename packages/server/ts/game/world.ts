@@ -697,7 +697,6 @@ class World {
 
             if (entity.isMob() && entity.isOutsideSpawn()) {
                 entity.removeTarget();
-                entity.combat.forget();
                 entity.combat.stop();
 
                 entity.return();
@@ -722,9 +721,7 @@ class World {
             }
         });
 
-        if (entity instanceof Character) {
-            entity.getCombat().setWorld(this);
-
+        if (entity instanceof Character)
             entity.onStunned((stun: boolean) => {
                 this.push(Packets.PushOpcode.Regions, {
                     regionId: entity.region,
@@ -734,7 +731,7 @@ class World {
                     })
                 });
             });
-        }
+        
     }
 
     addPlayer(player: Player) {
@@ -761,9 +758,9 @@ class World {
         mob.addToChestArea(this.getChestAreas());
 
         mob.onHit((attacker: Character) => {
-            if (mob.isDead() || mob.combat.started) return;
+            if (mob.isDead() || mob.inCombat()) return;
 
-            mob.combat.begin(attacker);
+            mob.combat.attack(attacker);
         });
     }
 

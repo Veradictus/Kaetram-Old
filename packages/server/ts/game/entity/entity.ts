@@ -105,7 +105,7 @@ class Entity {
         return x > y ? x : y;
     }
 
-    setPosition(gridX: number, gridY: number, floatX?: number, floatY?: number) {
+    setPosition(gridX: number, gridY: number, floatX?: number, floatY?: number, running?: boolean) {
         this.x = floatX || this.getFloatPosition(gridX);
         this.y = floatY || this.getFloatPosition(gridY);
         

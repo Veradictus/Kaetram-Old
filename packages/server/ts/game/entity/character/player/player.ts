@@ -673,7 +673,7 @@ class Player extends Character {
     }
 
     incrementCheatScore(amount: number) {
-        if (this.combat.started) return;
+        if (this.inCombat()) return;
 
         this.cheatScore += amount;
 
@@ -851,7 +851,7 @@ class Player extends Character {
         };
     }
 
-    setPosition(gridX: number, gridY: number, floatX?: number, floatY?: number) {
+    setPosition(gridX: number, gridY: number, floatX?: number, floatY?: number, running?: boolean) {
         if (this.dead) return;
 
         if (this.map.isEmpty(gridX, gridY)) {
@@ -862,15 +862,20 @@ class Player extends Character {
 
         super.setPosition(gridX, gridY, floatX, floatY);
 
+        let movementInfo: any = {
+            id: this.instance,
+            x: floatX,
+            y: floatY,
+            forced: false,
+            teleport: false
+        };
+
+        if (running)
+            movementInfo.running = running;
+
         this.sendToAdjacentRegions(
             this.region,
-            new Messages.Movement(Packets.MovementOpcode.Move, {
-                id: this.instance,
-                x: floatX,
-                y: floatY,
-                forced: false,
-                teleport: false
-            }),
+            new Messages.Movement(Packets.MovementOpcode.Move, movementInfo),
             this.instance
         );
     }
@@ -1080,6 +1085,10 @@ class Player extends Character {
 
         otherPlayer.notify(`[From ${oFormattedName}]: ${message}`, 'aquamarine');
         this.notify(`[To ${formattedName}]: ${message}`, 'aquamarine');
+    }
+
+    sendAnimation(animationId, ignoreId?: string) {
+        this.sendToAdjacentRegions(this.region, new Messages.Animation(this.instance, animationId), ignoreId);
     }
 
     sync() {

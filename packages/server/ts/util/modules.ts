@@ -130,6 +130,14 @@ let Modules = {
         Idle: 0,
         Attack: 1,
         Walk: 2
+    },
+
+    Animations: {
+        Move: 'Move',
+        LightAttack: 'LightAttack',
+        HeavyAttack: 'HeavyAttack',
+        FistAttack: 'FistAttack',
+        Ranged: 'Ranged'
     }
 };
 

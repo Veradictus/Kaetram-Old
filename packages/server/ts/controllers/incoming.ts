@@ -14,6 +14,7 @@ import log from '../util/log';
 import Constants from '../util/constants';
 import config from '../../config';
 import Character from '../game/entity/character/character';
+import { Message } from 'discord.js';
 
 class Incoming {
     player: Player;
@@ -309,6 +310,7 @@ class Incoming {
             case Packets.MovementOpcode.Move:
                 let absoluteX = parseFloat(message.shift()),
                     absoluteY = parseFloat(message.shift()),
+                    running: boolean = message.shift(),
                     floatX = absoluteX / this.world.map.tileSize,
                     floatY = absoluteY / this.world.map.tileSize,
                     gridX = Math.floor(floatX),
@@ -322,7 +324,7 @@ class Incoming {
                     return;
                 }
 
-                this.player.setPosition(gridX, gridY, absoluteX, absoluteY);
+                this.player.setPosition(gridX, gridY, absoluteX, absoluteY, running);
 
                 break;
 
@@ -396,30 +398,15 @@ class Incoming {
         let opcode = message.shift();
 
         switch (opcode) {
-            case Packets.CombatOpcode.Initiate:
-                let attacker: any = this.world.getEntityByInstance(message.shift()),
-                    target: any = this.world.getEntityByInstance(message.shift());
+            case Packets.CombatOpcode.Attack:
 
-                if (
-                    !target ||
-                    target.dead ||
-                    !attacker ||
-                    attacker.dead ||
-                    !this.canAttack(attacker, target)
-                )
-                    return;
+                let instance = message.shift(),
+                    attackType = message.shift();
 
-                attacker.setTarget(target);
+                if (instance !== this.player.instance) return;
 
-                if (!attacker.combat.started) attacker.combat.forceAttack();
-                else {
-                    attacker.combat.start();
-
-                    attacker.combat.attack(target);
-                }
-
-                if (target.combat) target.combat.addAttacker(attacker);
-
+               this.player.sendAnimation(attackType, instance);
+                
                 break;
         }
     }
