@@ -328,6 +328,12 @@ class Incoming {
 
                 break;
 
+            case Packets.MovementOpcode.Orientate:
+
+                
+
+                break;
+
         }
     }
 

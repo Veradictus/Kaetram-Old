@@ -66,17 +66,8 @@ Packets.EquipmentOpcode = {
 };
 
 Packets.MovementOpcode = {
-    Request: 0,
-    Started: 1,
-    Step: 2,
-    Stop: 3,
-    Move: 4,
-    Orientate: 5,
-    Follow: 6,
-    Entity: 7,
-    Freeze: 8,
-    Stunned: 9,
-    Zone: 10
+    Move: 0,
+    Orientate: 1
 };
 
 Packets.TargetOpcode = {
