@@ -181,19 +181,7 @@ class Network {
             if (player) this.pushToPlayer(player, message);
         });
     }
-
-    /**
-     * Sends a message to the region the player just left from
-     */
-
-    pushToOldRegions(player: Player, message: any) {
-        _.each(player.recentRegions, (id: string) => {
-            this.pushToRegion(id, message);
-        });
-
-        player.recentRegions = [];
-    }
-
+    
     getSocketTime(connection: Connection) {
         return this.socket.ips[connection.socket.conn.remoteAddress];
     }

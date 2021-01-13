@@ -673,11 +673,6 @@ class World {
                 this.network.pushToNameArray(info.names, info.message);
 
                 break;
-
-            case Packets.PushOpcode.OldRegions:
-                this.network.pushToOldRegions(info.player, info.message);
-
-                break;
         }
     }
 

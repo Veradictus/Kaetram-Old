@@ -217,8 +217,7 @@ Packets.PushOpcode = {
     Players: 3,
     Region: 4,
     Regions: 5,
-    NameArray: 6,
-    OldRegions: 7
+    NameArray: 6
 };
 
 Packets.CommandOpcode = {
