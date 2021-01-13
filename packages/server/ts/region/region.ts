@@ -38,7 +38,6 @@ class Region {
     clientHeight: number;
 
     addCallback: Function;
-    removeCallback: Function;
     incomingCallback: Function;
 
     constructor(world: World) {
@@ -63,10 +62,6 @@ class Region {
 
                 this.sendRegion(entity, regionId);
             }
-        });
-
-        this.onRemove((entity: Entity, oldRegions: any) => {
-            if (!oldRegions || oldRegions.length < 1 || !entity || !entity.username) return;
         });
 
         this.onIncoming((entity: Entity, regionId: string) => {
@@ -301,7 +296,7 @@ class Region {
         _.each(this.regions[regionId].incoming, (entity: Entity) => {
             if (!entity || !entity.instance || entity.instanced) return;
 
-            this.world.push(Packets.PushOpcode.Regions, {
+            this.world.push(Packets.PushOpcode.Region, {
                 regionId: regionId,
                 message: new Messages.Spawn(entity),
                 ignoreId: entity.isPlayer() ? entity.instance : null
@@ -349,13 +344,16 @@ class Region {
                 if (this.regions[id] && entity.instance in this.regions[id].entities) {
                     delete this.regions[id].entities[entity.instance];
                     oldRegions.push(id);
+
+                    this.world.push(Packets.PushOpcode.Region, {
+                        regionId: id,
+                        message: new Messages.Despawn(entity.instance)
+                    });
                 }
             });
 
             entity.region = null;
         }
-
-        if (this.removeCallback) this.removeCallback(entity, oldRegions);
 
         return oldRegions;
     }
@@ -384,7 +382,7 @@ class Region {
 
             this.incoming(entity, regionId);
 
-            const oldRegions = this.remove(entity),
+            let oldRegions = this.remove(entity),
                 newRegions = this.add(entity, regionId);
 
             if (_.size(oldRegions) > 0) entity.recentRegions = _.difference(oldRegions, newRegions);
@@ -508,10 +506,6 @@ class Region {
 
     onAdd(callback: Function) {
         this.addCallback = callback;
-    }
-
-    onRemove(callback: Function) {
-        this.removeCallback = callback;
     }
 
     onIncoming(callback: Function) {
