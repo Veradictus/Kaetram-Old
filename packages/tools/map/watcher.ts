@@ -14,7 +14,7 @@ class Watcher {
     constructor() {
         this.map = process.argv[2];
         this.parser = new ParseMap(this.map);
-
+        
         if (!this.parser.ready) {
             log.error('The map file could not be loaded.');
             return;
@@ -24,6 +24,8 @@ class Watcher {
 
         this.parser.onMap((message) => {
             log.notice(message);
+
+            if (!process.argv[3]) return;
 
             if (!this.ready) this.load();
         });

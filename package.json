@@ -13,7 +13,8 @@
         "lint": "eslint \"./packages/**/*.ts\"",
         "test": "",
         "helper": "yarn packages helper",
-        "map": "yarn packages map"
+        "map": "yarn packages map",
+        "watcher": "yarn packages watcher"
     },
     "devDependencies": {
         "@typescript-eslint/eslint-plugin": "^4.1.0",

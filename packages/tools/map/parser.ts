@@ -1,3 +1,4 @@
+import area from '@kaetram/server/dist/ts/map/area';
 import _, { property } from 'lodash';
 import zlib from 'zlib';
 
@@ -42,14 +43,14 @@ export default class Parser {
             rockIndexes: [],
             pvpAreas: [],
             gameAreas: [],
-            doors: {},
+            doors: [],
             musicAreas: [],
             chestAreas: [],
             chests: [],
             overlayAreas: [],
             cameraAreas: [],
             achievementAreas: [],
-            warps: {},
+            warps: [], // TOOD - Remove
             layers: []
         }
 
@@ -260,224 +261,35 @@ export default class Parser {
      */
 
     parseObjectLayer(layer: any) {
-        const name = layer.name.toLowerCase();
+        let name = layer.name.toLowerCase(),
+            objects = layer.objects;
 
-        switch (name) {
-            case 'doors': {
-                const doors = layer.objects;
+        if (!objects) return;
 
-                _.each(doors, door => {
-                    if (door.properties.length > 2) {
-                        this.map.doors[door.id] = {
-                            o: door.properties[0].value,
-                            tx: parseInt(door.properties[1].value),
-                            ty: parseInt(door.properties[2].value),
-                            x: door.x / 16,
-                            y: door.y / 16
-                        };
-                    }
-                });
+        _.each(objects, info => {
+            this.parseObject(name, info);
+        });
+    }
 
-                break;
-            }
+    /**
+     * 
+     * @param name The object info in the map that we are storing the data in.
+     * @param info The raw data received from Tiled.
+     */
 
-            case 'warps': {
-                const warps = layer.objects;
+    parseObject(name: string, info: any) {
+        let object = {
+            x: info.x / this.map.tileSize,
+            y: info.y / this.map.tileSize,
+            width: info.width,
+            height: info.height
+        };
 
-                _.each(warps, warp => {
-                    this.map.warps[warp.name] = {
-                        x: warp.x / 16,
-                        y: warp.y / 16
-                    };
+        _.each(info.properties, property => {
+            object[property.name] = property.value;
+        });
 
-                    _.each(warp.properties, (property) => {
-                        if (property.name === 'level')
-                            property.value = parseInt(property.value);
-
-                        this.map.warps[warp.name][property.name] = property.value;
-                    });
-                });
-
-                break;
-            }
-
-            case 'chestareas': {
-                const cAreas = layer.objects;
-
-                _.each(cAreas, area => {
-                    const chestArea = {
-                        x: area.x / this.map.tileSize,
-                        y: area.y / this.map.tileSize,
-                        width: area.width / this.map.tileSize,
-                        height: area.height / this.map.tileSize
-                    };
-
-                    _.each(area.properties, (property) => {
-                        chestArea['t' + property.name] = property.value;
-                    });
-
-                    this.map.chestAreas.push(chestArea);
-                });
-
-                break;
-            }
-
-            case 'chests': {
-                const chests = layer.objects;
-
-                _.each(chests, chest => {
-                    const oChest: { [key: string]: number } = {
-                        x: chest.x / this.map.tileSize,
-                        y: chest.y / this.map.tileSize
-                    };
-
-                    _.each(chest.properties, (property) => {
-                        if (property.name === 'items') oChest.i = property.value.split(',');
-                        else oChest[property.name] = property.value;
-                    });
-
-                    this.map.chests.push(oChest);
-                });
-
-                break;
-            }
-
-            case 'lights': {
-                const lights = layer.objects;
-
-                _.each(lights, lightObject => {
-                    const light = {
-                        x: lightObject.x / 16 + 0.5,
-                        y: lightObject.y / 16 + 0.5
-                    };
-
-                    _.each(lightObject.properties, (property) => {
-                        light[property.name] = property.value;
-                    });
-
-                    this.map.lights.push(light);
-                });
-
-                break;
-            }
-
-            case 'music': {
-                const mAreas = layer.objects;
-
-                _.each(mAreas, area => {
-                    const musicArea = {
-                        x: area.x / this.map.tileSize,
-                        y: area.y / this.map.tileSize,
-                        width: area.width / this.map.tileSize,
-                        height: area.height / this.map.tileSize
-                    };
-
-                    _.each(area.properties, (property) => {
-                        musicArea[property.name] = property.value;
-                    });
-
-                    this.map.musicAreas.push(musicArea);
-                });
-
-                break;
-            }
-
-            case 'pvp': {
-                const pAreas = layer.objects;
-
-                _.each(pAreas, area => {
-                    const pvpArea = {
-                        x: area.x / this.map.tileSize,
-                        y: area.y / this.map.tileSize,
-                        width: area.width / this.map.tileSize,
-                        height: area.height / this.map.tileSize
-                    };
-
-                    this.map.pvpAreas.push(pvpArea);
-                });
-
-                break;
-            }
-
-            case 'overlays': {
-                const overlayAreas = layer.objects;
-
-                _.each(overlayAreas, area => {
-                    const oArea = {
-                        id: area.id,
-                        x: area.x / this.map.tileSize,
-                        y: area.y / this.map.tileSize,
-                        width: area.width / this.map.tileSize,
-                        height: area.height / this.map.tileSize
-                    };
-
-                    _.each(area.properties, (property) => {
-                        oArea[property.name] = isNaN(property.value)
-                            ? property.value
-                            : parseFloat(property.value);
-                    });
-
-                    this.map.overlayAreas.push(oArea);
-                });
-
-                break;
-            }
-
-            case 'camera': {
-                const cameraAreas = layer.objects;
-
-                _.each(cameraAreas, area => {
-                    const cArea = {
-                        id: area.id,
-                        x: area.x / this.map.tileSize,
-                        y: area.y / this.map.tileSize,
-                        width: area.width / this.map.tileSize,
-                        height: area.height / this.map.tileSize,
-                        type: area.properties[0].value
-                    };
-
-                    this.map.cameraAreas.push(cArea);
-                });
-
-                break;
-            }
-
-            case 'achievements': {
-                const achievementAreas = layer.objects;
-
-                _.each(achievementAreas, area => {
-                    const achievementArea = {
-                        id: area.id,
-                        x: area.x / this.map.tileSize,
-                        y: area.y / this.map.tileSize,
-                        width: area.width / this.map.tileSize,
-                        height: area.height / this.map.tileSize,
-                        achievement: area.properties[0].value
-                    };
-
-                    this.map.achievementAreas.push(achievementArea);
-                });
-
-                break;
-            }
-
-            case 'games': {
-                const gAreas = layer.objects;
-
-                _.each(gAreas, area => {
-                    const gameArea = {
-                        x: area.x / this.map.tileSize,
-                        y: area.y / this.map.tileSize,
-                        width: area.width / this.map.tileSize,
-                        height: area.height / this.map.tileSize
-                    };
-
-                    this.map.gameAreas.push(gameArea);
-                });
-
-                break;
-            }
-        }
+        this.map[name].push(object);
     }
 
     /* The way Tiled processes polygons is by using the first point

@@ -6,7 +6,8 @@
     "license": "MPL-2.0",
     "scripts": {
         "helper": "ts-node map/helper",
-        "map": "cd map && ts-node watcher data/map.json"
+        "map": "cd map && ts-node watcher data/map.json",
+        "watcher": "cd map && ts-node watcher data/map.json 1"
     },
     "dependencies": {
         "lodash": "^4.17.20"
