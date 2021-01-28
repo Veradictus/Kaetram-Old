@@ -12,7 +12,7 @@ class Watcher {
     ready: boolean;
 
     constructor() {
-        this.map = process.argv[2];
+        this.map = this.getMap();
         this.parser = new ParseMap(this.map);
         
         if (!this.parser.ready) {
@@ -22,10 +22,10 @@ class Watcher {
 
         this.parser.parse();
 
-        this.parser.onMap((message) => {
+        this.parser.onMap((message: string) => {
             log.notice(message);
 
-            if (!process.argv[3]) return;
+            if (!this.isWatcher()) return;
 
             if (!this.ready) this.load();
         });
@@ -51,13 +51,21 @@ class Watcher {
 
         let checksum = Utils.getChecksum(data);
 
-        console.log('Watcher Checksum: ' + checksum);
-        console.log('Parser Checksum: ' + this.parser.checksum);
+        log.debug('Watcher Checksum: ' + checksum);
+        log.debug('Parser Checksum: ' + this.parser.checksum);
 
         if (checksum === this.parser.checksum)
             return;
 
         this.parser.parse();
+    }
+
+    isWatcher() {
+        return process.argv.length > 3;
+    }
+
+    getMap() {
+        return this.isWatcher() ? process.argv[3] : process.argv[2];
     }
 }
 

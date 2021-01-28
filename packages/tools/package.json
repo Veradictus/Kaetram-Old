@@ -7,7 +7,7 @@
     "scripts": {
         "helper": "ts-node map/helper",
         "map": "cd map && ts-node watcher data/map.json",
-        "watcher": "cd map && ts-node watcher data/map.json 1"
+        "watcher": "cd map && ts-node watcher 1"
     },
     "dependencies": {
         "lodash": "^4.17.20"
