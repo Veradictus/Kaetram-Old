@@ -1,4 +1,3 @@
-import area from '@kaetram/server/dist/ts/map/area';
 import _, { property } from 'lodash';
 import zlib from 'zlib';
 
