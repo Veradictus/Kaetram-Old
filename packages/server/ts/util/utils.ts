@@ -117,6 +117,8 @@ export default {
      */
 
     compressData(data: string, compression = 'gzip'): string {
+        if (!data) return null;
+
         return compression === 'gzip' ? 
             zlib.gzipSync(data).toString('base64') : 
             zlib.deflateSync(data).toString('base64');
