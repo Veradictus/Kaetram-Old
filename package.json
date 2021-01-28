@@ -8,6 +8,7 @@
     "scripts": {
         "packages": "yarn workspaces foreach --exclude kaetram -piv run",
         "dev": "yarn packages dev",
+        "run": "yarn packages run",
         "start": "yarn packages start",
         "build": "yarn packages build",
         "lint": "eslint \"./packages/**/*.ts\"",

@@ -7,6 +7,7 @@
     "main": "./dist/main.js",
     "scripts": {
         "start": "node ./dist/ts/main.js",
+        "run": "ts-node ./ts/main.ts",
         "dev": "ts-node-dev ./ts/main.ts",
         "build": "tsc"
     },
