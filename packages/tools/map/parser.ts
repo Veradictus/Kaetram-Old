@@ -260,10 +260,14 @@ export default class Parser {
      */
 
     parseObjectLayer(layer: any) {
-        let name = layer.name.toLowerCase(),
+        let name = layer.name,
             objects = layer.objects;
 
         if (!objects) return;
+        if (!(name in this.map)) {
+            log.warning(`${name} object info does not exist in the map interface.`);
+            return;
+        };
 
         _.each(objects, info => {
             this.parseObject(name, info);

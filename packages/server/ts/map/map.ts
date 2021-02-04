@@ -7,6 +7,7 @@ import Grids from './grids';
 import Regions from './regions';
 import Utils from '../util/utils';
 import Modules from '../util/modules';
+import DoorAreas from './areas/doorareas';
 import PVPAreas from './areas/pvpareas';
 import MusicAreas from './areas/musicareas';
 import ChestAreas from './areas/chestareas';
@@ -128,7 +129,6 @@ class Map {
         this.areas = {};
 
         this.loadAreas();
-        this.loadDoors();
 
         this.ready = true;
 
@@ -166,44 +166,7 @@ class Map {
         this.areas['Overlays'] = new OverlayAreas();
         this.areas['Cameras'] = new CameraAreas();
         this.areas['Achievements'] = new AchievementAreas();
-    }
-
-    loadDoors() {
-        this.doors = {};
-
-        _.each(map.doors, (door: any) => {
-            let orientation: number;
-
-            switch (door.o) {
-                case 'u':
-                    orientation = Modules.Orientation.Up;
-                    break;
-
-                case 'd':
-                    orientation = Modules.Orientation.Down;
-                    break;
-
-                case 'l':
-                    orientation = Modules.Orientation.Left;
-                    break;
-
-                case 'r':
-                    orientation = Modules.Orientation.Right;
-                    break;
-            }
-
-            let index = this.gridPositionToIndex(door.x, door.y) + 1;
-
-            this.doors[index] = {
-                x: door.tx,
-                y: door.ty,
-                orientation: orientation,
-                portal: door.p ? door.p : 0,
-                level: door.l,
-                achievement: door.a,
-                rank: door.r
-            };
-        });
+        this.areas['Doors'] = new DoorAreas();
     }
 
     loadStaticEntities() {

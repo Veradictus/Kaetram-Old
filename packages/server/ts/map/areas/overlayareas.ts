@@ -1,35 +1,22 @@
-/* global module */
-
-import _ from 'lodash';
 import Area from '../area';
+import Areas from './areas';
+import World from '@kaetram/ts/game/world';
+
 import map from '../../../data/map/world.json';
-import log from '../../util/log';
 
-class OverlayAreas {
-    overlayAreas: any;
+export default class OverlayAreas extends Areas {
 
-    constructor() {
-        this.overlayAreas = [];
+    constructor(world?: World) {
+        super(world);
 
-        this.load();
-    }
+        super.load(map.overlayAreas, (overlayArea: Area, rawData: any) => {
+            overlayArea.darkness = rawData.darkness;
+            overlayArea.type = rawData.type;
 
-    load() {
-        let list = map.overlayAreas;
-
-        _.each(list, (o: any) => {
-            let overlayArea: any = new Area(o.id, o.x, o.y, o.width, o.height);
-
-            overlayArea.darkness = o.darkness;
-            overlayArea.type = o.type;
-
-            if (o.fog) overlayArea.fog = o.fog;
-
-            this.overlayAreas.push(overlayArea);
+            if (rawData.fog) overlayArea.fog = rawData.fog;
         });
 
-        log.info('Loaded ' + this.overlayAreas.length + ' overlay areas.');
+        super.message('camera');
     }
-}
 
-export default OverlayAreas;
+}

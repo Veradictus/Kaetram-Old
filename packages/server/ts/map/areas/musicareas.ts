@@ -1,28 +1,16 @@
-/* global module */
+import Areas from './areas';
+import World from '@kaetram/ts/game/world';
 
-import _ from 'lodash';
-import Area from '../area';
 import map from '../../../data/map/world.json';
-import log from '../../util/log';
 
-class MusicAreas {
-    musicAreas: any;
+export default class MusicAreas extends Areas {
 
-    constructor() {
-        this.musicAreas = [];
+    constructor(world?: World) {
+        super(world);
 
-        this.load();
+        super.load(map.musicAreas);
+
+        super.message('music');
     }
 
-    load() {
-        _.each(map.musicAreas, (m) => {
-            let musicArea = new Area(m.id, m.x, m.y, m.width, m.height);
-
-            this.musicAreas.push(musicArea);
-        });
-
-        log.info('Loaded ' + this.musicAreas.length + ' music areas.');
-    }
 }
-
-export default MusicAreas;

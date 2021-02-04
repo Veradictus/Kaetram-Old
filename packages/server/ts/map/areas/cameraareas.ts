@@ -1,32 +1,19 @@
-/* global module */
-
-import _ from 'lodash';
 import Area from '../area';
+import Areas from './areas';
+import World from '@kaetram/ts/game/world';
+
 import map from '../../../data/map/world.json';
-import log from '../../util/log';
 
-class CameraAreas {
-    cameraAreas: any;
+export default class CameraAreas extends Areas {
 
-    constructor() {
-        this.cameraAreas = [];
+    constructor(world?: World) {
+        super(world);
 
-        this.load();
-    }
-
-    load() {
-        let list = map.cameraAreas;
-
-        _.each(list, (o) => {
-            let cameraArea: any = new Area(o.id, o.x, o.y, o.width, o.height);
-
-            cameraArea.type = o.type;
-
-            this.cameraAreas.push(cameraArea);
+        super.load(map.cameraAreas, (cameraArea: Area, rawData: any) => {
+            cameraArea.cameraType = rawData.type;
         });
 
-        log.info('Loaded ' + this.cameraAreas.length + ' camera areas.');
+        super.message('camera');
     }
-}
 
-export default CameraAreas;
+}

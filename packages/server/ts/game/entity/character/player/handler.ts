@@ -18,6 +18,7 @@ import Entity from '../../entity';
 import Map from '../../../../map/map';
 import Area from '../../../../map/area';
 import Doors from './doors';
+import Areas from '@kaetram/ts/map/areas/areas';
 
 class Handler {
     player: Player;
@@ -48,7 +49,7 @@ class Handler {
     load() {
         this.updateInterval = setInterval(() => {
             this.detectAggro();
-            this.detectPVP(this.player.gridX, this.player.gridY);
+            //this.detectPVP(this.player.gridX, this.player.gridY);
 
             //if (this.updateTicks % 4 === 0)
                 // Every 4 (1.6 seconds) update ticks.
@@ -73,11 +74,12 @@ class Handler {
 
             this.player.checkRegions();
 
-            this.detectMusic(x, y);
+            /*this.detectMusic(x, y);
             this.detectOverlay(x, y);
             this.detectLights(x, y);
             this.detectAchievements(x, y);
-            this.detectCamera(x, y);
+            this.detectCamera(x, y);*/
+
             //this.detectClipping(x, y);
 
             this.detectDoor(x, y);
@@ -223,7 +225,15 @@ class Handler {
         });
     }
 
-    detectMusic(x: number, y: number) {
+    detectAreas(x: number, y: number) {
+        _.each(this.world.getAreas(), (area: Areas) => {
+            if (!area.inArea(x, y)) return;
+
+            
+        });
+    }
+
+    /*detectMusic(x: number, y: number) {
         let musicArea = _.find(this.world.getMusicAreas(), (area: Area) => {
                 return area.contains(x, y);
             }),
@@ -241,7 +251,6 @@ class Handler {
     }
 
     detectOverlay(x: number, y: number) {
-        let overlayArea = _.find(this.world.getOverlayAreas(), (area: Area) => {
             return area.contains(x, y);
         });
 
@@ -266,7 +275,7 @@ class Handler {
         if (!this.player.achievementsLoaded) return;
 
         this.player.finishAchievement(achievementArea.achievement);
-    }
+    }*/
 
     detectLights(x: number, y: number) {
         _.each(this.map.lights, (light) => {

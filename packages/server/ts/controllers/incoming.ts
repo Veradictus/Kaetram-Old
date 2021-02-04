@@ -800,7 +800,7 @@ class Incoming {
         console.log(message);
 
         this.player.cameraArea = null;
-        this.player.handler.detectCamera(this.player.gridX, this.player.gridY);
+        //this.player.handler.detectCamera(this.player.gridX, this.player.gridY);
     }
 
     /**

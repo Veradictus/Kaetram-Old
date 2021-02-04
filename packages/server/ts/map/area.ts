@@ -4,29 +4,39 @@ import Mob from '../game/entity/character/mob/mob';
 import Player from '../game/entity/character/player/player';
 
 class Area {
-    id: any;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
+    public x: number;
+    public y: number;
+    public width: number;
+    public height: number;
 
-    entities: any;
-    chest: any;
-    items: any;
+    public entities: any;
+    public chest: any;
+    public items: any;
 
-    hasRespawned: boolean;
+    public hasRespawned: boolean;
 
-    maxEntities: number;
-    spawnDelay: number;
+    // Overlay properties
+    public darkness: string;
+    public type: string;
+    public fog: boolean;
 
-    spawnCallback: Function;
-    emptyCallback: Function;
+    // Properties it can hold
+    public achievement: number;
+    public cameraType: string;
 
-    achievement: any;
+    // Chest coordinates
+    public cx: number;
+    public cy: number;
 
-    constructor(id: number, x: number, y: number, width: number, height: number) {
-        this.id = id;
+    public maxEntities: number;
+    public spawnDelay: number;
+    public lastSpawn: number;
 
+    private spawnCallback: Function;
+    private emptyCallback: Function;
+
+
+    constructor(x: number, y: number, width: number, height: number) {
         this.x = x;
         this.y = y;
 
@@ -53,7 +63,7 @@ class Area {
         this.entities.push(mob);
         mob.area = this;
 
-        // Grab a spawn delay from an mob to create an offset for the chest.
+        // Grab a spawn delay from a mob to create an offset for the chest.
         if (!this.spawnDelay) this.spawnDelay = mob.respawnDelay;
 
         if (this.spawnCallback) this.spawnCallback();

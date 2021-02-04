@@ -894,28 +894,12 @@ class World {
         });
     }
 
-    getPVPAreas() {
-        return this.map.areas['PVP'].pvpAreas;
-    }
-
-    getMusicAreas() {
-        return this.map.areas['Music'].musicAreas;
+    getAreas() {
+        return this.map.areas;
     }
 
     getChestAreas() {
         return this.map.areas['Chests'].chestAreas;
-    }
-
-    getOverlayAreas() {
-        return this.map.areas['Overlays'].overlayAreas;
-    }
-
-    getCameraAreas() {
-        return this.map.areas['Cameras'].cameraAreas;
-    }
-
-    getAchievementAreas() {
-        return this.map.areas['Achievements'].achievementAreas;
     }
 
     getGrids() {

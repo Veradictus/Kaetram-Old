@@ -1,35 +1,24 @@
-/* global module */
-
-import _ from 'lodash';
 import Area from '../area';
-import World from '../../game/world';
+import Areas from './areas';
+import World from '@kaetram/ts/game/world';
+import Utils from '../../util/utils';
+
 import map from '../../../data/map/world.json';
-import log from '../../util/log';
 
-class ChestAreas {
-    world: World;
-    chestAreas: any;
+export default class ChestAreas extends Areas {
 
-    constructor(world: World) {
-        this.world = world;
+    constructor(world?: World) {
+        super(world);
 
-        this.chestAreas = [];
+        super.load(map.chestAreas, (chestArea: Area, rawData: any) => {
+            chestArea.maxEntities = rawData.entities || 0;
+            chestArea.items = rawData.items.split(',');
 
-        this.load();
-    }
+            chestArea.cx = rawData.cx;
+            chestArea.cy = rawData.cy;
 
-    load() {
-        _.each(map.chestAreas, (m: any) => {
-            let chestArea: any = new Area(m.id, m.x, m.y, m.width, m.height);
-
-            chestArea.maxEntities = m.entities || 0;
-            chestArea.items = m.titems.split(',');
-            chestArea.cX = parseInt(m.tx);
-            chestArea.cY = parseInt(m.ty);
-
-            if (m.tachievement) chestArea.achievement = parseInt(m.tachievement);
-
-            this.chestAreas.push(chestArea);
+            if (rawData.achievement)
+                chestArea.achievement = rawData.achievement;
 
             chestArea.onEmpty(() => {
                 this.spawnChest(chestArea);
@@ -40,29 +29,28 @@ class ChestAreas {
             });
         });
 
-        log.info('Loaded ' + this.chestAreas.length + ' chest areas.');
+        super.message('chest');
     }
 
-    spawnChest(chestArea: any) {
-        if (new Date().getTime() - chestArea.lastSpawn < chestArea.spawnDelay) return;
+    spawnChest(chestArea: Area) {
+        if (Utils.timePassed(chestArea.lastSpawn, chestArea.spawnDelay)) return;
 
         chestArea.chest = this.world.spawnChest(
             chestArea.items,
-            chestArea.cX,
-            chestArea.cY,
-            null,
-            false
+            chestArea.cx,
+            chestArea.cy,
+            null, false
         );
-        chestArea.lastSpawn = new Date().getTime();
+
+        chestArea.lastSpawn = Date.now();
     }
 
-    removeChest(chestArea: any) {
+    removeChest(chestArea: Area) {
         if (!chestArea.chest) return;
 
         this.world.removeChest(chestArea.chest);
-
+        
         chestArea.chest = null;
     }
-}
 
-export default ChestAreas;
+}
