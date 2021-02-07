@@ -15,7 +15,7 @@ export default class Areas {
 
     load(mapAreas: any, callback?: Function) {
         _.each(mapAreas, (a: any) => {
-            let area: Area = new Area(a.x, a.y, a.width, a.height);
+            let area: Area = new Area(a.id, a.x, a.y, a.width, a.height);
 
             this.areas.push(area);
 

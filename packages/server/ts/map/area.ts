@@ -6,6 +6,7 @@ import Player from '../game/entity/character/player/player';
 import Constants from '../util/constants';
 
 class Area {
+    public id: number;
     public x: number;
     public y: number;
     public width: number;
@@ -28,8 +29,8 @@ class Area {
     public song: string;
 
     // Door coordinates
-    public tx: number;
-    public ty: number;
+    public destinationId: number;
+    public destination: Area;
 
     // Chest coordinates
     public cx: number;
@@ -43,7 +44,9 @@ class Area {
     private emptyCallback: Function;
 
 
-    constructor(x: number, y: number, width: number, height: number) {
+    constructor(id: number, x: number, y: number, width: number, height: number) {
+        this.id = id;
+
         this.x = x;
         this.y = y;
 
