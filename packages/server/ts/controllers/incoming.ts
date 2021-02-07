@@ -324,7 +324,7 @@ class Incoming {
                     return;
                 }
 
-                this.player.setPosition(gridX, gridY, absoluteX, absoluteY, running);
+                this.player.setPosition(gridX, gridY, floatX, floatY, running);
 
                 break;
 

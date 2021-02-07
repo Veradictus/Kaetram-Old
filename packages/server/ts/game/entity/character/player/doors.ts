@@ -4,6 +4,7 @@ import World from '../../../world';
 import Player from './player';
 import Map from '../../../../map/map';
 import Regions from '../../../../map/regions';
+import Area from '@kaetram/ts/map/area';
 
 import DoorData from '../../../../../data/doors.json';
 
@@ -14,9 +15,7 @@ class Doors {
     public regions: Regions;
 
     public doors: any;
-    
-    public lastDestX: number;
-    public lastDestY: number;
+    public lastDoor: Area;
 
     constructor(player: Player) {
         this.world = player.world;

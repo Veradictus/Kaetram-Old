@@ -198,7 +198,7 @@ class Character extends Entity {
 
         super.setPosition(gridX, gridY, floatX, floatY);
 
-        if (this.movementCallback) this.movementCallback(gridX, gridY);
+        if (this.movementCallback) this.movementCallback(floatX, floatY);
     }
 
     setTarget(target: any) {

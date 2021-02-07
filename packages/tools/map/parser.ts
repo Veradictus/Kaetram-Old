@@ -284,8 +284,8 @@ export default class Parser {
         let object = {
             x: info.x / this.map.tileSize,
             y: info.y / this.map.tileSize,
-            width: info.width,
-            height: info.height
+            width: info.width / this.map.tileSize,
+            height: info.height / this.map.tileSize
         };
 
         _.each(info.properties, property => {

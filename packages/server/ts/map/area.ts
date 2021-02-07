@@ -3,6 +3,8 @@
 import Mob from '../game/entity/character/mob/mob';
 import Player from '../game/entity/character/player/player';
 
+import Constants from '../util/constants';
+
 class Area {
     public x: number;
     public y: number;
@@ -23,6 +25,11 @@ class Area {
     // Properties it can hold
     public achievement: number;
     public cameraType: string;
+    public song: string;
+
+    // Door coordinates
+    public tx: number;
+    public ty: number;
 
     // Chest coordinates
     public cx: number;
@@ -40,8 +47,8 @@ class Area {
         this.x = x;
         this.y = y;
 
-        this.width = width;
-        this.height = height;
+        this.width = width + Constants.POSITION_OFFSET;
+        this.height = height + Constants.POSITION_OFFSET;
 
         this.entities = [];
         this.items = [];

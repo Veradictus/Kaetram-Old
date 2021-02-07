@@ -66,23 +66,10 @@ class Handler {
             this.updateTicks++;
         }, 400);
 
-        this.player.onMovement((x: number, y: number) => {
-            if (this.player.doors.lastDestX !== x && this.player.doors.lastDestY !== y) {
-                this.player.doors.lastDestX = -1;
-                this.player.doors.lastDestY = -1;
-            }
-
+        this.player.onMovement((floatX: number, floatY: number) => {
             this.player.checkRegions();
 
-            /*this.detectMusic(x, y);
-            this.detectOverlay(x, y);
-            this.detectLights(x, y);
-            this.detectAchievements(x, y);
-            this.detectCamera(x, y);*/
-
-            //this.detectClipping(x, y);
-
-            this.detectDoor(x, y);
+            this.detectAreas(floatX, floatY);
         });
 
         this.player.onDeath(() => {
@@ -226,56 +213,44 @@ class Handler {
     }
 
     detectAreas(x: number, y: number) {
-        _.each(this.world.getAreas(), (area: Areas) => {
-            if (!area.inArea(x, y)) return;
+        _.each(this.world.getAreas(), (area: Areas, name: string) => {
+            let info = area.inArea(x, y);
 
-            
+            switch (name.toLowerCase()) {
+                case 'pvp':
+                    this.player.updatePVP(!!info);
+                    break;
+
+                case 'music':
+                    if (info && this.player.currentSong !== info.song)
+                        this.player.updateMusic(info.song);
+
+                    break;
+
+                case 'overlays':
+                    this.player.updateOverlay(info);
+                    break;
+
+                case 'camera':
+                    this.player.updateCamera(info);
+                    break;
+
+                case 'achievements':
+
+                    if (!info || !info.achievement) return;
+
+                    if (!this.player.achievementsLoaded) return;
+
+                    this.player.finishAchievement(info.achievement);
+
+                    break;
+
+                case 'doors':
+                    this.handleDoor(info);
+                    break;
+            }
         });
     }
-
-    /*detectMusic(x: number, y: number) {
-        let musicArea = _.find(this.world.getMusicAreas(), (area: Area) => {
-                return area.contains(x, y);
-            }),
-            song = musicArea ? musicArea.id : null;
-
-        if (this.player.currentSong !== song) this.player.updateMusic(song);
-    }
-
-    detectPVP(x: number, y: number) {
-        let pvpArea = _.find(this.world.getPVPAreas(), (area: Area) => {
-            return area.contains(x, y);
-        });
-
-        this.player.updatePVP(!!pvpArea);
-    }
-
-    detectOverlay(x: number, y: number) {
-            return area.contains(x, y);
-        });
-
-        this.player.updateOverlay(overlayArea);
-    }
-
-    detectCamera(x: number, y: number) {
-        let cameraArea = _.find(this.world.getCameraAreas(), (area: Area) => {
-            return area.contains(x, y);
-        });
-
-        this.player.updateCamera(cameraArea);
-    }
-
-    detectAchievements(x: number, y: number) {
-        let achievementArea = _.find(this.world.getAchievementAreas(), (area: Area) => {
-            return area.contains(x, y);
-        });
-
-        if (!achievementArea || !achievementArea.achievement) return;
-
-        if (!this.player.achievementsLoaded) return;
-
-        this.player.finishAchievement(achievementArea.achievement);
-    }*/
 
     detectLights(x: number, y: number) {
         _.each(this.map.lights, (light) => {
@@ -296,24 +271,13 @@ class Handler {
         this.player.incoming.handleNoClip(x, y);
     }
 
-    detectDoor(x: number, y: number) {
-        if (this.player.doors.lastDestX === x && this.player.doors.lastDestY === y)
-            return;
+    handleDoor(doorArea: Area) {
+        if (!doorArea) return;
+        if (this.player.doors.lastDoor === doorArea) return;
 
-        if (!this.map.isDoor(x, y))
-            return;
+        this.player.teleport(doorArea.tx, doorArea.ty);
 
-        let door = this.player.doors.getDoor(x, y);
-
-        if (door && this.player.doors.getStatus(door) === 'closed')
-            return;
-
-        let destination = this.map.getDoorDestination(x, y);
-
-        this.player.doors.lastDestX = destination.x;
-        this.player.doors.lastDestY = destination.y;
-
-        this.player.teleport(destination.x, destination.y, true);
+        this.player.doors.lastDoor = doorArea;
     }
 
     handlePoison() {
