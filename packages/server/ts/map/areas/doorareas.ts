@@ -22,8 +22,6 @@ export default class DoorAreas extends Areas {
         this.linkDoors();
 
         super.message('door');
-
-        console.log(this.areas);
     }
 
     linkDoors() {

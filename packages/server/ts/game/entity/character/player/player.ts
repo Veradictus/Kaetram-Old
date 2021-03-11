@@ -190,8 +190,6 @@ class Player extends Character {
         this.timeoutDuration = Constants.TIMEOUT_DURATION; //10 minutes
         this.lastRegionChange = new Date().getTime();
 
-        this.handler = new Handler(this);
-
         this.equipment = new Equipments(this);
         this.inventory = new Inventory(this, 20);
         this.professions = new Professions(this);
@@ -203,6 +201,8 @@ class Player extends Character {
         this.trade = new Trade(this);
         this.doors = new Doors(this);
         this.warp = new Warp(this);
+
+        this.handler = new Handler(this);
 
         this.introduced = false;
         this.currentSong = null;
@@ -240,7 +240,7 @@ class Player extends Character {
         this.pvpDeaths = data.pvpDeaths;
         this.orientation = data.orientation;
         this.mapVersion = data.mapVersion;
-
+            
         this.setPosition(data.gridX, data.gridY, data.x, data.y);
         this.warp.setLastWarp(data.lastWarp);
 
@@ -465,6 +465,8 @@ class Player extends Character {
 
         this.world.addPlayer(this);
 
+        console.log(info);
+
         this.send(new Messages.Welcome(info));
     }
 
@@ -614,6 +616,11 @@ class Player extends Character {
     teleport(x: number, y: number, isDoor?: boolean, animate?: boolean) {
         if (this.teleportCallback) this.teleportCallback(x, y, isDoor);
 
+        let isFloatX: boolean = x % 1 !== 0,
+            isFloatY: boolean = y % 1 !== 0,
+            gridX = isFloatX ? Math.floor(x) : x, 
+            gridY = isFloatY ? Math.floor(y) : y;
+
         this.sendToAdjacentRegions(
             this.region,
             new Messages.Teleport({
@@ -624,7 +631,8 @@ class Player extends Character {
             })
         );
 
-        this.setPosition(x, y);
+        this.setPosition(gridX, gridY, isFloatX ? x : undefined, isFloatY ? y : undefined);
+        
         this.world.cleanCombat(this);
     }
 
@@ -859,6 +867,11 @@ class Player extends Character {
             this.sendToSpawn();
             return;
         }
+
+        console.log(`gridX: ${gridX}`);
+        console.log(`gridY: ${gridY}`);
+        console.log(`floatX: ${floatX}`);
+        console.log(`floatY: ${floatY}`);
 
         super.setPosition(gridX, gridY, floatX, floatY);
 

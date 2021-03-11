@@ -120,7 +120,7 @@ class Entity {
         this.oldY = this.gridY;
     }
 
-    getFloatPosition(floatValue) {
+    getFloatPosition(floatValue: number) {
         return floatValue * Map.tileSize + (Map.tileSize / 2);
     }
 

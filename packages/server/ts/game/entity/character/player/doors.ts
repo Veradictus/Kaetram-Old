@@ -15,7 +15,8 @@ class Doors {
     public regions: Regions;
 
     public doors: any;
-    public lastDoor: Area;
+    
+    public ignoreDoor: number; // The door we ignore until we exit the area
 
     constructor(player: Player) {
         this.world = player.world;

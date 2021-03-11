@@ -34,6 +34,7 @@ class Handler {
 
         this.world = player.world;
         this.map = player.world.map;
+        this.doors = player.doors;
 
         this.updateTicks = 0;
         this.updateInterval = null;
@@ -272,12 +273,23 @@ class Handler {
     }
 
     handleDoor(doorArea: Area) {
-        if (!doorArea) return;
-        if (this.player.doors.lastDoor === doorArea) return;
+        if (!doorArea) {
+            this.doors.ignoreDoor = 0;
+            return;
+        }
+        
+        console.log(doorArea);
+        console.log(this.doors.ignoreDoor);
+        
+        if (doorArea.id === this.doors.ignoreDoor) return;
 
-        this.player.teleport(doorArea.tx, doorArea.ty);
+        let x = doorArea.destination.x - (doorArea.width / 2),
+            y = doorArea.destination.y + (doorArea.height / 2);
 
-        this.player.doors.lastDoor = doorArea;
+        console.log(`x: ${x} - y: ${y}`);
+
+        this.doors.ignoreDoor = doorArea.destination.id;
+        this.player.teleport(x, y);
     }
 
     handlePoison() {
