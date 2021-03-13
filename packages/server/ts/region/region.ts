@@ -275,6 +275,13 @@ class Region {
         player.send(new Messages.Region(Packets.RegionOpcode.Tileset, tilesetData));
     }
 
+    sendDoors(player: Player) {
+        let doors = [];
+
+        for (let i in this.map.doors)
+            console.log(this.map.doors[i]);       
+    }
+
     // TODO - Format dynamic tiles to follow same structure as `getRegionData()`
     getDynamicTiles(player: Player) {
         const dynamicTiles: any = player.doors.getAllTiles(),

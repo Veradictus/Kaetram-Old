@@ -9,17 +9,14 @@ class Connection {
     public socket: WS
 
     private server: WebSocket;
-    public rawWebSocket: boolean;
 
-    listenCallback: Function;
-    closeCallback: Function;
+    private listenCallback: Function;
+    private closeCallback: Function;
 
-    constructor(id: string, socket: WS, server: WebSocket, rawWebSocket?: boolean) {
+    constructor(id: string, socket: WS, server: WebSocket) {
         this.id = id;
         this.socket = socket;
         this.server = server;
-
-        this.rawWebSocket = rawWebSocket;
 
         this.socket.on('message', (message: any) => {
             try {
@@ -30,12 +27,12 @@ class Connection {
             }
         });
 
-        this.socket.on(this.rawWebSocket ? 'close' : 'disconnect', () => {
+        this.socket.on('close', () => {
             log.info('Closed socket: ' + this.socket.conn.remoteAddress);
 
             if (this.closeCallback) this.closeCallback();
 
-            this.server.removeConnection(this.id);
+            this.server.remove(this.id);
         });
     }
 
@@ -55,11 +52,10 @@ class Connection {
         this.socket.send(data);
     }
 
-    close(reason: any) {
+    close(reason?: any) {
         if (reason) log.info('[Connection] Closing - ' + reason);
 
-        if (this.rawWebSocket) this.socket.close();
-        else this.socket.conn.close();
+        this.socket.close();
     }
 }
 
