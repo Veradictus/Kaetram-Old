@@ -10,7 +10,8 @@
         "watcher": "cd map && ts-node watcher 1"
     },
     "dependencies": {
-        "lodash": "^4.17.20"
+        "lodash": "^4.17.20",
+        "ws": "^7.4.4"
     },
     "devDependencies": {
         "@types/redis": "^2.8.27",
