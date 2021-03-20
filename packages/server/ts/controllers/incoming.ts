@@ -211,18 +211,9 @@ class Incoming {
 
         this.player.ready = true;
 
-        this.world.region.handle(this.player);
-        this.world.region.push(this.player);
+        this.world.region.syncRegion(this.player);
 
-        this.world.region.sendTilesetInfo(this.player);
-
-        // Maybe move this to later?
-        this.player.sendEquipment();
-
-        this.player.loadProfessions();
-        this.player.loadInventory();
-        this.player.loadQuests();
-        this.player.loadBank();
+        this.player.loadReady();
 
         if (this.player.userAgent !== userAgent) {
             this.player.userAgent = userAgent;

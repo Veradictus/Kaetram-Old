@@ -485,7 +485,7 @@ class World {
             let position = this.map.idToPosition(key),
                 regionId = this.map.regions.regionIdFromPosition(position.gridX, position.gridY);
 
-            this.region.updateRegions(regionId);
+            this.region.updateRegion(regionId);
 
             delete this.cutTrees[key];
         });
@@ -507,7 +507,7 @@ class World {
             let position = this.map.idToPosition(key),
                 regionId = this.map.regions.regionIdFromPosition(position.gridX, position.gridY);
 
-            this.region.updateRegions(regionId);
+            this.region.updateRegion(regionId);
 
             delete this.depletedRocks[key];
         });
@@ -571,7 +571,7 @@ class World {
 
         let regionId = this.map.regions.regionIdFromPosition(position.gridX, position.gridY);
 
-        this.region.updateRegions(regionId);
+        this.region.updateRegion(regionId);
 
         this.trees[id] = {};
     }

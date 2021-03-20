@@ -29,7 +29,7 @@ class Regions {
     }
 
     loadDoors() {
-        const doors = this.map.doors;
+        const doors = this.map.getDoors();
 
         _.each(doors, (door: any) => {
             const regionId = this.regionIdFromPosition(door.x, door.y),

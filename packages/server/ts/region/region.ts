@@ -28,6 +28,8 @@ class Region {
     map: Map;
     mapRegions: Regions;
 
+    doors: any;
+
     world: World;
 
     regions: any;
@@ -43,6 +45,8 @@ class Region {
     constructor(world: World) {
         this.map = world.map;
         this.mapRegions = world.map.regions;
+
+        this.doors = this.map.getDoors();
 
         this.world = world;
 
@@ -184,6 +188,40 @@ class Region {
         });
     }
 
+    /**
+     * We take every player instance within and around the region
+     * and send new data to all those players.
+     * 
+     * @param regionId The region we are updating
+     */
+
+    updateRegion(regionId: string) {
+        this.mapRegions.forEachSurroundingRegion(regionId, (id: string) => {
+            const region = this.regions[id];
+
+            _.each(region.players, (instance: string) => {
+                const player = this.world.players[instance];
+
+                if (player) this.sendRegion(player, player.region);
+            });
+        });
+    }
+
+    syncRegion(player: Player, reset?: boolean) {
+        if (reset) {
+            player.regionsLoaded = [];
+            
+            player.send(new Messages.Region(Packets.RegionOpcode.Reset));
+
+        }
+
+        this.handle(player)
+
+        this.sendRegion(player, player.region, true);
+        this.sendTilesetInfo(player);
+        this.sendDoors(player);
+    }
+
     // If `regionId` is not null, we update adjacent regions
     updateRegions(regionId?: string) {
         if (regionId)
@@ -278,8 +316,15 @@ class Region {
     sendDoors(player: Player) {
         let doors = [];
 
-        for (let i in this.map.doors)
-            console.log(this.map.doors[i]);       
+        for (let i in this.doors)
+            doors.push({
+                x: this.doors[i].x,
+                y: this.doors[i].y,
+                width: this.doors[i].width,
+                height: this.doors[i].height
+            });
+
+        player.send(new Messages.Region(Packets.RegionOpcode.Doors, doors));
     }
 
     // TODO - Format dynamic tiles to follow same structure as `getRegionData()`

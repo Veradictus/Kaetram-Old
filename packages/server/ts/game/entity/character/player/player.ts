@@ -277,6 +277,15 @@ class Player extends Character {
         this.connection = null;
     }
 
+    loadReady() {
+        this.sendEquipment();
+
+        this.loadProfessions();
+        this.loadInventory();
+        this.loadQuests();
+        this.loadBank();
+    }
+
     loadRegions(regions: any) {
         if (!regions) return;
 
@@ -464,8 +473,6 @@ class Player extends Character {
          */
 
         this.world.addPlayer(this);
-
-        console.log(info);
 
         this.send(new Messages.Welcome(info));
     }
@@ -867,12 +874,7 @@ class Player extends Character {
             this.sendToSpawn();
             return;
         }
-
-        console.log(`gridX: ${gridX}`);
-        console.log(`gridY: ${gridY}`);
-        console.log(`floatX: ${floatX}`);
-        console.log(`floatY: ${floatY}`);
-
+        
         super.setPosition(gridX, gridY, floatX, floatY);
 
         let movementInfo: any = {

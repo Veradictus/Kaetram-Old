@@ -57,9 +57,6 @@ class MobHandler {
                 // Prevent movement if the area is empty.
                 if (this.map.isEmpty(newX, newY)) return;
 
-                // Don't have mobs block a door.
-                if (this.map.isDoor(newX, newY)) return;
-
                 // Prevent mobs from going outside of their roaming radius.
                 if (distance < this.mob.maxRoamingDistance) return;
 

@@ -47,7 +47,6 @@ class Map {
     high: any[];
     plateau: any;
     objects: any;
-    doors: any;
     warps: any;
 
     trees: any;
@@ -209,25 +208,6 @@ class Map {
         return y * this.width + x;
     }
 
-    getX(index: number, width: number) {
-        if (index === 0) return 0;
-
-        return index % width === 0 ? width - 1 : (index % width) - 1;
-    }
-
-    getRandomPosition(area: Area) {
-        let pos: any = {},
-            valid = false;
-
-        while (!valid) {
-            pos.x = area.x + Utils.randomInt(0, area.width + 1);
-            pos.y = area.y + Utils.randomInt(0, area.height + 1);
-            valid = this.isValidPosition(pos.x, pos.y);
-        }
-
-        return pos;
-    }
-
     inArea(posX: number, posY: number, x: number, y: number, width: number, height: number) {
         return posX >= x && posY >= y && posX <= width + x && posY <= height + y;
     }
@@ -256,69 +236,11 @@ class Map {
         return this.objects.indexOf(object) > -1;
     }
 
-    getAnimation(tileData: any): any {
-        if (tileData instanceof Array) {
-            for (let i in tileData)
-                if (tileData[i] in this.animations)
-                    return { tileId: tileData[i], name: this.animations[tileData[i]] };
-        } else
-            if (tileData in this.animations)
-                return { tileId: tileData, name: this.animations[tileData] };
-
-        return null;
-    }
-
-    getPositionObject(x: number, y: number) {
-        let index = this.gridPositionToIndex(x, y),
-            tiles: any = this.data[index],
-            objectId: any;
-
-        if (tiles instanceof Array)
-            for (let i in tiles)
-                if (this.isObject(tiles[i])) objectId = tiles[i];
-                else if (this.isObject(tiles)) objectId = tiles;
-
-        return objectId;
-    }
-
-    getObjectId(tileIndex: number) {
-        let position = this.indexToGridPosition(tileIndex + 1);
-
-        return position.gridX + '-' + position.gridY;
-    }
-
-    getObject(x: number, y: number, data: any) {
-        let index = this.gridPositionToIndex(x, y) - 1,
-            tiles: any = this.data[index];
-
-        if (tiles instanceof Array) for (let i in tiles) if (tiles[i] in data) return tiles[i];
-
-        if (tiles in data) return tiles;
-
-        return null;
-    }
-
-    getTree(x: number, y: number) {
-        return this.getObject(x, y, this.trees);
-    }
-
-    getRock(x: number, y: number) {
-        return this.getObject(x, y, this.rocks);
-    }
-
     // Transforms an object's `instance` or `id` into position
     idToPosition(id: string) {
         let split = id.split('-');
 
         return { gridX: parseInt(split[0]), gridY: parseInt(split[1]) };
-    }
-
-    isDoor(x: number, y: number) {
-        return !!this.doors[this.gridPositionToIndex(x, y) + 1];
-    }
-
-    getDoorDestination(x: number, y: number) {
-        return this.doors[this.gridPositionToIndex(x, y) + 1];
     }
 
     isValidPosition(x: number, y: number) {
@@ -413,6 +335,25 @@ class Map {
         return this.data[tileIndex] === 0;
     }
 
+    getX(index: number, width: number) {
+        if (index === 0) return 0;
+
+        return index % width === 0 ? width - 1 : (index % width) - 1;
+    }
+
+    getRandomPosition(area: Area) {
+        let pos: any = {},
+            valid = false;
+
+        while (!valid) {
+            pos.x = area.x + Utils.randomInt(0, area.width + 1);
+            pos.y = area.y + Utils.randomInt(0, area.height + 1);
+            valid = this.isValidPosition(pos.x, pos.y);
+        }
+
+        return pos;
+    }
+
     getPlateauLevel(x: number, y: number) {
         let index = this.gridPositionToIndex(x, y);
 
@@ -431,6 +372,60 @@ class Map {
         warp.name = warpName;
 
         return warp;
+    }
+
+    getAnimation(tileData: any): any {
+        if (tileData instanceof Array) {
+            for (let i in tileData)
+                if (tileData[i] in this.animations)
+                    return { tileId: tileData[i], name: this.animations[tileData[i]] };
+        } else
+            if (tileData in this.animations)
+                return { tileId: tileData, name: this.animations[tileData] };
+
+        return null;
+    }
+
+    getPositionObject(x: number, y: number) {
+        let index = this.gridPositionToIndex(x, y),
+            tiles: any = this.data[index],
+            objectId: any;
+
+        if (tiles instanceof Array)
+            for (let i in tiles)
+                if (this.isObject(tiles[i])) objectId = tiles[i];
+                else if (this.isObject(tiles)) objectId = tiles;
+
+        return objectId;
+    }
+
+    getObjectId(tileIndex: number) {
+        let position = this.indexToGridPosition(tileIndex + 1);
+
+        return position.gridX + '-' + position.gridY;
+    }
+
+    getObject(x: number, y: number, data: any) {
+        let index = this.gridPositionToIndex(x, y) - 1,
+            tiles: any = this.data[index];
+
+        if (tiles instanceof Array) for (let i in tiles) if (tiles[i] in data) return tiles[i];
+
+        if (tiles in data) return tiles;
+
+        return null;
+    }
+
+    getTree(x: number, y: number) {
+        return this.getObject(x, y, this.trees);
+    }
+
+    getRock(x: number, y: number) {
+        return this.getObject(x, y, this.rocks);
+    }
+
+    getDoors() {
+        return this.areas['Doors'].areas;
     }
 
     isReady(callback: Function) {

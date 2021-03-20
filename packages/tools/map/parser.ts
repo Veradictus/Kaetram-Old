@@ -283,10 +283,10 @@ export default class Parser {
     parseObject(name: string, info: any) {
         let object = {
             id: info.id,
-            x: info.x / this.map.tileSize,
-            y: info.y / this.map.tileSize,
-            width: info.width / this.map.tileSize,
-            height: info.height / this.map.tileSize
+            x: info.x,
+            y: info.y,
+            width: info.width,
+            height: info.height
         };
 
         _.each(info.properties, property => {
