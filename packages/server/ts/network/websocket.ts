@@ -10,7 +10,8 @@ import https from 'https';
 export default class WebSocket {
 
     public host: string;
-    public port: number;
+    public wsPort: number;
+    public httpPort: number;
 
     public version: string;
 
@@ -25,9 +26,10 @@ export default class WebSocket {
     private readyCallback: () => void;
     private connectionCallback: (connection: Connection) => void;
 
-    constructor(host: string, port: number, version: string) {
+    constructor(host: string, wsPort: number, httpPort: number, version: string) {
         this.host = host;
-        this.port = port;
+        this.wsPort = wsPort;
+        this.httpPort = httpPort;
 
         this.version = version;
 
@@ -35,13 +37,13 @@ export default class WebSocket {
         this.connections = {};
 
         this.httpServer = http.createServer(this.httpResponse)
-            .listen(this.port, this.host, () => {
-                log.info(`Server is now listening on port: ${this.port}.`);
+            .listen(this.httpPort, this.host, () => {
+                log.info(`Server is now listening on port: ${this.httpPort}.`);
 
                 if (this.readyCallback) this.readyCallback();
             });
 
-        this.server = new WS.Server({ port: this.port });
+        this.server = new WS.Server({ port: this.wsPort });
         this.server.on('connection', (socket: WS.Socket, request: any) => {
             let mappedAddress = request.socket.remoteAddress,
                 remoteAddress = mappedAddress.split('::ffff:')[1];

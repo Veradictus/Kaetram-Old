@@ -15,7 +15,7 @@ class Main {
     constructor() {
         log.info('Initializing ' + config.name + ' game engine...');
 
-        this.webSocket = new WebSocket(config.host, config.httpPort, config.gver);
+        this.webSocket = new WebSocket(config.host, config.port, config.httpPort, config.gver);
         this.database = new Database(config.database).getDatabase();
         this.parser = new Parser();
         this.world = null;
