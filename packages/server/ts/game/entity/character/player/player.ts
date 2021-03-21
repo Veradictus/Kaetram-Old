@@ -474,6 +474,8 @@ class Player extends Character {
 
         this.world.addPlayer(this);
 
+        this.introduced = true;
+
         this.send(new Messages.Welcome(info));
     }
 
@@ -874,7 +876,7 @@ class Player extends Character {
             this.sendToSpawn();
             return;
         }
-        
+
         super.setPosition(gridX, gridY, floatX, floatY);
 
         let movementInfo: any = {

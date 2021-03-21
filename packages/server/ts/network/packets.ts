@@ -50,7 +50,8 @@ const Packets: { [key: string]: any } = {
     Bubble: 46,
     Client: 47,
     Profession: 48,
-    BuildUp: 49
+    BuildUp: 49,
+    Area: 50
 };
 
 Packets.IntroOpcode = {
@@ -228,6 +229,10 @@ Packets.CommandOpcode = {
 Packets.ProfessionOpcode = {
     Batch: 0,
     Update: 1
+};
+
+Packets.AreaOpcode = {
+    Door: 0
 };
 
 export default Packets;

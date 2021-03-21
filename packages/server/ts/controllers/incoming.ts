@@ -17,13 +17,11 @@ import Character from '../game/entity/character/character';
 import { Message } from 'discord.js';
 
 class Incoming {
-    player: Player;
-    connection: any;
-    world: World;
-    database: any;
-    commands: any;
-
-    introduced: boolean;
+    private player: Player;
+    private connection: any;
+    private world: World;
+    private database: any;
+    private commands: any;
 
     constructor(player: Player) {
         this.player = player;
@@ -39,7 +37,11 @@ class Incoming {
             if (!Utils.validPacket(packet)) {
                 log.error('Non-existent packet received: ' + packet + ' data: ');
                 log.error(message);
+                return;
+            }
 
+            if (packet > Packets.Intro && !this.player.introduced) {
+                log.error('Improper handshake between client and server.')
                 return;
             }
 
@@ -133,6 +135,10 @@ class Incoming {
                 case Packets.Client:
                     this.handleClient(message);
                     break;
+
+                case Packets.Area:
+                    this.handleArea(message);
+                    break;
             }
         });
     }
@@ -152,7 +158,7 @@ class Incoming {
         this.player.password = password.substr(0, 32);
         this.player.email = email.substr(0, 128).toLowerCase();
 
-        if (this.introduced) return;
+        if (this.player.introduced) return;
 
         if (this.world.isOnline(this.player.username)) {
             this.connection.sendUTF8('loggedin');
@@ -171,8 +177,6 @@ class Incoming {
 
             return;
         }
-
-        this.introduced = true;
 
         if (isRegistering) {
             this.database.exists(this.player, (result: any) => {
@@ -402,7 +406,7 @@ class Incoming {
 
                 if (instance !== this.player.instance) return;
 
-               this.player.sendAnimation(attackType, instance);
+                this.player.sendAnimation(attackType, instance);
                 
                 break;
         }
@@ -813,6 +817,18 @@ class Incoming {
 
         this.player.regionWidth = Math.ceil(canvasWidth / 48);
         this.player.regionHeight = Math.ceil(canvasHeight / 48);
+    }
+
+    /**
+     * Each time a player enters an area client-sided, a signal is
+     * sent. We take the player's position and correlate it with
+     * the respective area. For example, a player triggers a door
+     * area, we just find the player's area and trigger the action
+     * server-sided.
+     */
+
+    handleArea(message: Array<any>) {
+        console.log(message);
     }
 
     canAttack(attacker: Character, target: Character) {
