@@ -36,6 +36,8 @@ export default class WebSocket {
         this.ips = {};
         this.connections = {};
 
+        this.counter = 0;
+
         this.httpServer = http.createServer(this.httpResponse)
             .listen(this.httpPort, this.host, () => {
                 log.info(`Server is now listening on port: ${this.httpPort}.`);
@@ -121,7 +123,7 @@ export default class WebSocket {
      */
 
     getId(): string {
-        return '1' + Utils.random(1000) + this.counter;
+        return '1' + Utils.random(1000) + this.counter++;
     }
 
     /**
