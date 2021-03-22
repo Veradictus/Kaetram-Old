@@ -318,6 +318,7 @@ class Region {
 
         for (let i in this.doors)
             doors.push({
+                id: this.doors[i].id,
                 x: this.doors[i].x,
                 y: this.doors[i].y,
                 width: this.doors[i].width,

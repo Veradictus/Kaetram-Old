@@ -1010,9 +1010,9 @@ class Player extends Character {
          * other special events and determine a spawn point.
          */
 
-        if (!this.finishedTutorial()) return this.getTutorial().getSpawn();
+        //if (!this.finishedTutorial()) return this.getTutorial().getSpawn();
 
-        return { x: 4, y: 3 };
+        return { x: 144, y: 114 };
     }
 
     getHit(target?: Character) {
@@ -1097,10 +1097,7 @@ class Player extends Character {
     sendToSpawn() {
         let position = this.getSpawn();
 
-        this.gridX = position.x;
-        this.gridY = position.y;
-
-        this.teleport(this.gridX, this.gridY);
+        this.teleport(position.x, position.y);
     }
 
     sendMessage(playerName: string, message: string) {

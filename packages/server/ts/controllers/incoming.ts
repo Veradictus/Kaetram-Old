@@ -303,22 +303,18 @@ class Incoming {
 
         switch (opcode) {
             case Packets.MovementOpcode.Move:
-                let absoluteX = parseFloat(message.shift()),
-                    absoluteY = parseFloat(message.shift()),
-                    running: boolean = message.shift(),
-                    floatX = absoluteX / this.world.map.tileSize,
-                    floatY = absoluteY / this.world.map.tileSize,
+                let [x, y, running] = message,
+                    floatX = x / this.world.map.tileSize,
+                    floatY = y / this.world.map.tileSize,
                     gridX = Math.floor(floatX),
                     gridY = Math.floor(floatY);
 
-                /*if (this.world.map.isCollision(floatX, floatY, gridX, gridY)) {
+                if (this.world.map.isCollision(floatX, floatY, gridX, gridY)) {
                     log.debug('Detected no clipping.');
                     return;
-                }*/
+                }
 
-                //log.debug(`absoluteX: ${absoluteX} - absoluteY: ${absoluteY}`);
-
-                this.player.setPosition(absoluteX, absoluteY, running);
+                this.player.setPosition(x, y, running);
 
                 break;
 
