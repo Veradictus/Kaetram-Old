@@ -17,14 +17,12 @@ import World from '../../../world';
 import Entity from '../../entity';
 import Map from '../../../../map/map';
 import Area from '../../../../map/area';
-import Doors from './doors';
 import Areas from '@kaetram/ts/map/areas/areas';
 
 class Handler {
     player: Player;
     world: World;
     map: Map;
-    doors: Doors;
 
     updateTicks: number;
     updateInterval: any;
@@ -34,7 +32,6 @@ class Handler {
 
         this.world = player.world;
         this.map = player.world.map;
-        this.doors = player.doors;
 
         this.updateTicks = 0;
         this.updateInterval = null;
@@ -245,10 +242,6 @@ class Handler {
                     this.player.finishAchievement(info.achievement);
 
                     break;
-
-                case 'doors':
-                    this.handleDoor(info);
-                    break;
             }
         });
     }
@@ -270,26 +263,6 @@ class Handler {
         if (!isColliding) return;
 
         this.player.incoming.handleNoClip(x, y);
-    }
-
-    handleDoor(doorArea: Area) {
-        if (!doorArea) {
-            this.doors.ignoreDoor = 0;
-            return;
-        }
-        
-        console.log(doorArea);
-        console.log(this.doors.ignoreDoor);
-        
-        if (doorArea.id === this.doors.ignoreDoor) return;
-
-        let x = doorArea.destination.x - (doorArea.width / 2),
-            y = doorArea.destination.y + (doorArea.height / 2);
-
-        console.log(`x: ${x} - y: ${y}`);
-
-        this.doors.ignoreDoor = doorArea.destination.id;
-        this.player.teleport(x, y);
     }
 
     handlePoison() {
