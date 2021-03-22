@@ -241,7 +241,7 @@ class Player extends Character {
         this.orientation = data.orientation;
         this.mapVersion = data.mapVersion;
             
-        this.setPosition(data.gridX, data.gridY, data.x, data.y);
+        this.setPosition(data.x, data.y);
         this.warp.setLastWarp(data.lastWarp);
 
         this.level = Formulas.expToLevel(this.experience);
@@ -622,26 +622,29 @@ class Player extends Character {
         this.send(new Messages.Death(this.instance));
     }
 
+    /**
+     * 
+     * @param x Absolute x position (not gridX)
+     * @param y Absolute y position (not gridY)
+     * @param isDoor Whether the teleport is a door type.
+     * @param animate Do we animate the teleportation?
+     */
+
     teleport(x: number, y: number, isDoor?: boolean, animate?: boolean) {
         if (this.teleportCallback) this.teleportCallback(x, y, isDoor);
-
-        let isFloatX: boolean = x % 1 !== 0,
-            isFloatY: boolean = y % 1 !== 0,
-            gridX = isFloatX ? Math.floor(x) : x, 
-            gridY = isFloatY ? Math.floor(y) : y;
 
         this.sendToAdjacentRegions(
             this.region,
             new Messages.Teleport({
                 id: this.instance,
-                x: this.getFloatPosition(x),
-                y: this.getFloatPosition(y),
+                x: x,
+                y: y,
                 withAnimation: animate
             })
         );
 
-        this.setPosition(gridX, gridY, isFloatX ? x : undefined, isFloatY ? y : undefined);
-        
+        this.setPosition(x, y);
+
         this.world.cleanCombat(this);
     }
 
@@ -687,6 +690,21 @@ class Player extends Character {
 
                 break;
         }
+    }
+
+    handleDoor(x?: number, y?: number) {
+        let door = this.world.getArea(Modules.Areas.Doors).inArea(x, y);
+
+        log.debug(`x: ${x} - y: ${y}`);
+        log.debug(door);
+
+        if (!door) return;
+
+        let destination = this.doors.getDestination(door);
+
+        this.teleport(destination.x, destination.y, true);
+        
+        //console.log(this.world.getArea(Modules.Areas.Doors).areas);
     }
 
     incrementCheatScore(amount: number) {
@@ -868,21 +886,21 @@ class Player extends Character {
         };
     }
 
-    setPosition(gridX: number, gridY: number, floatX?: number, floatY?: number, running?: boolean) {
+    setPosition(x: number, y: number, running?: boolean) {
         if (this.dead) return;
 
-        if (this.map.isEmpty(gridX, gridY)) {
+        super.setPosition(x, y);
+
+        if (this.map.isEmpty(this.gridX, this.gridY)) {
             log.debug(`Player ${this.username} is out of bounds.`);
             this.sendToSpawn();
             return;
         }
 
-        super.setPosition(gridX, gridY, floatX, floatY);
-
         let movementInfo: any = {
             id: this.instance,
-            x: floatX,
-            y: floatY,
+            x: x,
+            y: y,
             forced: false,
             teleport: false
         };

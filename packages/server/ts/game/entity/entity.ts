@@ -6,6 +6,7 @@ import NPCs from '../../util/npcs';
 import Combat from './character/combat/combat';
 import Player from './character/player/player';
 import Map from '../../../data/map/world.json'
+import { runInThisContext } from 'vm';
 
 class Entity {
     public id: number;
@@ -105,16 +106,16 @@ class Entity {
         return x > y ? x : y;
     }
 
-    setPosition(gridX: number, gridY: number, floatX?: number, floatY?: number, running?: boolean) {
-        this.x = floatX || this.getFloatPosition(gridX);
-        this.y = floatY || this.getFloatPosition(gridY);
-        
-        this.gridX = gridX;
-        this.gridY = gridY;
+    setPosition(x: number, y: number, running?: boolean) {
+        this.x = x;
+        this.y = y;
+
+        this.gridX = Math.floor(x / Map.tileSize);
+        this.gridY = Math.floor(y / Map.tileSize);
 
         if (this.setPositionCallback) this.setPositionCallback();
     }
-
+    
     updatePosition() {
         this.oldX = this.gridX;
         this.oldY = this.gridY;

@@ -138,6 +138,16 @@ let Modules = {
         HeavyAttack: 'HeavyAttack',
         FistAttack: 'FistAttack',
         Ranged: 'Ranged'
+    },
+
+    Areas: {
+        PVP: 'PVP',
+        Music: 'Music',
+        Chests: 'Chests',
+        Overlays: 'Overlays',
+        Cameras: 'Cameras',
+        Achievements: 'Achievements',
+        Doors: 'Doors'
     }
 };
 

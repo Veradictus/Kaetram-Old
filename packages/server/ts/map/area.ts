@@ -40,6 +40,8 @@ class Area {
     public spawnDelay: number;
     public lastSpawn: number;
 
+    public margin: boolean;
+
     private spawnCallback: Function;
     private emptyCallback: Function;
 
@@ -64,7 +66,12 @@ class Area {
     }
 
     contains(x: number, y: number) {
-        return x >= this.x && y >= this.y && x < this.x + this.width && y < this.y + this.height;
+        let startX = this.x - (this.margin ? 7 : 0),
+            startY = this.y - (this.margin ? 7 : 0),
+            endX = this.x + this.width + (this.margin ? 7 : 0),
+            endY = this.y + this.height + (this.margin ? 7 : 0);
+
+        return x >= startX && y >= startY && x < endX && y < endY;
     }
 
     addEntity(mob: Mob) {

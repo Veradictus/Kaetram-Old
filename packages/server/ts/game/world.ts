@@ -26,6 +26,7 @@ import Trees from '../../data/professions/trees';
 import Rocks from '../../data/professions/rocks';
 import Player from './entity/character/player/player';
 import Entity from './entity/entity';
+import Areas from '../map/areas/areas';
 import WebSocket from '../network/websocket';
 import MongoDB from '../database/mongodb/mongodb';
 import API from '../network/api';
@@ -891,6 +892,10 @@ class World {
         _.each(this.players, (player) => {
             callback(player);
         });
+    }
+
+    getArea(area: string): Areas {
+        return this.map.areas[area];
     }
 
     getAreas() {

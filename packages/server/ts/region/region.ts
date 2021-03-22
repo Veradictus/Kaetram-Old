@@ -330,7 +330,7 @@ class Region {
     // TODO - Format dynamic tiles to follow same structure as `getRegionData()`
     getDynamicTiles(player: Player) {
         const dynamicTiles: any = player.doors.getAllTiles(),
-            trees = player.getSurroundingTrees();
+              trees = player.getSurroundingTrees();
 
         // Start with the doors and append afterwards.
 

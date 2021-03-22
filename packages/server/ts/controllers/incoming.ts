@@ -311,15 +311,14 @@ class Incoming {
                     gridX = Math.floor(floatX),
                     gridY = Math.floor(floatY);
 
-                floatX += Constants.POSITION_OFFSET;
-                floatY += Constants.POSITION_OFFSET;
-
-                if (this.world.map.isCollision(floatX, floatY, gridX, gridY)) {
+                /*if (this.world.map.isCollision(floatX, floatY, gridX, gridY)) {
                     log.debug('Detected no clipping.');
                     return;
-                }
+                }*/
 
-                this.player.setPosition(gridX, gridY, absoluteX, absoluteY, running);
+                //log.debug(`absoluteX: ${absoluteX} - absoluteY: ${absoluteY}`);
+
+                this.player.setPosition(absoluteX, absoluteY, running);
 
                 break;
 
@@ -828,6 +827,17 @@ class Incoming {
      */
 
     handleArea(message: Array<any>) {
+        let opcode = message.shift();
+
+        switch (opcode) {
+
+            case Packets.AreaOpcode.Door:
+                let [x, y] = message;
+
+                return this.player.handleDoor(x, y);
+
+        }
+
         console.log(message);
     }
 

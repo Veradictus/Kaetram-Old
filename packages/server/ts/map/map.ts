@@ -327,6 +327,8 @@ class Map {
     }
 
     /* For preventing NPCs from roaming in null areas. */
+
+
     isEmpty(x: number, y: number) {
         if (this.isOutOfBounds(x, y)) return true;
 

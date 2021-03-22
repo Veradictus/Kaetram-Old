@@ -14,8 +14,8 @@ export default class DoorAreas extends Areas {
         super(world);
 
         super.load(map.doors, (doorArea: Area, rawData: any) => {
-            doorArea.destinationId = rawData.destination; 
-        });
+            doorArea.destinationId = rawData.destination;
+        }, true);
 
         this.areasCopy = _.cloneDeep(this.areas);
 
