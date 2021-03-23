@@ -72,7 +72,7 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJzt1zsOAVEUgOFbYE+2NFOyDRVLoFR4LAGdwmMJ6BTYgJMQGREKyTDF9yUnc3JvMdVf3JSAb\/WzlAbZ7Qs8m0cXs5hFSX0sm+\/vOh\/uoAr20cUu5lBSH8dCA6PYxzGT+9lQH1RcPU+pFtPIy\/\/XKnpYx2x0AS9O0cU55qIPAAAA+Jtp4V3eir3tnQ4P20IP3dh7+gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA+LkrkyMeHQ==",
+         "data":"eJzt17suBGEAhuE\/G9yTO3CqnCqnymG3we5tqLgESoXDJaBTOFwCOgVuwJcgmURWIZllss+TvJk\/M8VM8xVTCvBbh+1SjtofV76baJUymabSdJpp\/fUXMUiX2cVFuqppH9fj\/Z\/t\/fDsv5jNHubSfFpIi\/YxVB6zi4f0VNM+nisbOMn5NJ193jtuwD6WsofltJJW05p9DJXRTikjaaxT\/7tusofbdNeAXXxZzx420mbaSm37oCYv2cVremvQPrazh520m7qpZx8AAAA03Hnlv7ybc69B\/+lQt\/vKHvZzPrAPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAICBewdB3id9",
          "encoding":"base64",
          "height":200,
          "id":12,
@@ -128,11 +128,25 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJzt2EkyQ2EYheFbFoKVYIqZbiRkpAkDzVizEc1GiI1IbETiZJaEP1KqNHU9T9U7uhOD71TFX1UAX\/fQqqrH1E5Prfffl2eqaiWtzvz83wa\/7Tmb6KRuehnbx1o2sZ420mbaGtrIZ7uCOnjNbfdSf3DjR6PftrOHRtpJu6k5tI9Ju4I6mc0u5tL82D72sof9dJAOU2toH5N2BXWykPteTEtjd36SPZyms3T+wf8fpV0B5V0BUB\/em6DMexOUeW+Cybw3QZn3JgCA79fIb62dtJuafnfBiIts4jJdpevCPmyI\/+om936b7tJ94fan2RDU0UPu\/TG101Ph9qfZENTRc+69k7rppXD702wI6qqXm+8P7v744+\/TbAj+s882BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwN\/3BnqnblY=",
+         "data":"eJztwYEAAAAAw6D5U1\/hAFUBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHwGcR4AAQ==",
          "encoding":"base64",
          "height":200,
          "id":11,
          "name":"miscellaneous3",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":200,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "compression":"zlib",
+         "data":"eJzt2sdtAzEUBNBtxKERh0YczpJbcGjEoRGFRhQakeRRAbSwXgIUFu8Bc1xiDxzgA59dB9DPw7TrHpOn5Hna+m\/gvLymE2\/Je\/IxsB+zSdfNk0WynNT5P2jpM534Sr6Tn4H9WKUT62STbPWDEZilE\/NkkSwH9mOXTuyTw7EbZjVGYJV7vE42yXbgnb7I95fJVXKtH4zALvd4nxyO9\/ll2Fk3OeM2uUvu9QMA4N\/sUBiT2nuKmjsUaK32nqLmDgVaO7Wn6Dsv1dyhQGun9hR956WaOxRo7dSeou+8VHOHAufOvARl5iUo+2te8oYdyrxhhzJv2KHMG3Yo84YdAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgHH4BqoqFyQ==",
+         "encoding":"base64",
+         "height":200,
+         "id":16,
+         "name":"trees",
          "opacity":1,
          "type":"tilelayer",
          "visible":true,
@@ -177,7 +191,7 @@
                  "y":128
                 }, 
                 {
-                 "height":40,
+                 "height":32,
                  "id":4,
                  "name":"",
                  "properties":[
@@ -189,9 +203,9 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":40,
-                 "x":2600,
-                 "y":136
+                 "width":36,
+                 "x":2603,
+                 "y":142
                 }],
          "opacity":1,
          "properties":[
@@ -238,7 +252,7 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":16,
+ "nextlayerid":17,
  "nextobjectid":7,
  "orientation":"orthogonal",
  "renderorder":"right-down",
@@ -999,7 +1013,6 @@
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -1056,7 +1069,6 @@
                  "objectgroup":
                     {
                      "draworder":"index",
-                     "id":2,
                      "name":"",
                      "objects":[
                             {
@@ -1246,7 +1258,7 @@
                                      "y":-18
                                     }, 
                                     {
-                                     "x":6,
+                                     "x":9,
                                      "y":-18
                                     }, 
                                     {
