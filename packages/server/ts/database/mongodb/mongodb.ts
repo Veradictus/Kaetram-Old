@@ -7,6 +7,7 @@ import config from '../../../config';
 import { MongoClient, Db } from 'mongodb';
 import Loader from './loader';
 import Creator from './creator';
+import Player from '@kaetram/ts/game/entity/character/player/player';
 
 class MongoDB {
     host: string;
@@ -99,7 +100,7 @@ class MongoDB {
         });
     }
 
-    verify(player, callback) {
+    verify(player: Player, callback) {
         this.getDatabase((database) => {
             let dataCursor = database.collection('player_data').find({ username: player.username });
 
@@ -119,7 +120,7 @@ class MongoDB {
         });
     }
 
-    register(player) {
+    register(player: Player) {
         this.getDatabase((database) => {
             let playerData = database.collection('player_data'),
                 cursor = playerData.find({ username: player.username });
@@ -137,7 +138,7 @@ class MongoDB {
         });
     }
 
-    exists(player, callback) {
+    exists(player: Player, callback) {
         this.getDatabase((database) => {
             let playerData = database.collection('player_data'),
                 emailCursor = playerData.find({ email: player.email }),
@@ -156,7 +157,7 @@ class MongoDB {
         });
     }
 
-    delete(player) {
+    delete(player: Player) {
         this.getDatabase((database) => {
             let collections = [
                 'player_data',

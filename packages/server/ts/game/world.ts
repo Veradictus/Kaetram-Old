@@ -861,6 +861,12 @@ class World {
         });
     }
 
+    saveAll() {
+        this.forEachPlayer((player: Player) => {
+            player.save();
+        });
+    }
+
     isOnline(username: string) {
         for (let id in this.players)
             if (this.players.hasOwnProperty(id))

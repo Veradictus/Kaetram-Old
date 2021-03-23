@@ -53,7 +53,13 @@ class Main {
             }
         });
 
+        this.loadSignals();
         this.loadConsole();
+    }
+
+    loadSignals() {
+        process.on('SIGTERM', () => this.terminateSignal('Termination signal received...'));
+        process.on('SIGINT', () => this.terminateSignal('Interrupt signal received...'))
     }
 
     loadConsole() {
@@ -161,6 +167,16 @@ class Main {
                     break;
             }
         });
+    }
+
+    terminateSignal(message?: string) {
+        if (message) log.warning(message);
+
+        this.world.saveAll();
+
+        setTimeout(() => {
+            process.exit();
+        }, 2000);
     }
 
     getPopulation() {
