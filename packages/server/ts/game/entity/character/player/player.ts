@@ -1012,7 +1012,7 @@ class Player extends Character {
 
         //if (!this.finishedTutorial()) return this.getTutorial().getSpawn();
 
-        return { x: 144, y: 114 };
+        return { x: 14 * 32, y: 10 * 32 };
     }
 
     getHit(target?: Character) {
