@@ -188,7 +188,7 @@
          "name":"doors",
          "objects":[
                 {
-                 "height":27,
+                 "height":28,
                  "id":3,
                  "name":"",
                  "properties":[
@@ -200,9 +200,9 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":37,
-                 "x":781,
-                 "y":128
+                 "width":24,
+                 "x":548,
+                 "y":546
                 }, 
                 {
                  "height":32,
@@ -240,6 +240,28 @@
         }, 
         {
          "draworder":"topdown",
+         "id":18,
+         "name":"openableAreas",
+         "objects":[
+                {
+                 "height":64,
+                 "id":7,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":352,
+                 "y":384
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
          "id":15,
          "name":"achievementAreas",
          "objects":[
@@ -266,8 +288,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":18,
- "nextobjectid":7,
+ "nextlayerid":19,
+ "nextobjectid":8,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.4.3",
@@ -11058,6 +11080,11 @@
                  "id":54,
                  "properties":[
                         {
+                         "name":"openable",
+                         "type":"int",
+                         "value":55
+                        }, 
+                        {
                          "name":"v",
                          "type":"object",
                          "value":0
@@ -11070,6 +11097,11 @@
                          "name":"c",
                          "type":"string",
                          "value":""
+                        }, 
+                        {
+                         "name":"openable",
+                         "type":"int",
+                         "value":54
                         }, 
                         {
                          "name":"v",
@@ -11223,6 +11255,24 @@
                          "name":"v",
                          "type":"object",
                          "value":0
+                        }]
+                }, 
+                {
+                 "id":86,
+                 "properties":[
+                        {
+                         "name":"openable",
+                         "type":"int",
+                         "value":87
+                        }]
+                }, 
+                {
+                 "id":87,
+                 "properties":[
+                        {
+                         "name":"openable",
+                         "type":"int",
+                         "value":86
                         }]
                 }, 
                 {
@@ -12702,6 +12752,45 @@
                 }, 
                 {
                  "id":451,
+                 "objectgroup":
+                    {
+                     "draworder":"index",
+                     "name":"",
+                     "objects":[
+                            {
+                             "height":0,
+                             "id":1,
+                             "name":"",
+                             "polygon":[
+                                    {
+                                     "x":0,
+                                     "y":0
+                                    }, 
+                                    {
+                                     "x":0,
+                                     "y":-20
+                                    }, 
+                                    {
+                                     "x":32,
+                                     "y":-20
+                                    }, 
+                                    {
+                                     "x":32,
+                                     "y":0
+                                    }],
+                             "rotation":0,
+                             "type":"",
+                             "visible":true,
+                             "width":0,
+                             "x":0,
+                             "y":32
+                            }],
+                     "opacity":1,
+                     "type":"objectgroup",
+                     "visible":true,
+                     "x":0,
+                     "y":0
+                    },
                  "properties":[
                         {
                          "name":"c",

@@ -26,6 +26,7 @@ export default class Parser {
 
             collisions: [],
             blocking: [],
+            openables: {},
             polygons: {},
             entities: {},
             staticEntities: {},
@@ -49,6 +50,7 @@ export default class Parser {
             overlayAreas: [],
             cameraAreas: [],
             achievementAreas: [],
+            openableAreas: [],
             warps: [], // TOOD - Remove
             layers: []
         }
@@ -156,7 +158,7 @@ export default class Parser {
             const tileId = this.getTileId(tileset, tile);
 
             _.each(tile.properties, property => {
-                this.parseProperties(tileId, property, tile.objectgroup);
+                this.parseProperties(tileId, property, tile.id, tile.objectgroup);
             });
         });
 
@@ -169,7 +171,7 @@ export default class Parser {
      * @param objectGroup The object group present (useful for collisions).
      */
 
-    parseProperties(tileId: number, property: any, objectGroup?: any) {
+    parseProperties(tileId: number, property: any, relativeTileId: number, objectGroup?: any) {
         const name = property.name,
               value = parseInt(property.value, 10) || property.value;
 
@@ -189,6 +191,10 @@ export default class Parser {
 
             case 'o':
                 this.map.objects.push(tileId);
+                break;
+
+            case 'openable':
+                this.map.openables[tileId] = tileId + (value - relativeTileId);
                 break;
             
             case 'tree':

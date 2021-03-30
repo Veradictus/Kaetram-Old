@@ -8,6 +8,7 @@ export interface MapData {
 
     collisions: number[];
     blocking: number[];
+    openables: any;
     polygons: any;
     entities: any;
     staticEntities: any;
@@ -31,6 +32,7 @@ export interface MapData {
     overlayAreas: any[];
     cameraAreas: any[];
     achievementAreas: any[];
+    openableAreas: any[];
     warps: any;
     layers: any[];
 }
