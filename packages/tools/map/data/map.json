@@ -142,7 +142,7 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJzt17ERgCAMQNHs4Cg2MIkjOBQyict59lCTO96rUqbILxIBAACQXy8RT1m9BeT0t9H1AQAALHL5R2Dq1gfA9o46noGIs45n2E1z\/zD16gMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAILUPBa8HuQ==",
+         "data":"eJzt17ENgDAMRUHvwCg0ySSMwFCQSVgOUaEUqWMpd81v3bzCEQAAAPm1EnGX2VdATl8bTR8AAMAkh38Ehk59ACxvq\/0Cv732C6u6NABDjz4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFJ7AQiPB7k=",
          "encoding":"base64",
          "height":200,
          "id":11,
@@ -220,6 +220,108 @@
                  "width":36,
                  "x":2603,
                  "y":142
+                }, 
+                {
+                 "height":31,
+                 "id":8,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"destination",
+                         "type":"object",
+                         "value":9
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":352,
+                 "y":368
+                }, 
+                {
+                 "height":31,
+                 "id":9,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"destination",
+                         "type":"object",
+                         "value":8
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":352,
+                 "y":423
+                }, 
+                {
+                 "height":31,
+                 "id":10,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"destination",
+                         "type":"object",
+                         "value":11
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":287,
+                 "y":238
+                }, 
+                {
+                 "height":31,
+                 "id":11,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"destination",
+                         "type":"object",
+                         "value":10
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":287,
+                 "y":293
+                }, 
+                {
+                 "height":31,
+                 "id":12,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"destination",
+                         "type":"object",
+                         "value":13
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":128,
+                 "y":238
+                }, 
+                {
+                 "height":31,
+                 "id":13,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"destination",
+                         "type":"object",
+                         "value":12
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":128,
+                 "y":293
                 }],
          "opacity":1,
          "properties":[
@@ -242,18 +344,7 @@
          "draworder":"topdown",
          "id":18,
          "name":"openableAreas",
-         "objects":[
-                {
-                 "height":64,
-                 "id":7,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":32,
-                 "x":352,
-                 "y":384
-                }],
+         "objects":[],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -289,7 +380,7 @@
          "y":0
         }],
  "nextlayerid":19,
- "nextobjectid":8,
+ "nextobjectid":14,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.4.3",
@@ -3505,6 +3596,11 @@
                          "name":"c",
                          "type":"string",
                          "value":""
+                        }, 
+                        {
+                         "name":"v",
+                         "type":"object",
+                         "value":0
                         }]
                 }, 
                 {
@@ -3617,6 +3713,11 @@
                          "name":"c",
                          "type":"string",
                          "value":""
+                        }, 
+                        {
+                         "name":"v",
+                         "type":"object",
+                         "value":0
                         }]
                 }, 
                 {
@@ -3665,6 +3766,11 @@
                          "name":"c",
                          "type":"string",
                          "value":""
+                        }, 
+                        {
+                         "name":"v",
+                         "type":"object",
+                         "value":0
                         }]
                 }, 
                 {
@@ -3942,6 +4048,11 @@
                          "name":"c",
                          "type":"string",
                          "value":""
+                        }, 
+                        {
+                         "name":"v",
+                         "type":"object",
+                         "value":0
                         }]
                 }, 
                 {
@@ -5147,6 +5258,11 @@
                          "name":"c",
                          "type":"string",
                          "value":""
+                        }, 
+                        {
+                         "name":"v",
+                         "type":"object",
+                         "value":0
                         }]
                 }, 
                 {
@@ -5259,6 +5375,11 @@
                          "name":"c",
                          "type":"string",
                          "value":""
+                        }, 
+                        {
+                         "name":"v",
+                         "type":"object",
+                         "value":0
                         }]
                 }, 
                 {
@@ -7506,6 +7627,11 @@
                          "name":"c",
                          "type":"string",
                          "value":""
+                        }, 
+                        {
+                         "name":"v",
+                         "type":"object",
+                         "value":0
                         }]
                 }, 
                 {
@@ -7626,6 +7752,11 @@
                          "name":"c",
                          "type":"string",
                          "value":""
+                        }, 
+                        {
+                         "name":"v",
+                         "type":"object",
+                         "value":0
                         }]
                 }, 
                 {
@@ -9867,6 +9998,11 @@
                          "name":"c",
                          "type":"string",
                          "value":""
+                        }, 
+                        {
+                         "name":"v",
+                         "type":"object",
+                         "value":0
                         }]
                 }, 
                 {
@@ -9979,6 +10115,11 @@
                          "name":"c",
                          "type":"string",
                          "value":""
+                        }, 
+                        {
+                         "name":"v",
+                         "type":"object",
+                         "value":0
                         }]
                 }, 
                 {
