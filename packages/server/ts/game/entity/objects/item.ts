@@ -12,6 +12,8 @@ class Item extends Entity {
     abilityLevel: number;
     tier: number;
 
+    hidden: string;
+
     respawnTime: number;
     despawnDuration: number;
     blinkDelay: number;

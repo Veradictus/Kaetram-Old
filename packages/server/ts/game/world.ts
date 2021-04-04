@@ -444,12 +444,15 @@ class World {
         x: number,
         y: number,
         ability?: number,
-        abilityLevel?: number
+        abilityLevel?: number,
+        hidden?: string
     ) {
         let item = this.createItem(id, Utils.generateInstance(), x, y, ability, abilityLevel);
 
         item.count = count;
         item.dropped = true;
+        
+        if (hidden) item.hidden = hidden;
 
         this.addItem(item);
         item.despawn();
