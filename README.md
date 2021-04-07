@@ -4,8 +4,8 @@ This is a privately developed version of Kaetram. It contains proprietary and li
 
 ## TODO
 
-- Properly reset regions when reconnecting
-- Y-sort and colliding animated tiles
+- Properly reset regions when reconnecting -- Almost Done
+- Y-sort and colliding animated tiles -- Done Client Sided
 
 ## License
 
