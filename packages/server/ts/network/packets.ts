@@ -223,7 +223,8 @@ Packets.PushOpcode = {
 };
 
 Packets.CommandOpcode = {
-    CtrlClick: 0
+    CtrlClick: 0,
+    ClearMap: 1
 };
 
 Packets.ProfessionOpcode = {

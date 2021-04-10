@@ -441,7 +441,7 @@ class Incoming {
     }
 
     handleChat(message: any) {
-        let text = sanitizer.escape(sanitizer.sanitize(message.shift()));
+        let text = sanitizer.escape(sanitizer.sanitize(message));
 
         if (!text || text.length < 1 || !/\S/.test(text)) return;
 

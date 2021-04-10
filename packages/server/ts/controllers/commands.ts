@@ -470,6 +470,12 @@ class Commands {
                 );
 
                 break;
+
+            case 'clearmap':
+
+                this.player.send(new Messages.Command(Packets.CommandOpcode.ClearMap));
+
+                break;
         }
     }
 }
