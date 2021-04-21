@@ -1,15 +1,13 @@
 import Area from '../area';
-import Areas from './areas';
+import Areas from '../areas';
 import World from '@kaetram/ts/game/world';
 
-import map from '../../../data/map/world.json';
+export default class Overlay extends Areas {
 
-export default class OverlayAreas extends Areas {
+    constructor(data: any, world?: World) {
+        super(data, world);
 
-    constructor(world?: World) {
-        super(world);
-
-        super.load(map.overlayAreas, (overlayArea: Area, rawData: any) => {
+        super.load(this.data, (overlayArea: Area, rawData: any) => {
             overlayArea.darkness = rawData.darkness;
             overlayArea.type = rawData.type;
 

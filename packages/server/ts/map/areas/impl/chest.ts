@@ -1,21 +1,19 @@
 import Area from '../area';
-import Areas from './areas';
+import Areas from '../areas';
 import World from '@kaetram/ts/game/world';
-import Utils from '../../util/utils';
+import Utils from '../../../util/utils';
 
-import map from '../../../data/map/world.json';
+export default class Chest extends Areas {
 
-export default class ChestAreas extends Areas {
+    constructor(data: any, world?: World) {
+        super(data, world);
 
-    constructor(world?: World) {
-        super(world);
-
-        super.load(map.chestAreas, (chestArea: Area, rawData: any) => {
+        super.load(this.data, (chestArea: Area, rawData: any) => {
             chestArea.maxEntities = rawData.entities || 0;
-            chestArea.items = rawData.items.split(',');
+            chestArea.items = rawData.items;
 
-            chestArea.cx = rawData.cx;
-            chestArea.cy = rawData.cy;
+            chestArea.cx = rawData.spawnX;
+            chestArea.cy = rawData.spawnY;
 
             if (rawData.achievement)
                 chestArea.achievement = rawData.achievement;

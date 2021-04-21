@@ -25,7 +25,7 @@ import MongoDB from '../../../../database/mongodb/mongodb';
 import Connection from '../../../../network/connection';
 import World from '../../../world';
 import Map from '../../../../map/map';
-import Area from '../../../../map/area';
+import Area from '../../../../map/areas/area';
 import Regions from '../../../../map/regions';
 import GlobalObjects from '../../../../controllers/globalobjects';
 import Hit from '../combat/hit';

@@ -1,9 +1,9 @@
 /* global module */
 
-import Mob from '../game/entity/character/mob/mob';
-import Player from '../game/entity/character/player/player';
+import Mob from '../../game/entity/character/mob/mob';
+import Player from '../../game/entity/character/player/player';
 
-import Constants from '../util/constants';
+import Constants from '../../util/constants';
 
 class Area {
     public id: number;

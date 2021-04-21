@@ -7,18 +7,13 @@ import Grids from './grids';
 import Regions from './regions';
 import Utils from '../util/utils';
 import Modules from '../util/modules';
-import DoorAreas from './areas/doorareas';
-import PVPAreas from './areas/pvpareas';
-import MusicAreas from './areas/musicareas';
-import ChestAreas from './areas/chestareas';
-import OverlayAreas from './areas/overlayareas';
-import CameraAreas from './areas/cameraareas';
-import AchievementAreas from './areas/achievementareas';
 import World from '../game/world';
-import Area from './area';
+import Area from './areas/area';
 import Entity from '../game/entity/entity';
 import Spawns from '../../data/spawns.json';
 import log from '../util/log';
+import Areas from './areas/areas';
+import AreasIndex from './areas/index';
 
 let map: any;
 
@@ -41,7 +36,6 @@ class Map {
     collisions: any;
     animations: any;
     polygons: any;
-    chestAreas: any;
     chests: any;
     lights: any;
     high: any[];
@@ -58,7 +52,7 @@ class Map {
     regionWidth: number;
     regionHeight: number;
 
-    areas: any;
+    areas: { [name: string]: Areas };
 
     staticEntities: any;
 
@@ -101,12 +95,11 @@ class Map {
         this.collisions = map.collisions;
         this.animations = map.animations;
         this.polygons = map.polygons;
-        this.chestAreas = map.chestAreas;
-        this.chests = map.chests;
+        this.chests = map.areas.chests;
 
         this.loadStaticEntities();
 
-        this.lights = map.lights;
+        this.lights = map.areas.lights;
         this.high = map.high;
         this.plateau = map.plateau;
         this.objects = map.objects;
@@ -143,29 +136,12 @@ class Map {
     }
 
     loadAreas() {
-        /**
-         * The structure for the new this.areas is as follows:
-         *
-         * this.areas = {
-         *      pvpAreas = {
-         *          allPvpAreas
-         *      },
-         *
-         *      musicAreas = {
-         *          allMusicAreas
-         *      },
-         *
-         *      ...
-         * }
-         */
 
-        this.areas['PVP'] = new PVPAreas();
-        this.areas['Music'] = new MusicAreas();
-        this.areas['Chests'] = new ChestAreas(this.world);
-        this.areas['Overlays'] = new OverlayAreas();
-        this.areas['Cameras'] = new CameraAreas();
-        this.areas['Achievements'] = new AchievementAreas();
-        this.areas['Doors'] = new DoorAreas();
+        _.each(map.areas, (area: any, key: string) => {
+            if (!(key in AreasIndex)) return;
+
+            this.areas[key] = new AreasIndex[key](area, this.world);
+        });
     }
 
     loadStaticEntities() {
@@ -369,11 +345,21 @@ class Map {
 
         if (!warpName) return null;
 
-        let warp = this.warps[warpName.toLowerCase()];
+        let warp = this.getWarpByName(warpName.toLowerCase());
+
+        if (!warp) return;
 
         warp.name = warpName;
 
         return warp;
+    }
+
+    getWarpByName(name: string) {
+        for (let i in this.warps)
+            if (this.warps[i].name === name)
+                return _.cloneDeep(this.warps[i]);
+
+        return null;
     }
 
     getAnimation(tileData: any): any {
@@ -426,8 +412,12 @@ class Map {
         return this.getObject(x, y, this.rocks);
     }
 
+    getChestAreas(): Areas {
+        return this.areas['chests'];
+    }
+
     getDoors() {
-        return this.areas['Doors'].areas;
+        return this.areas['doors'].areas;
     }
 
     isReady(callback: Function) {

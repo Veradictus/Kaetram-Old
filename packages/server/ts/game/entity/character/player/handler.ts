@@ -16,7 +16,7 @@ import NPC from '../../npc/npc';
 import World from '../../../world';
 import Entity from '../../entity';
 import Map from '../../../../map/map';
-import Area from '../../../../map/area';
+import Area from '../../../../map/areas/area';
 import Areas from '@kaetram/ts/map/areas/areas';
 
 class Handler {

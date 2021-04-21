@@ -41,18 +41,8 @@ export default class Parser {
             treeIndexes: [],
             rocks: {},
             rockIndexes: [],
-            pvpAreas: [],
-            gameAreas: [],
-            doors: [],
-            musicAreas: [],
-            chestAreas: [],
-            chests: [],
-            overlayAreas: [],
-            cameraAreas: [],
-            achievementAreas: [],
-            openableAreas: [],
-            warps: [], // TOOD - Remove
-            layers: []
+            layers: [],
+            areas: {}
         }
 
         this.parseTilesets();
@@ -270,10 +260,8 @@ export default class Parser {
             objects = layer.objects;
 
         if (!objects) return;
-        if (!(name in this.map)) {
-            log.warning(`${name} object info does not exist in the map interface.`);
-            return;
-        };
+        if (!(name in this.map.areas))
+            this.map.areas[name] = [];
 
         _.each(objects, info => {
             this.parseObject(name, info);
@@ -287,8 +275,9 @@ export default class Parser {
      */
 
     parseObject(name: string, info: any) {
-        let object = {
+        let object: any = {
             id: info.id,
+            name: info.name,
             x: info.x,
             y: info.y,
             width: info.width,
@@ -300,7 +289,7 @@ export default class Parser {
             object[property.name] = property.value;
         });
 
-        this.map[name].push(object);
+        this.map.areas[name].push(object);
     }
 
     /**

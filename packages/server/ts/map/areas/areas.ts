@@ -1,13 +1,15 @@
 import _ from 'lodash';
-import Area from '../area';
+import Area from './area';
 import World from '../../game/world';
 import log from '../../util/log';
 
 export default class Areas {
+    public data: any;
     public world: World;
     public areas: Area[];
 
-    constructor(world?: World) {
+    constructor(data: any, world?: World) {
+        this.data = data;
         this.world = world;
 
         this.areas = [];

@@ -1,3 +1,12 @@
+export interface Area {
+    id: number;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    properties: { [property: string]: string | number }
+}
+
 export interface MapData {
     width: number;
     height: number;
@@ -23,18 +32,9 @@ export interface MapData {
     treeIndexes: any[];
     rocks: any;
     rockIndexes: any[];
-    pvpAreas: any[];
-    gameAreas: any[];
-    doors: any;
-    musicAreas: any[];
-    chestAreas: any[];
-    chests: any[];
-    overlayAreas: any[];
-    cameraAreas: any[];
-    achievementAreas: any[];
-    openableAreas: any[];
-    warps: any;
     layers: any[];
+
+    areas: { [name: string]: Area[] };
 }
 
 export default MapData;

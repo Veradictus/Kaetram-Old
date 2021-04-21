@@ -1,19 +1,17 @@
 import _ from 'lodash';
 
-import Areas from './areas';
+import Area from '../area';
+import Areas from '../areas';
 import World from '@kaetram/ts/game/world';
 
-import map from '../../../data/map/world.json';
-import Area from '../area';
-
-export default class DoorAreas extends Areas {
+export default class Doors extends Areas {
 
     private areasCopy: Area[];
 
-    constructor(world?: World) {
-        super(world);
+    constructor(data: any, world?: World) {
+        super(data, world);
 
-        super.load(map.doors, (doorArea: Area, rawData: any) => {
+        super.load(this.data, (doorArea: Area, rawData: any) => {
             doorArea.destinationId = rawData.destination;
         }, true);
 

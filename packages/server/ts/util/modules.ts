@@ -141,13 +141,13 @@ let Modules = {
     },
 
     Areas: {
-        PVP: 'PVP',
-        Music: 'Music',
-        Chests: 'Chests',
-        Overlays: 'Overlays',
-        Cameras: 'Cameras',
-        Achievements: 'Achievements',
-        Doors: 'Doors'
+        PVP: 'pvp',
+        Music: 'music',
+        Chests: 'chests',
+        Overlays: 'overlay',
+        Cameras: 'camera',
+        Achievements: 'achievements',
+        Doors: 'doors'
     }
 };
 

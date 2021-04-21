@@ -1,0 +1,17 @@
+import Area from '../area';
+import Areas from '../areas';
+import World from '@kaetram/ts/game/world';
+
+export default class Music extends Areas {
+
+    constructor(data: any, world?: World) {
+        super(data, world);
+
+        super.load(this.data, (musicArea: Area, rawData: any) => {
+            musicArea.song = rawData.songName;
+        });
+
+        super.message('music');
+    }
+
+}
