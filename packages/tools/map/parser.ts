@@ -292,7 +292,8 @@ export default class Parser {
             x: info.x,
             y: info.y,
             width: info.width,
-            height: info.height
+            height: info.height,
+            polygon: this.extractPolygon(info)
         };
 
         _.each(info.properties, property => {
@@ -300,6 +301,31 @@ export default class Parser {
         });
 
         this.map[name].push(object);
+    }
+
+    /**
+     * Polygons are drawn without the offset, we add the `x` and `y` position
+     * of the object to get the true position of the polygon.
+     * 
+     * @param info The raw data from Tiled
+     * @returns A modified array of polygons adjusted for `tileSize`.
+     */
+
+    private extractPolygon(info: any) {
+        if (!info.polygon) return;
+    
+        let polygon: any = [];
+            
+        console.log(info);
+    
+        _.each(info.polygon, (point: any) => {
+            polygon.push({ 
+                x: (info.x + point.x) / this.map.tileSize,
+                y: (info.y + point.y) / this.map.tileSize
+            });
+        });
+    
+        return polygon;
     }
 
     /* The way Tiled processes polygons is by using the first point
