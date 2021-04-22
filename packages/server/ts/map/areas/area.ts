@@ -12,6 +12,8 @@ class Area {
     public width: number;
     public height: number;
 
+    public polygon: any[];
+
     public entities: any;
     public chest: any;
     public items: any;
@@ -65,15 +67,6 @@ class Area {
         this.spawnDelay = 0;
     }
 
-    contains(x: number, y: number) {
-        let startX = this.x - (this.margin ? 7 : 0),
-            startY = this.y - (this.margin ? 7 : 0),
-            endX = this.x + this.width + (this.margin ? 7 : 0),
-            endY = this.y + this.height + (this.margin ? 7 : 0);
-
-        return x >= startX && y >= startY && x < endX && y < endY;
-    }
-
     addEntity(mob: Mob) {
         if (this.entities.indexOf(mob) > 0) return;
 
@@ -97,6 +90,33 @@ class Area {
             this.emptyCallback();
         }
     }
+
+    contains(x: number, y: number) {
+        return this.polygon ? this.inPolygon(x, y) : this.inRectangularArea(x, y);
+    }
+
+    inRectangularArea(x: number, y: number): boolean {
+        let startX = this.x - (this.margin ? 7 : 0),
+            startY = this.y - (this.margin ? 7 : 0),
+            endX = this.x + this.width + (this.margin ? 7 : 0),
+            endY = this.y + this.height + (this.margin ? 7 : 0);
+
+        return x >= startX && y >= startY && x < endX && y < endY;
+    }
+
+    inPolygon(x: number, y: number): boolean {
+        for (let i = 0, j = this.polygon.length - 1; i < this.polygon.length; j = i++) {
+            let xi = this.polygon[i].x, yi = this.polygon[i].y,
+                xj = this.polygon[j].x, yj = this.polygon[j].y;
+
+            let intersect = ((yi > y) != (yj > y)) &&
+                (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+
+            if (intersect) return true;
+        }
+
+        return false;
+    }    
 
     handleAchievement(player: Player) {
         if (!this.achievement) return;
