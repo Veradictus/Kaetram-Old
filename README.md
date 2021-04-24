@@ -7,6 +7,8 @@ This is a privately developed version of Kaetram. It contains proprietary and li
 - Properly reset regions when reconnecting -- Almost Done
 - Y-sort and colliding animated tiles -- Done Client Sided
 
+- Import the remainder of animated tiles
+
 ## License
 
 This program is proprietary resource of Flavius Poenaru. Unauthorized distribution of this code, and any of its components without express permission is strictly forbidden.
