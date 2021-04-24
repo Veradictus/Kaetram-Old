@@ -216,8 +216,8 @@ class Entity {
                 id: this.instance,
                 string: string,
                 name: name,
-                x: this.gridX,
-                y: this.gridY
+                x: this.x,
+                y: this.y
             };
 
         if (this.specialState) data.nameColour = this.getNameColour();

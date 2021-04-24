@@ -151,7 +151,7 @@ class Map {
         _.each(map.staticEntities, (entity: any, tileIndex) => {
             this.staticEntities.push({
                 tileIndex: tileIndex,
-                string: entity.type,
+                string: entity.key,
                 roaming: entity.roaming
             });
         });

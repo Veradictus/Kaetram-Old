@@ -1,6 +1,122 @@
 {
-  "King": {
-    "id": 45,
-    "name": "King"
+  "female1": {
+    "id": 1,
+    "name": "Female1"
+  },
+
+  "female2": {
+    "id": 2,
+    "name": "Female2"
+  },
+
+  "female3": {
+    "id": 3,
+    "name": "Female3"
+  },
+
+  "female4": {
+    "id": 4,
+    "name": "Female4"
+  },
+
+  "female5": {
+    "id": 5,
+    "name": "Female5"
+  },
+
+  "female6": {
+    "id": 6,
+    "name": "Female6"
+  },
+
+  "female7": {
+    "id": 7,
+    "name": "Female7"
+  },
+
+  "female8": {
+    "id": 8,
+    "name": "Female8"
+  },
+
+  "male1": {
+    "id": 9,
+    "name": "Male1"
+  },
+
+  "male2": {
+    "id": 10,
+    "name": "Male2"
+  },
+
+  "male3": {
+    "id": 11,
+    "name": "Male3"
+  },
+
+  "male4": {
+    "id": 12,
+    "name": "Male4"
+  },
+
+  "male5": {
+    "id": 13,
+    "name": "Male5"
+  },
+
+  "male6": {
+    "id": 14,
+    "name": "Male6"
+  },
+
+  "male7": {
+    "id": 15,
+    "name": "Male7"
+  },
+
+  "male8": {
+    "id": 16,
+    "name": "Male8"
+  },
+
+  "male9": {
+    "id": 17,
+    "name": "Male9"
+  },
+
+  "male10": {
+    "id": 18,
+    "name": "Male10"
+  },
+
+  "male11": {
+    "id": 19,
+    "name": "Male11"
+  },
+
+  "male12": {
+    "id": 20,
+    "name": "Male12"
+  },
+
+  "male13": {
+    "id": 21,
+    "name": "Male13"
+  },
+
+  "male14": {
+    "id": 22,
+    "name": "Male14"
+  },
+
+  "male15": {
+    "id": 23,
+    "name": "Male15"
+  },
+
+  "male16": {
+    "id": 24,
+    "name": "Male16"
   }
+
 }

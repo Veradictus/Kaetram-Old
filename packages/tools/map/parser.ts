@@ -66,7 +66,7 @@ export default class Parser {
             const name = tileset.name.toLowerCase();
 
             switch (name) {
-                case 'mobs':
+                case 'entities':
                     
                     this.parseEntities(tileset);
 

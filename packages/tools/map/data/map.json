@@ -236,7 +236,7 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJztwYEAAAAAw6D5U1\/hAFUBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHwGcR4AAQ==",
+         "data":"eJztzjERAAAIBKDPYv8AxrOEngskIAEAAAAAAAAAgDvV3wMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADYNS58A2w==",
          "encoding":"base64",
          "height":200,
          "id":10,
@@ -30946,6 +30946,34 @@
          "spacing":0,
          "tilecount":256,
          "tileheight":32,
+         "tilewidth":32
+        }, 
+        {
+         "columns":20,
+         "firstgid":47138,
+         "image":"tilesets\/tilesheet_99_mobs.png",
+         "imageheight":400,
+         "imagewidth":640,
+         "margin":0,
+         "name":"Entities",
+         "spacing":0,
+         "tilecount":240,
+         "tileheight":32,
+         "tiles":[
+                {
+                 "id":0,
+                 "properties":[
+                        {
+                         "name":"key",
+                         "type":"string",
+                         "value":"female1"
+                        }, 
+                        {
+                         "name":"roaming",
+                         "type":"bool",
+                         "value":true
+                        }]
+                }],
          "tilewidth":32
         }],
  "tilewidth":32,

@@ -215,7 +215,8 @@ class Region {
 
         }
 
-        this.handle(player)
+        this.handle(player);
+        this.push(player);
 
         this.sendRegion(player, player.region, true);
         this.sendTilesetInfo(player);
