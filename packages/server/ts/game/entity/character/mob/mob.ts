@@ -43,6 +43,8 @@ class Mob extends Character {
     respawnCallback: Function;
     returnCallback: Function;
     deathCallback: Function;
+    forceTalkCallback: Function;
+    roamingCallback: Function;
 
     area: Area;
 
@@ -209,8 +211,16 @@ class Mob extends Character {
         this.respawnCallback = callback;
     }
 
-    onReturn = (callback: Function) => {
+    onReturn(callback: Function) {
         this.returnCallback = callback;
+    }
+
+    onForceTalk(callback: Function) {
+        this.forceTalkCallback = callback;
+    }
+
+    onRoaming(callback: Function) {
+        this.roamingCallback = callback;
     };
 
     onRefresh(callback: Function) {

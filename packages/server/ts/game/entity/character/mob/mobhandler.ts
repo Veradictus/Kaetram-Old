@@ -79,15 +79,8 @@ class MobHandler {
                 //    this.forceTalk('Yes hello, I am moving.');
 
                 this.mob.setPosition(newX, newY);
+                this.mob.roamingCallback(newX, newY);
 
-                this.world.push(Packets.PushOpcode.Regions, {
-                    regionId: this.mob.region,
-                    message: new Messages.Movement(Packets.MovementOpcode.Move, {
-                        id: this.mob.instance,
-                        x: newX,
-                        y: newY
-                    })
-                });
             }
         }, 5000);
     }
@@ -112,16 +105,7 @@ class MobHandler {
     }
 
     forceTalk(message: string) {
-        if (!this.world) return;
-
-        this.world.push(Packets.PushOpcode.Regions, {
-            regionId: this.mob.region,
-            message: new Messages.NPC(Packets.NPCOpcode.Talk, {
-                id: this.mob.instance,
-                text: message,
-                nonNPC: true
-            })
-        });
+        this.mob.forceTalkCallback(message);
     }
 }
 

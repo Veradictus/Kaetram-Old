@@ -151,6 +151,7 @@ class Map {
         _.each(map.staticEntities, (entity: any, tileIndex) => {
             this.staticEntities.push({
                 tileIndex: tileIndex,
+                type: entity.type,
                 string: entity.key,
                 roaming: entity.roaming
             });
@@ -170,12 +171,12 @@ class Map {
         });
     }
 
-    indexToGridPosition(tileIndex: number) {
+    indexToGridPosition(tileIndex: number, offset = 0) {
         let x = this.getX(tileIndex, this.width),
             y = Math.floor((tileIndex - 1) / this.width);
 
         return {
-            gridX: x,
+            gridX: x + offset,
             gridY: y
         };
     }

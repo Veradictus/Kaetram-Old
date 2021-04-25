@@ -200,7 +200,7 @@ class Region {
             const region = this.regions[id];
 
             _.each(region.players, (instance: string) => {
-                const player = this.world.players[instance];
+                const player = this.world.entities.players[instance];
 
                 if (player) this.sendRegion(player, player.region);
             });
@@ -230,13 +230,13 @@ class Region {
                 const region = this.regions[id];
 
                 _.each(region.players, (instance: string) => {
-                    const player = this.world.players[instance];
+                    const player = this.world.entities.players[instance];
 
                     if (player) this.sendRegion(player, player.region);
                 });
             });
         else
-            this.world.forEachPlayer((player: Player) => {
+            this.world.entities.forEachPlayer((player: Player) => {
                 player.regionsLoaded = [];
 
                 player.send(new Messages.Region(Packets.RegionOpcode.Reset));

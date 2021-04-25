@@ -5,11 +5,29 @@ import Player from '../character/player/player';
 
 class NPC extends Entity {
     talkIndex: number;
+    
+    private roamingInterval: any;
+    
+    public roamingCallback: Function;
 
     constructor(id: number, instance: string, x: number, y: number) {
         super(id, 'npc', instance, x, y);
 
         this.talkIndex = 0;
+
+        this.roamingInterval = null;
+
+        this.load();
+    }
+
+    load() {
+
+        this.roamingInterval = setInterval(() => {
+
+            if (this.roamingCallback) this.roamingCallback();
+
+        }, 5000);
+
     }
 
     talk(messages?: any, player?: Player) {
@@ -26,6 +44,10 @@ class NPC extends Entity {
         else player.talkIndex++;
 
         return message;
+    }
+
+    onRoaming(callback: Function) {
+        this.roamingCallback = callback;
     }
 }
 

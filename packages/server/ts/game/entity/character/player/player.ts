@@ -472,7 +472,7 @@ class Player extends Character {
          * Send player data to client here
          */
 
-        this.world.addPlayer(this);
+        this.world.entities.addPlayer(this);
 
         this.introduced = true;
 
@@ -590,7 +590,7 @@ class Player extends Character {
     }
 
     isInvisible(instance: string) {
-        let entity = this.world.getEntityByInstance(instance);
+        let entity = this.world.entities.get(instance);
 
         if (!entity) return false;
 

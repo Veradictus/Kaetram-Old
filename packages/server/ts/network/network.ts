@@ -8,19 +8,22 @@ import Player from '../game/entity/character/player/player';
 import Utils from '../util/utils';
 import Connection from './connection';
 import config from '../../config';
+import Entities from '../controllers/entities';
 
 class Network {
-    world: World;
-    database: MongoDB;
-    socket: any;
-    region: Region;
-    map: Map;
+    private world: World;
+    private entities: Entities;
+    private database: MongoDB;
+    private socket: any;
+    private region: Region;
+    private map: Map;
 
-    packets: any;
-    differenceThreshold: number;
+    public packets: any;
+    public differenceThreshold: number;
 
     constructor(world: World) {
         this.world = world;
+        this.entities = world.entities;
         this.database = world.database;
         this.socket = world.socket;
         this.region = world.region;
@@ -137,7 +140,7 @@ class Network {
 
     pushToPlayers(players: Player, message: any) {
         _.each(players, (instance: string) => {
-            this.pushToPlayer(this.world.getPlayerByInstance(instance), message);
+            this.pushToPlayer(this.entities.get(instance) as Player, message);
         });
     }
 
@@ -152,7 +155,7 @@ class Network {
 
         _.each(region.players, (instance: string) => {
             if (instance !== ignoreId)
-                this.pushToPlayer(this.world.getEntityByInstance(instance) as Player, message);
+                this.pushToPlayer(this.entities.get(instance) as Player, message);
         });
     }
 

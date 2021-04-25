@@ -246,7 +246,7 @@ class Incoming {
 
     handleWho(message: Array<any>) {
         _.each(message.shift(), (id: string) => {
-            let entity: any = this.world.getEntityByInstance(id);
+            let entity: any = this.world.entities.get(id);
 
             if (!entity || entity.dead) return;
 
@@ -343,7 +343,7 @@ class Incoming {
 
         switch (opcode) {
             case Packets.TargetOpcode.Talk:
-                let entity = this.world.getEntityByInstance(instance);
+                let entity = this.world.entities.get(instance);
 
                 if (!entity || !this.player.isAdjacent(entity)) return;
 
@@ -361,7 +361,7 @@ class Incoming {
                 break;
 
             case Packets.TargetOpcode.Attack:
-                let target: any = this.world.getEntityByInstance(instance);
+                let target: any = this.world.entities.get(instance);
 
                 if (!target || target.dead || !this.canAttack(this.player, target)) return;
 
@@ -412,13 +412,13 @@ class Incoming {
 
         switch (type) {
             case Packets.ProjectileOpcode.Impact:
-                let projectile: any = this.world.getEntityByInstance(message.shift()),
-                    target: any = this.world.getEntityByInstance(message.shift());
+                let projectile: any = this.world.entities.get(message.shift()),
+                    target: any = this.world.entities.get(message.shift());
 
                 if (!target || target.dead || !projectile) return;
 
                 this.world.handleDamage(projectile.owner, target, projectile.damage);
-                this.world.removeProjectile(projectile);
+                this.world.entities.remove(projectile);
 
                 if (target.combat.started || target.dead || target.type !== 'mob') return;
 
@@ -527,7 +527,7 @@ class Incoming {
                 (ability = iSlot.ability), (abilityLevel = iSlot.abilityLevel);
 
                 if (this.player.inventory.remove(id, count ? count : item.count, item.index))
-                    this.world.dropItem(
+                    this.world.entities.dropItem(
                         id,
                         count ? count : 1,
                         this.player.gridX,
@@ -630,7 +630,7 @@ class Incoming {
 
     handleTrade(message: Array<any>) {
         let opcode = message.shift(),
-            oPlayer = this.world.getEntityByInstance(message.shift());
+            oPlayer = this.world.entities.get(message.shift());
 
         if (!oPlayer || !opcode) return;
 

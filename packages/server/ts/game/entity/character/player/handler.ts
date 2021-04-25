@@ -18,19 +18,22 @@ import Entity from '../../entity';
 import Map from '../../../../map/map';
 import Area from '../../../../map/areas/area';
 import Areas from '@kaetram/ts/map/areas/areas';
+import Entities from '@kaetram/ts/controllers/entities';
 
 class Handler {
-    player: Player;
-    world: World;
-    map: Map;
+    public player: Player;
+    public world: World;
+    public entities: Entities;
+    public map: Map;
 
-    updateTicks: number;
-    updateInterval: any;
+    public updateTicks: number;
+    public updateInterval: any;
 
     constructor(player: Player) {
         this.player = player;
 
         this.world = player.world;
+        this.entities = player.world.entities;
         this.map = player.world.map;
 
         this.updateTicks = 0;
@@ -123,7 +126,7 @@ class Handler {
                     );
             }
 
-            this.world.removePlayer(this.player);
+            this.entities.removePlayer(this.player);
         });
 
         this.player.onTalkToNPC((npc: NPC) => {

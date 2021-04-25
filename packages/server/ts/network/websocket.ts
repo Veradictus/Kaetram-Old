@@ -38,7 +38,7 @@ export default class WebSocket {
 
         this.counter = 0;
 
-        this.httpServer = http.createServer(this.httpResponse)
+        this.httpServer = https.createServer(this.httpResponse)
             .listen(this.httpPort, this.host, () => {
                 log.info(`Server is now listening on port: ${this.httpPort}.`);
 

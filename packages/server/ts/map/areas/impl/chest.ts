@@ -33,11 +33,11 @@ export default class Chest extends Areas {
     spawnChest(chestArea: Area) {
         if (Utils.timePassed(chestArea.lastSpawn, chestArea.spawnDelay)) return;
 
-        chestArea.chest = this.world.spawnChest(
+        chestArea.chest = this.world.entities.spawnChest(
             chestArea.items,
             chestArea.cx,
             chestArea.cy,
-            null, false
+            false, null
         );
 
         chestArea.lastSpawn = Date.now();
@@ -46,7 +46,7 @@ export default class Chest extends Areas {
     removeChest(chestArea: Area) {
         if (!chestArea.chest) return;
 
-        this.world.removeChest(chestArea.chest);
+        this.world.entities.removeChest(chestArea.chest);
         
         chestArea.chest = null;
     }
