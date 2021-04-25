@@ -6,15 +6,12 @@ import Mobs from '../../../../util/mobs';
 import Utils from '../../../../util/utils';
 import Items from '../../../../util/items';
 import Constants from '../../../../util/constants';
-import World from '../../../world';
 import MobHandler from './mobhandler';
 import Player from '../player/player';
 import Area from '../../../../map/areas/area';
 import Areas from '../../../../map/areas/areas';
 
 class Mob extends Character {
-    world: World;
-
     data: any;
     hitPoints: number;
     maxHitPoints: number;
@@ -48,12 +45,10 @@ class Mob extends Character {
 
     area: Area;
 
-    constructor(id: number, instance: string, gridX: number, gridY: number, world?: World) {
+    constructor(id: number, instance: string, gridX: number, gridY: number) {
         super(id, 'mob', instance, gridX, gridY);
 
         if (!Mobs.exists(id)) return;
-
-        this.world = world;
 
         this.data = Mobs.Ids[this.id];
         this.hitPoints = this.data.hitPoints;
@@ -86,7 +81,7 @@ class Mob extends Character {
     }
 
     load() {
-        this.handler = new MobHandler(this, this.world);
+        this.handler = new MobHandler(this);
 
         if (this.loadCallback) this.loadCallback();
     }
@@ -192,11 +187,6 @@ class Mob extends Character {
         base.hiddenName = this.hiddenName; // TODO - Just don't send name when hiddenName present.
 
         return base;
-    }
-
-    // We take the plateau level of where the entity spawns.
-    getPlateauLevel() {
-        return this.world.map.getPlateauLevel(this.spawnLocation[0], this.spawnLocation[1]);
     }
 
     resetPosition() {

@@ -3,7 +3,6 @@ import Messages from '../../../../network/messages';
 import Mobs from '../../../../util/mobs';
 import Packets from '../../../../network/packets';
 import Combat from '../combat/combat';
-import World from '../../../world';
 import Mob from './mob';
 import Map from '../../../../map/map';
 import Character from '../character';
@@ -11,18 +10,15 @@ import Character from '../character';
 class MobHandler {
     mob: Mob;
     combat: Combat;
-    world: World;
     map: Map;
 
     roamingInterval: any;
     spawnLocation: any;
     maxRoamingDistance: number;
 
-    constructor(mob: Mob, world: World) {
+    constructor(mob: Mob) {
         this.mob = mob;
         this.combat = mob.combat;
-        this.world = world;
-        this.map = world.map;
 
         this.roamingInterval = null;
         this.spawnLocation = mob.spawnLocation;
@@ -36,52 +32,7 @@ class MobHandler {
         if (!this.mob.roaming) return;
 
         this.roamingInterval = setInterval(() => {
-            if (!this.mob.dead) {
-                // Calculate a random position near the mobs spawn location.
-                let newX =
-                        this.spawnLocation[0] +
-                        Utils.randomInt(-this.maxRoamingDistance, this.maxRoamingDistance),
-                    newY =
-                        this.spawnLocation[1] +
-                        Utils.randomInt(-this.maxRoamingDistance, this.maxRoamingDistance),
-                    distance = Utils.getDistance(
-                        this.spawnLocation[0],
-                        this.spawnLocation[1],
-                        newX,
-                        newY
-                    );
-
-                // Return if the tile is colliding.
-                if (this.map.isColliding(newX, newY)) return;
-
-                // Prevent movement if the area is empty.
-                if (this.map.isEmpty(newX, newY)) return;
-
-                // Prevent mobs from going outside of their roaming radius.
-                if (distance < this.mob.maxRoamingDistance) return;
-
-                // No need to move mobs to the same position as theirs.
-                if (newX === this.mob.gridX && newY === this.mob.gridY) return;
-
-                // We don't want mobs randomly roaming while in combat.
-                if (this.mob.inCombat()) return;
-
-                /**
-                 * An expansion of the plateau level present in BrowserQuest.
-                 * Because the map is far more complex, we will require multiple
-                 * levels of plateau in order to properly roam entities without
-                 * them walking into other regions (or clipping).
-                 */
-
-                if (this.mob.getPlateauLevel() !== this.map.getPlateauLevel(newX, newY)) return;
-
-                //if (config.debug)
-                //    this.forceTalk('Yes hello, I am moving.');
-
-                this.mob.setPosition(newX, newY);
-                this.mob.roamingCallback(newX, newY);
-
-            }
+            this.mob.roamingCallback();
         }, 5000);
     }
 

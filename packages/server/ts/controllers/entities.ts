@@ -86,7 +86,31 @@ export default class Entities {
                     npc.roaming = entityInfo.roaming;
 
                     npc.onRoaming(() => {
-                        //log.debug('NPC Roaming....');
+                        let newX = npc.originalLocation.x + Utils.randomInt(-npc.maxRoamingDistance, npc.maxRoamingDistance),
+                            newY = npc.originalLocation.y + Utils.randomInt(-npc.maxRoamingDistance, npc.maxRoamingDistance),
+                            distance = Utils.getDistance(npc.originalLocation.x, npc.originalLocation.y, newX, newY);
+
+                        if (this.map.isColliding(newX, newY)) return;
+
+                        if (this.map.isEmpty(newX, newY)) return;
+
+                        if (distance < npc.maxRoamingDistance) return;
+
+                        if (newX === npc.gridX && newY === npc.gridY) return;
+
+                        let x = newX * this.map.tileSize,
+                            y = newY * this.map.tileSize;
+
+                        npc.setPosition(x, y);
+                        
+                        this.world.push(Packets.PushOpcode.Regions, {
+                            regionId: npc.region,
+                            message: new Messages.Movement(Packets.MovementOpcode.Move, {
+                                id: npc.instance,
+                                x: x,
+                                y: y
+                            })
+                        });
                     });
 
                     this.addNPC(npc);
@@ -94,7 +118,7 @@ export default class Entities {
                     break;
 
                 case 'mob':
-                    let mob = new Mob(Mobs.stringToId(key), instance, position.gridX, position.gridY, this.world);
+                    let mob = new Mob(Mobs.stringToId(key), instance, position.gridX, position.gridY);
 
                     mob.static = true;
                     mob.roaming = entityInfo.roaming;
@@ -133,13 +157,59 @@ export default class Entities {
                         });
                     });
     
-                    mob.onRoaming((x: number, y: number) => {
+                    mob.onRoaming(() => {
+                        if (this.mobs.dead) return;
+
+                        let newX =
+                                mob.spawnLocation[0] +
+                                Utils.randomInt(-mob.maxRoamingDistance, mob.maxRoamingDistance),
+                            newY =
+                                mob.spawnLocation[1] +
+                                Utils.randomInt(-mob.maxRoamingDistance, mob.maxRoamingDistance),
+                            distance = Utils.getDistance(
+                                mob.spawnLocation[0],
+                                mob.spawnLocation[1],
+                                newX,
+                                newY
+                            );
+
+                        // Return if the tile is colliding.
+                        if (this.map.isColliding(newX, newY)) return;
+
+                        // Prevent movement if the area is empty.
+                        if (this.map.isEmpty(newX, newY)) return;
+
+                        // Prevent mobs from going outside of their roaming radius.
+                        if (distance < mob.maxRoamingDistance) return;
+
+                        // No need to move mobs to the same position as theirs.
+                        if (newX === mob.gridX && newY === mob.gridY) return;
+
+                        // We don't want mobs randomly roaming while in combat.
+                        if (mob.inCombat()) return;
+
+                        /**
+                         * An expansion of the plateau level present in BrowserQuest.
+                         * Because the map is far more complex, we will require multiple
+                         * levels of plateau in order to properly roam entities without
+                         * them walking into other regions (or clipping).
+                         */
+
+                        let plateauLevel = this.map.getPlateauLevel(mob.spawnLocation[0], mob.spawnLocation[1]);
+
+                        if (plateauLevel !== this.map.getPlateauLevel(newX, newY)) return;
+
+                        //if (config.debug)
+                        //    this.forceTalk('Yes hello, I am moving.');
+
+                        mob.setPosition(newX, newY);
+
                         this.world.push(Packets.PushOpcode.Regions, {
                             regionId: mob.region,
                             message: new Messages.Movement(Packets.MovementOpcode.Move, {
                                 id: mob.instance,
-                                x: x,
-                                y: y
+                                x: newX,
+                                y: newY
                             })
                         });
                     });

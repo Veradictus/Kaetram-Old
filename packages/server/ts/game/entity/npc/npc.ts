@@ -10,12 +10,19 @@ class NPC extends Entity {
     
     public roamingCallback: Function;
 
+    public originalLocation: any
+    public maxRoamingDistance: number;
+
     constructor(id: number, instance: string, x: number, y: number) {
         super(id, 'npc', instance, x, y);
 
         this.talkIndex = 0;
 
         this.roamingInterval = null;
+
+        this.originalLocation = { x: x, y: y };
+
+        this.maxRoamingDistance = 2;
 
         this.load();
     }
