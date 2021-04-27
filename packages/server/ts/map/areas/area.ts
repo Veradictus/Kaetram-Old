@@ -21,9 +21,7 @@ class Area {
     public hasRespawned: boolean;
 
     // Overlay properties
-    public darkness: string;
-    public type: string;
-    public fog: boolean;
+    public overlayColour: any;
 
     // Properties it can hold
     public achievement: number;

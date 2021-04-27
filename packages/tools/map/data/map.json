@@ -68,7 +68,7 @@
         }, 
         {
          "compression":"zlib",
-         "data":"eJzt2ktKA0EUBdBag1FBt6Em4FKyhCQrcBt+Bm7Dz8Bt+BkobsKoYEY+FAk9qII0CWlT58CloXtSk0uqKi8lAAAAAAAAWK3TcUpnkfPIxXjdq4FuuYpOXEduIrf6AQ330YmHyGPkST+gYRqdeI98RD71Axp6k5S2IzuR3cm6VwPdchCdOIwcRfr6wYZw70TtSh1w70TtSh1w70TtSh1w70TtSh1w70TtSh1w70TtdAAAAACATWdOC\/LMaUGeOS1qs8ieyZwWtVlkz2ROi9ossmcyo0Jt7Jkgz54J8uyZAGhr6NwBWSf6AVmX+gFAC84f1KDt\/Pnf+eN1tJp1QRe0nT8vnT9eRs0n\/FfmzyFvWbNUpfPIXeZb7j10xbJmqUr\/hzxnvuXeQ1csa5aqdB6ZZb7l3gMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACs0nF\/3SuA7hrqB2T5\/YA8vx\/w6y26MO3Pn1+RmX7Aj61BSr3B\/LkX2Y98AxRnqy0=",
+         "data":"eJzt2ktKA0EUBdBag1FBt6F2wKVkCSYrcBt+Bm7Dz0b8zNyEUUFHPhQJPaiGbghp8s6BS09rcumqxysFAAAAAAAA1utiXspl5CpyPd\/0aWBcbqMTd5H7yIN+QMtjdOIp8hx50Q9oWUYn3iMfkU\/9gJbJopTdyF5kf7Hp08C4HEUnjiMnkUY\/2BLmTmTX1QFzJ7Lr6oC5E9l1dcDciey6OmDuRHZdHTB3IjsdAAAAAGDb2dOCOntaUGdPi2z63JnsaZFNnzuTPS2y6XNnsqNCNu5MUOfOBHXuTAAMNfPugKpz\/YCqG\/0AYADvDzIYun\/+\/\/54PVvPuWAMhu6fe3+Qgf1zqLNLBXV2qaDOLhUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACQzWmz6RPAeM30A6r8P6DO\/wP+vEUXls3q+xX51g\/4tTMtZTJdfQ8ih5Eft4KeVg==",
          "encoding":"base64",
          "height":200,
          "id":9,
@@ -252,6 +252,77 @@
          "draworder":"topdown",
          "id":24,
          "name":"overlay",
+         "objects":[
+                {
+                 "height":2560,
+                 "id":18,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"a",
+                         "type":"int",
+                         "value":255
+                        }, 
+                        {
+                         "name":"b",
+                         "type":"int",
+                         "value":86
+                        }, 
+                        {
+                         "name":"g",
+                         "type":"int",
+                         "value":90
+                        }, 
+                        {
+                         "name":"r",
+                         "type":"int",
+                         "value":90
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":2912,
+                 "x":1760,
+                 "y":192
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":25,
+         "name":"camera",
+         "objects":[
+                {
+                 "height":2560,
+                 "id":17,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"lock"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":2912,
+                 "x":1760,
+                 "y":192
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":false,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":26,
+         "name":"lights",
          "objects":[],
          "opacity":1,
          "type":"objectgroup",
@@ -462,8 +533,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":25,
- "nextobjectid":16,
+ "nextlayerid":27,
+ "nextobjectid":19,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.5.0",

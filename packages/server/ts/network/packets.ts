@@ -45,7 +45,7 @@ const Packets: { [key: string]: any } = {
     Shop: 41,
     Minigame: 42,
     Region: 43,
-    Overlay: 44,
+    Overlay: 44, 
     Camera: 45,
     Bubble: 46,
     Client: 47,
@@ -198,18 +198,13 @@ Packets.RegionOpcode = {
 };
 
 Packets.OverlayOpcode = {
-    Set: 0,
-    Remove: 1,
-    Lamp: 2,
-    RemoveLamps: 3,
-    Darkness: 4
+    Default: 0,
+    Set: 1
 };
 
 Packets.CameraOpcode = {
-    LockX: 0,
-    LockY: 1,
-    FreeFlow: 2,
-    Player: 3
+    Default: 0,
+    Lock: 1
 };
 
 Packets.PushOpcode = {

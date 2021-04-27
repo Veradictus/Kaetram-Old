@@ -738,16 +738,14 @@ class Player extends Character {
 
         this.overlayArea = overlay;
 
-        if (overlay && overlay.id) {
-            this.lightsLoaded = [];
+        if (!overlay) {
+            this.send(new Messages.Overlay(Packets.OverlayOpcode.Default));
+            return;
+        }
 
-            this.send(
-                new Messages.Overlay(Packets.OverlayOpcode.Set, {
-                    image: overlay.fog ? overlay.fog : 'empty',
-                    colour: 'rgba(0,0,0,' + overlay.darkness + ')'
-                })
-            );
-        } else this.send(new Messages.Overlay(Packets.OverlayOpcode.Remove));
+        console.log(overlay);
+
+        this.send(new Messages.Overlay(Packets.OverlayOpcode.Set, overlay.overlayColour));
     }
 
     updateCamera(camera: any) {
@@ -755,21 +753,21 @@ class Player extends Character {
 
         this.cameraArea = camera;
 
-        if (camera) {
-            switch (camera.type) {
-                case 'lockX':
-                    this.send(new Messages.Camera(Packets.CameraOpcode.LockX));
-                    break;
+        if (!camera) {
+            this.send(new Messages.Camera(Packets.CameraOpcode.Default));
+            return;
+        }
 
-                case 'lockY':
-                    this.send(new Messages.Camera(Packets.CameraOpcode.LockY));
-                    break;
-
-                case 'player':
-                    this.send(new Messages.Camera(Packets.CameraOpcode.Player));
-                    break;
-            }
-        } else this.send(new Messages.Camera(Packets.CameraOpcode.FreeFlow));
+        switch (camera.cameraType) {
+            case 'lock': 
+                this.send(new Messages.Camera(Packets.CameraOpcode.Lock, {
+                    left: camera.x,
+                    top: camera.y,
+                    right: camera.x + camera.width,
+                    bottom: camera.y + camera.height
+                }));
+                break;
+        }
     }
 
     updateMusic(song: string) {

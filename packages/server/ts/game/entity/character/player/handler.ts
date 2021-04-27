@@ -228,7 +228,7 @@ class Handler {
 
                     break;
 
-                case 'overlays':
+                case 'overlay':
                     this.player.updateOverlay(info);
                     break;
 

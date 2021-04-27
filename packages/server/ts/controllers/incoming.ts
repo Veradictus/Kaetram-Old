@@ -824,7 +824,7 @@ class Incoming {
 
     handleArea(message: Array<any>) {
         let opcode = message.shift(),
-            x, y;
+            x: number, y: number;
 
         console.log(opcode);
 
@@ -843,8 +843,6 @@ class Incoming {
                 break;
 
         }
-
-        console.log(message);
     }
 
     canAttack(attacker: Character, target: Character) {
