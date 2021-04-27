@@ -233,7 +233,8 @@ Packets.ProfessionOpcode = {
 };
 
 Packets.AreaOpcode = {
-    Door: 0
+    Door: 0,
+    NPC: 1
 };
 
 export default Packets;

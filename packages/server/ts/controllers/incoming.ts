@@ -823,14 +823,24 @@ class Incoming {
      */
 
     handleArea(message: Array<any>) {
-        let opcode = message.shift();
+        let opcode = message.shift(),
+            x, y;
+
+        console.log(opcode);
 
         switch (opcode) {
 
             case Packets.AreaOpcode.Door:
-                let [x, y] = message;
+                [x, y] = message;
 
                 return this.player.handleDoor(x, y);
+
+            case Packets.AreaOpcode.NPC:
+                [x, y] = message;
+
+                console.log('npc');    
+
+                break;
 
         }
 
