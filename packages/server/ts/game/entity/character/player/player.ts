@@ -703,8 +703,6 @@ class Player extends Character {
         let destination = this.doors.getDestination(door);
 
         this.teleport(destination.x, destination.y, true);
-        
-        //console.log(this.world.getArea(Modules.Areas.Doors).areas);
     }
 
     incrementCheatScore(amount: number) {
@@ -742,8 +740,6 @@ class Player extends Character {
             this.send(new Messages.Overlay(Packets.OverlayOpcode.Default));
             return;
         }
-
-        console.log(overlay);
 
         this.send(new Messages.Overlay(Packets.OverlayOpcode.Set, overlay.overlayColour));
     }
