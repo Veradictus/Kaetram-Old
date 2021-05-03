@@ -44,7 +44,7 @@ const Packets: { [key: string]: any } = {
     Warp: 40,
     Shop: 41,
     Minigame: 42,
-    Region: 43,
+    Map: 43,
     Overlay: 44, 
     Camera: 45,
     Bubble: 46,
@@ -188,13 +188,10 @@ Packets.MinigameOpcode = {
     }
 };
 
-Packets.RegionOpcode = {
-    Render: 0,
-    Modify: 1,
-    Tileset: 2,
-    Update: 3,
-    Reset: 4,
-    Doors: 5
+Packets.MapOpcode = {
+    Info: 0,
+    Tileset: 1,
+    Data: 2
 };
 
 Packets.OverlayOpcode = {

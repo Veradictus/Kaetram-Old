@@ -471,7 +471,7 @@ Messages.Minigame = class {
     }
 };
 
-Messages.Region = class {
+Messages.Map = class {
     opcode: number;
     bufferSize: number;
     info: any;
@@ -483,7 +483,7 @@ Messages.Region = class {
     }
 
     serialize() {
-        return [Packets.Region, this.opcode, this.bufferSize, this.info];
+        return [Packets.Map, this.opcode, this.bufferSize, this.info];
     }
 };
 

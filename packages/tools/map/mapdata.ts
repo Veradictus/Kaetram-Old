@@ -26,7 +26,7 @@ export interface MapData {
     plateau: any;
 
     lights: any[];
-    high: any[];
+    high: any;
     objects: any[];
     trees: any;
     treeIndexes: any[];

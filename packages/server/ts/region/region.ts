@@ -207,20 +207,13 @@ class Region {
         });
     }
 
-    syncRegion(player: Player, reset?: boolean) {
-        if (reset) {
-            player.regionsLoaded = [];
-            
-            player.send(new Messages.Region(Packets.RegionOpcode.Reset));
-
-        }
-
+    syncRegion(player: Player) {
         this.handle(player);
         this.push(player);
-
-        this.sendRegion(player, player.region, true);
+ 
         this.sendTilesetInfo(player);
-        this.sendDoors(player);
+        this.sendRegion(player, player.region, true);
+        //this.sendDoors(player);
     }
 
     // If `regionId` is not null, we update adjacent regions
@@ -247,50 +240,49 @@ class Region {
     }
 
     sendRegion(player: Player, region: string, force?: boolean) {
-        const tileData = this.getRegionData(region, player, force);
+        const regionData = this.getRegionData(region, player, force);
 
-        let dynamicTiles;// = this.getDynamicTiles(player);
+        // let dynamicTiles;// = this.getDynamicTiles(player);
 
-        dynamicTiles = {
-            indexes: [],
-            objectData: []
-        }
+        // dynamicTiles = {
+        //     indexes: [],
+        //     objectData: []
+        // }
 
-        // Send dynamic tiles alongside the region
-        for (let i = 0; i < tileData.length; i++) {
-            const tile = tileData[i],
-                index = dynamicTiles.indexes.indexOf(tile.index);
+        // // Send dynamic tiles alongside the region
+        // for (let i = 0; i < tileData.length; i++) {
+        //     const tile = tileData[i],
+        //         index = dynamicTiles.indexes.indexOf(tile.index);
 
-            if (index > -1)
-                tileData[i].data = dynamicTiles.data[index];
-        }
+        //     if (index > -1)
+        //         tileData[i].data = dynamicTiles.data[index];
+        // }
 
-        // Send dynamic tiles independently
-        if (tileData.length < 1)
-            for (let i = 0; i < dynamicTiles.indexes.length; i++) {
-                tileData[i] = {};
+        // // Send dynamic tiles independently
+        // if (tileData.length < 1)
+        //     for (let i = 0; i < dynamicTiles.indexes.length; i++) {
+        //         tileData[i] = {};
 
-                tileData[i].index = dynamicTiles.indexes[i];
-                tileData[i].data = dynamicTiles.data[i];
+        //         tileData[i].index = dynamicTiles.indexes[i];
+        //         tileData[i].data = dynamicTiles.data[i];
 
-                const data = dynamicTiles.objectData,
-                    index = tileData[i].index;
+        //         const data = dynamicTiles.objectData,
+        //             index = tileData[i].index;
 
-                if (data && index in data) {
-                    tileData[i].isObject = data[index].isObject;
+        //         if (data && index in data) {
+        //             tileData[i].isObject = data[index].isObject;
 
-                    if (data[index].cursor) tileData[i].cursor = data[index].cursor;
-                }
-            }
+        //             if (data[index].cursor) tileData[i].cursor = data[index].cursor;
+        //         }
+        //     }
 
-        for (let i in tileData) {
-            tileData[i].position = this.map.indexToGridPosition(tileData[i].index);
-            delete tileData[i].index;
-        }
+        // for (let i in tileData) {
+        //     tileData[i].position = this.map.indexToGridPosition(tileData[i].index);
+        //     delete tileData[i].index;
+        // }
 
-        //No need to send empty data...
-        if (tileData.length > 0)
-            player.send(new Messages.Region(Packets.RegionOpcode.Render, tileData, force));
+        if (Object.keys(regionData).length > -1)
+            player.send(new Messages.Map(Packets.MapOpcode.Data, regionData, force));
     }
 
     sendTilesetInfo(player: Player) {
@@ -311,7 +303,7 @@ class Region {
             else
                 tilesetData[high[i]] = { high: true }
 
-        player.send(new Messages.Region(Packets.RegionOpcode.Tileset, tilesetData));
+        player.send(new Messages.Map(Packets.MapOpcode.Tileset, tilesetData));
     }
 
     sendDoors(player: Player) {
@@ -486,38 +478,42 @@ class Region {
     formatRegionData(_player: Player, _data: any) {}
 
     getRegionData(region: string, player: Player, force?: boolean) {
-        const data = [];
+        const data = {};
 
         if (!player) return data;
 
         this.mapRegions.forEachSurroundingRegion(region, (regionId: string) => {
-            if (!player.hasLoadedRegion(regionId) || force) {
-                player.loadRegion(regionId);
+            if (player.hasLoadedRegion(regionId) && !force) return;
 
-                const bounds = this.getRegionBounds(regionId);
+            const bounds = this.getRegionBounds(regionId);
 
-                this.forEachGrid(bounds, (x: number, y: number) => {
-                    let index = this.gridPositionToIndex(x - 1, y),
-                    tileData = this.map.data[index];
+            data[regionId] = [];
 
-                    if (!tileData)
-                        return;
-                    
-                    let info: any = {
-                        index: index,
-                        data: tileData,
-                        animation: this.map.getAnimation(tileData)
-                    };
-
-                    if (!info.animation) delete info.animation;
-
-                    data.push(info);
-                });
-
-            }
+            this.forEachTile(bounds, (tile: any) => {
+                data[regionId].push(tile);
+            });
         });
 
         return data;
+    }
+
+    forEachTile(bounds: any, callback: Function) {
+        this.forEachGrid(bounds, (x: number, y: number) => {
+            let index = this.gridPositionToIndex(x - 1, y),
+                data = this.map.data[index];
+
+            if (!data) return;
+
+            let info: any = {
+                position: { x: x, y: y },
+                data: data,
+                animation: this.map.getAnimation(data)
+            };
+
+            if (!info.animation) delete info.animation;
+
+            callback(info);
+        });
     }
 
     forEachGrid(bounds: any, callback: Function) {

@@ -35,7 +35,7 @@ export default class Parser {
             plateau: {},
 
             lights: [],
-            high: [],
+            high: {},
             objects: [],
             trees: {},
             treeIndexes: [],
@@ -176,7 +176,13 @@ export default class Parser {
 
         switch (name) {
             case 'v':
-                this.map.high.push(tileId);
+                if (property.type !== 'int') {
+                    log.warning('Fault in high tile property.');
+                    log.warning(`TileId: ${tileId}`);
+                    return;
+                }
+
+                this.map.high[tileId] = property.value;
                 break;
 
             case 'o':
