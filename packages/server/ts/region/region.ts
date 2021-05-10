@@ -288,20 +288,19 @@ class Region {
     sendTilesetInfo(player: Player) {
         let tileCollisions = this.map.collisions,
             polygonCollisions = this.map.polygons,
-            high = this.map.high,
             tilesetData = {};
 
         for (let i in this.map.collisions)
-            tilesetData[tileCollisions[i]] = { collision: true };
+            tilesetData[tileCollisions[i]] = { c: true };
 
         for (let i in this.map.polygons)
-            tilesetData[i] = { polygon: true, polygons: polygonCollisions[i] };
+            tilesetData[i] = { p: polygonCollisions[i] };
 
         for (let i in this.map.high)
-            if (high[i] in tilesetData)
-                tilesetData[high[i]].high = true;
+            if (i in tilesetData)
+                tilesetData[i].h = this.map.high[i];
             else
-                tilesetData[high[i]] = { high: true }
+                tilesetData[i] = { h: this.map.high[i] };
 
         player.send(new Messages.Map(Packets.MapOpcode.Tileset, tilesetData));
     }

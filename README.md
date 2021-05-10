@@ -5,9 +5,10 @@ This is a privately developed version of Kaetram. It contains proprietary and li
 ## TODO
 
 - Properly reset regions when reconnecting -- Almost Done
-- Y-sort and colliding animated tiles -- Done Client Sided
+- Y-sort and colliding animated tiles -- Done Client Sided.
 
-- Import the remainder of animated tiles
+- Import the remainder of animated tiles.
+- Make doors spawn and despawn for a player to prevent large memory usage.
 
 ## License
 
