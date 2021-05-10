@@ -16,6 +16,8 @@ class Entity {
     public x: number;
     public y: number;
 
+    public z: number;
+
     public gridX: number;
     public gridY: number;
 
@@ -47,6 +49,8 @@ class Entity {
         // Floating-point position
         this.x = this.getFloatPosition(gridX);
         this.y = this.getFloatPosition(gridY);
+
+        this.z = 0;
 
         // Position relative to the grid
         this.gridX = gridX;
@@ -106,9 +110,11 @@ class Entity {
         return x > y ? x : y;
     }
 
-    setPosition(x: number, y: number, running?: boolean) {
+    setPosition(x: number, y: number, z?: number) {
         this.x = x;
         this.y = y;
+
+        if (z) this.z = z;
 
         this.gridX = Math.floor(x / Map.tileSize);
         this.gridY = Math.floor(y / Map.tileSize);

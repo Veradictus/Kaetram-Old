@@ -241,7 +241,7 @@ class Player extends Character {
         this.orientation = data.orientation;
         this.mapVersion = data.mapVersion;
             
-        this.setPosition(data.x, data.y);
+        this.setPosition(data.x, data.y, data.z);
         this.warp.setLastWarp(data.lastWarp);
 
         this.level = Formulas.expToLevel(this.experience);
@@ -451,6 +451,7 @@ class Player extends Character {
             username: Utils.formatUsername(this.username),
             x: this.x,
             y: this.y,
+            z: this.z,
             kind: this.kind,
             rights: this.rights,
             hitPoints: this.hitPoints.getData(),
@@ -631,7 +632,9 @@ class Player extends Character {
      */
 
     teleport(x: number, y: number, isDoor?: boolean, animate?: boolean) {
-        if (this.teleportCallback) this.teleportCallback(x, y, isDoor);
+        var z = this.map.getPlateauLevel(x, y);
+
+        if (this.teleportCallback) this.teleportCallback(x, y, z, isDoor);
 
         this.sendToAdjacentRegions(
             this.region,
@@ -639,11 +642,12 @@ class Player extends Character {
                 id: this.instance,
                 x: x,
                 y: y,
+                z: z,
                 withAnimation: animate
             })
         );
 
-        this.setPosition(x, y);
+        this.setPosition(x, y, z);
 
         this.world.cleanCombat(this);
     }
@@ -880,10 +884,10 @@ class Player extends Character {
         };
     }
 
-    setPosition(x: number, y: number, running?: boolean) {
+    setPosition(x: number, y: number, z?: number, running?: boolean) {
         if (this.dead) return;
 
-        super.setPosition(x, y);
+        super.setPosition(x, y, z);
 
         if (this.map.isEmpty(this.gridX, this.gridY)) {
             log.debug(`Player ${this.username} is out of bounds.`);

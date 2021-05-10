@@ -169,9 +169,9 @@ class Handler {
             );
         });
 
-        this.player.onTeleport((x: number, y: number, isDoor: boolean) => {
+        this.player.onTeleport((x: number, y: number, z: number, isDoor: boolean) => {
             if (!this.player.finishedTutorial() && isDoor && this.player.doorCallback) {
-                this.player.doorCallback(x, y);
+                this.player.doorCallback(x, y, z);
                 return;
             }
         });

@@ -479,6 +479,16 @@ class Commands {
                 this.player.send(new Messages.Command(Packets.CommandOpcode.ClearMap));
 
                 break;
+
+            case 'zindex':
+
+                let index = parseInt(blocks.shift());
+
+                if (!index) index = 0;
+
+                this.player.setPosition(this.player.x, this.player.y, index);
+
+                break;
         }
     }
 }

@@ -66,10 +66,10 @@ Messages.Sync = class {
 };
 
 Messages.Equipment = class {
-    opcode: any;
+    opcode: number;
     info: any;
 
-    constructor(opcode: any, info: any) {
+    constructor(opcode: number, info: any) {
         this.opcode = opcode;
         this.info = info;
     }
@@ -80,10 +80,10 @@ Messages.Equipment = class {
 };
 
 Messages.Movement = class {
-    opcode: any;
+    opcode: number;
     info: any;
 
-    constructor(opcode: any, info: any) {
+    constructor(opcode: number, info: any) {
         this.opcode = opcode;
         this.info = info;
     }
@@ -133,10 +133,10 @@ Messages.Animation = class {
 
 // TODO - Revise this when going over combat.
 Messages.Combat = class {
-    opcode: any;
+    opcode: number;
     info: any;
 
-    constructor(opcode: any, info: any) {
+    constructor(opcode: number, info: any) {
         this.opcode = opcode;
         this.info = info;
     }
@@ -147,10 +147,10 @@ Messages.Combat = class {
 };
 
 Messages.Projectile = class {
-    opcode: any;
+    opcode: number;
     info: any;
 
-    constructor(opcode: any, info: any) {
+    constructor(opcode: number, info: any) {
         this.opcode = opcode;
         this.info = info;
     }
@@ -185,9 +185,9 @@ Messages.Points = class {
 };
 
 Messages.Network = class {
-    opcode: any;
+    opcode: number;
 
-    constructor(opcode: any) {
+    constructor(opcode: number) {
         this.opcode = opcode;
     }
 
@@ -226,10 +226,10 @@ Messages.Command = class {
  */
 
 Messages.Inventory = class {
-    opcode: any;
+    opcode: number;
     info: any;
 
-    constructor(opcode: any, info: any) {
+    constructor(opcode: number, info: any) {
         this.opcode = opcode;
         this.info = info;
     }
@@ -240,10 +240,10 @@ Messages.Inventory = class {
 };
 
 Messages.Bank = class {
-    opcode: any;
+    opcode: number;
     info: any;
 
-    constructor(opcode: any, info: any) {
+    constructor(opcode: number, info: any) {
         this.opcode = opcode;
         this.info = info;
     }
@@ -254,10 +254,10 @@ Messages.Bank = class {
 };
 
 Messages.Ability = class {
-    opcode: any;
+    opcode: number;
     info: any;
 
-    constructor(opcode: any, info: any) {
+    constructor(opcode: number, info: any) {
         this.opcode = opcode;
         this.info = info;
     }
@@ -268,10 +268,10 @@ Messages.Ability = class {
 };
 
 Messages.Quest = class {
-    opcode: any;
+    opcode: number;
     info: any;
 
-    constructor(opcode: any, info: any) {
+    constructor(opcode: number, info: any) {
         this.opcode = opcode;
         this.info = info;
     }
@@ -282,10 +282,10 @@ Messages.Quest = class {
 };
 
 Messages.Notification = class {
-    opcode: any;
+    opcode: number;
     info: any;
 
-    constructor(opcode: any, info: any) {
+    constructor(opcode: number, info: any) {
         this.opcode = opcode;
         this.info = info;
     }
@@ -320,10 +320,10 @@ Messages.Heal = class {
 };
 
 Messages.Experience = class {
-    opcode: any;
+    opcode: number;
     info: any;
 
-    constructor(opcode: any, info: any) {
+    constructor(opcode: number, info: any) {
         this.opcode = opcode;
         this.info = info;
     }
@@ -358,10 +358,10 @@ Messages.Audio = class {
 };
 
 Messages.NPC = class {
-    opcode: any;
+    opcode: number;
     info: any;
 
-    constructor(opcode: any, info: any) {
+    constructor(opcode: number, info: any) {
         this.opcode = opcode;
         this.info = info;
     }
@@ -388,10 +388,10 @@ Messages.Respawn = class {
 };
 
 Messages.Enchant = class {
-    opcode: any;
+    opcode: number;
     info: any;
 
-    constructor(opcode: any, info: any) {
+    constructor(opcode: number, info: any) {
         this.opcode = opcode;
         this.info = info;
     }
@@ -402,10 +402,10 @@ Messages.Enchant = class {
 };
 
 Messages.Guild = class {
-    opcode: any;
+    opcode: number;
     info: any;
 
-    constructor(opcode: any, info: any) {
+    constructor(opcode: number, info: any) {
         this.opcode = opcode;
         this.info = info;
     }
@@ -416,10 +416,10 @@ Messages.Guild = class {
 };
 
 Messages.Pointer = class {
-    opcode: any;
+    opcode: number;
     info: any;
 
-    constructor(opcode: any, info: any) {
+    constructor(opcode: number, info: any) {
         this.opcode = opcode;
         this.info = info;
     }
@@ -444,10 +444,10 @@ Messages.PVP = class {
 };
 
 Messages.Shop = class {
-    opcode: any;
+    opcode: number;
     info: any;
 
-    constructor(opcode: any, info: any) {
+    constructor(opcode: number, info: any) {
         this.opcode = opcode;
         this.info = info;
     }
@@ -458,10 +458,10 @@ Messages.Shop = class {
 };
 
 Messages.Minigame = class {
-    opcode: any;
+    opcode: number;
     info: any;
 
-    constructor(opcode: any, info: any) {
+    constructor(opcode: number, info: any) {
         this.opcode = opcode;
         this.info = info;
     }
@@ -476,7 +476,7 @@ Messages.Map = class {
     bufferSize: number;
     info: any;
 
-    constructor(opcode: any, info: any) {
+    constructor(opcode: number, info: any) {
         this.opcode = opcode;
         this.bufferSize = Utils.getBufferSize(info);
         this.info = Utils.compressData(JSON.stringify(info));
@@ -488,10 +488,10 @@ Messages.Map = class {
 };
 
 Messages.Overlay = class {
-    opcode: any;
+    opcode: number;
     info: any;
 
-    constructor(opcode: any, info: any) {
+    constructor(opcode: number, info: any) {
         this.opcode = opcode;
         this.info = info;
     }
@@ -502,10 +502,10 @@ Messages.Overlay = class {
 };
 
 Messages.Camera = class {
-    opcode: any;
+    opcode: number;
     info: any;
 
-    constructor(opcode: any, info: any) {
+    constructor(opcode: number, info: any) {
         this.opcode = opcode;
         this.info = info;
     }
@@ -528,10 +528,10 @@ Messages.Bubble = class {
 };
 
 Messages.Profession = class {
-    opcode: any;
+    opcode: number;
     info: any;
 
-    constructor(opcode: any, info: any) {
+    constructor(opcode: number, info: any) {
         this.opcode = opcode;
         this.info = info;
     }
@@ -542,10 +542,10 @@ Messages.Profession = class {
 };
 
 Messages.BuildUp = class {
-    opcode: any;
+    opcode: number;
     info: any;
 
-    constructor(opcode: any, info: any) {
+    constructor(opcode: number, info: any) {
         this.opcode = opcode;
         this.info = info;
     }
