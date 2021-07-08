@@ -64,7 +64,7 @@ class Region {
 
                 if (!entity.achievementsLoaded) return;
 
-                this.sendRegion(entity, regionId);
+                this.sendRegion(entity);
             }
         });
 
@@ -198,11 +198,11 @@ class Region {
     updateRegion(regionId: string) {
         this.mapRegions.forEachSurroundingRegion(regionId, (id: string) => {
             const region = this.regions[id];
-
+            
             _.each(region.players, (instance: string) => {
                 const player = this.world.entities.players[instance];
 
-                if (player) this.sendRegion(player, player.region);
+                if (player) this.sendRegion(player);
             });
         });
     }
@@ -212,7 +212,7 @@ class Region {
         this.push(player);
  
         this.sendTilesetInfo(player);
-        this.sendRegion(player, player.region, true);
+        this.sendRegion(player, true);
         //this.sendDoors(player);
     }
 
@@ -225,7 +225,7 @@ class Region {
                 _.each(region.players, (instance: string) => {
                     const player = this.world.entities.players[instance];
 
-                    if (player) this.sendRegion(player, player.region);
+                    if (player) this.sendRegion(player);
                 });
             });
         else
@@ -234,52 +234,13 @@ class Region {
 
                 player.send(new Messages.Region(Packets.RegionOpcode.Reset));
                 
-                this.sendRegion(player, player.region, true);
+                this.sendRegion(player, true);
                 this.sendTilesetInfo(player);
             });
     }
 
-    sendRegion(player: Player, region: string, force?: boolean) {
-        const regionData = this.getRegionData(region, player, force);
-
-        // let dynamicTiles;// = this.getDynamicTiles(player);
-
-        // dynamicTiles = {
-        //     indexes: [],
-        //     objectData: []
-        // }
-
-        // // Send dynamic tiles alongside the region
-        // for (let i = 0; i < tileData.length; i++) {
-        //     const tile = tileData[i],
-        //         index = dynamicTiles.indexes.indexOf(tile.index);
-
-        //     if (index > -1)
-        //         tileData[i].data = dynamicTiles.data[index];
-        // }
-
-        // // Send dynamic tiles independently
-        // if (tileData.length < 1)
-        //     for (let i = 0; i < dynamicTiles.indexes.length; i++) {
-        //         tileData[i] = {};
-
-        //         tileData[i].index = dynamicTiles.indexes[i];
-        //         tileData[i].data = dynamicTiles.data[i];
-
-        //         const data = dynamicTiles.objectData,
-        //             index = tileData[i].index;
-
-        //         if (data && index in data) {
-        //             tileData[i].isObject = data[index].isObject;
-
-        //             if (data[index].cursor) tileData[i].cursor = data[index].cursor;
-        //         }
-        //     }
-
-        // for (let i in tileData) {
-        //     tileData[i].position = this.map.indexToGridPosition(tileData[i].index);
-        //     delete tileData[i].index;
-        // }
+    sendRegion(player: Player, force?: boolean) {
+        const regionData = this.getRegionData(player, force);
 
         if (Object.keys(regionData).length > -1)
             player.send(new Messages.Map(Packets.MapOpcode.Data, regionData, force));
@@ -471,25 +432,31 @@ class Region {
     }
 
     /**
-     * Compare the user's screen size and chip away the amount of data
-     * we are sending.
+     * We parse through the surrounding regions around a player.
+     * See `getSurroundingRegions` for more information in `regions.ts`
+     * 
+     * @param player The player entity we extract the surrounding regions from.
+     * @param force This forces reloading of regions regardless if player has loaded them
+     * @returns A serialized object array of region data.
      */
-    formatRegionData(_player: Player, _data: any) {}
 
-    getRegionData(region: string, player: Player, force?: boolean) {
+    getRegionData(player: Player, force?: boolean) {
         const data = {};
 
         if (!player) return data;
 
-        this.mapRegions.forEachSurroundingRegion(region, (regionId: string) => {
+        this.mapRegions.forEachSurroundingRegion(player.region, (regionId: string) => {
             if (player.hasLoadedRegion(regionId) && !force) return;
 
             const bounds = this.getRegionBounds(regionId);
 
-            data[regionId] = [];
+            data[regionId] = {
+                region: [],
+                doors: []
+            };
 
             this.forEachTile(bounds, (tile: any) => {
-                data[regionId].push(tile);
+                data[regionId].region.push(tile);
             });
         });
 

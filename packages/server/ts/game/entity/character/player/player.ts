@@ -587,7 +587,7 @@ class Player extends Character {
     }
 
     updateRegion(force?: boolean) {
-        this.world.region.sendRegion(this, this.region, force);
+        this.world.region.sendRegion(this, force);
     }
 
     isInvisible(instance: string) {
