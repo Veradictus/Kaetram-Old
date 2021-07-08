@@ -219,13 +219,6 @@ class Incoming {
 
         this.player.loadReady();
 
-        if (this.player.userAgent !== userAgent) {
-            this.player.userAgent = userAgent;
-
-            this.player.regionsLoaded = [];
-            this.player.updateRegion(true);
-        }
-
         if (this.player.new || config.offlineMode) {
             this.player.questsLoaded = true;
             this.player.achievementsLoaded = true;

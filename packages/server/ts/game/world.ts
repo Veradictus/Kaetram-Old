@@ -86,7 +86,7 @@ class World {
         this.ready = false;
     }
 
-    load(onWorldLoad: Function) {
+    load(onWorldLoad: Function): void {
         log.info('************ World Information ***********');
 
         /**
@@ -106,7 +106,7 @@ class World {
         });
     }
 
-    loaded() {
+    loaded(): void {
         /**
          * The following are all globally based 'plugins'. We load them
          * in a batch here in order to keep it organized and neat.
@@ -129,7 +129,7 @@ class World {
         log.info('******************************************');
     }
 
-    async tick() {
+    async tick(): Promise<void> {
         let update = 1000 / this.updateTime;
 
         const setIntervalAsync = (fn: any, ms: any) => {
@@ -160,7 +160,7 @@ class World {
      * Entity related functions *
      ****************************/
 
-    kill(character: Character) {
+    kill(character: Character): void {
         character.applyDamage(character.hitPoints);
 
         this.push(Packets.PushOpcode.Regions, [
@@ -181,7 +181,7 @@ class World {
         this.handleDeath(character, true);
     }
 
-    handleDamage(attacker: Character, target: Character, damage: number) {
+    handleDamage(attacker: Character, target: Character, damage: number): void {
         if (!attacker || !target || isNaN(damage) || target.invincible) return;
 
         if (target.type === 'player' && target.hitCallback) target.hitCallback(attacker, damage);
@@ -228,7 +228,7 @@ class World {
         }
     }
 
-    handleDeath(character: Character, ignoreDrops?: boolean, lastAttacker?: Character) {
+    handleDeath(character: Character, ignoreDrops?: boolean, lastAttacker?: Character): void {
         if (!character) return;
 
         if (character.type === 'mob') {
@@ -255,7 +255,7 @@ class World {
         } else if (character.type === 'player') character.die();
     }
 
-    parseTrees() {
+    parseTrees(): void {
         let time = new Date().getTime(),
             treeTypes = Object.keys(Modules.Trees);
 
@@ -277,7 +277,7 @@ class World {
         });
     }
 
-    parseRocks() {
+    parseRocks(): void {
         let time = new Date().getTime(),
             rockTypes = Object.keys(Modules.Rocks);
 
@@ -299,7 +299,7 @@ class World {
         });
     }
 
-    isTreeCut(id: string) {
+    isTreeCut(id: string): boolean {
         if (id in this.cutTrees) return true;
 
         for (let i in this.cutTrees) if (id in this.cutTrees[i]) return true;
@@ -307,7 +307,7 @@ class World {
         return false;
     }
 
-    isRockDepleted(id: string) {
+    isRockDepleted(id: string): boolean {
         if (id in this.depletedRocks) return true;
 
         for (let i in this.depletedRocks) if (id in this.depletedRocks[i]) return true;
@@ -323,7 +323,7 @@ class World {
      * using the data from `this.trees`.
      */
 
-    destroyTree(id: any, treeId: any) {
+    destroyTree(id: any, treeId: any): void {
         let position = this.map.idToPosition(id);
 
         if (!(id in this.trees)) this.trees[id] = {};
@@ -374,7 +374,7 @@ class World {
      * `type` - The type of tile we are looking for.
      */
 
-    getSearchTile(type: string, x: number, y: number) {
+    getSearchTile(type: string, x: number, y: number): boolean {
         switch (type) {
             case 'tree':
                 return this.map.getTree(x, y);
@@ -384,7 +384,7 @@ class World {
         }
     }
 
-    search(x: number, y: number, refId: any, data: any, type: string) {
+    search(x: number, y: number, refId: any, data: any, type: string): boolean {
         let objectTile = this.getSearchTile(type, x, y);
 
         if (!objectTile) return false;
@@ -395,7 +395,7 @@ class World {
 
         data[refId][id] = {
             index: this.map.gridPositionToIndex(x, y) - 1,
-            objectTile: objectTile
+            objectTile
         };
 
         if (this.search(x + 1, y, refId, data, type)) return true;
@@ -409,7 +409,7 @@ class World {
         return false;
     }
 
-    push(type: number, info: any) {
+    push(type: number, info: any): void {
         if (_.isArray(info)) {
             _.each(info, (i) => {
                 this.push(type, i);
@@ -461,7 +461,7 @@ class World {
         }
     }
 
-    cleanCombat(character: Character) {
+    cleanCombat(character: Character): void {
         _.each(this.entities, (oCharacter) => {
             if (oCharacter instanceof Character && oCharacter.combat.hasAttacker(character))
                 oCharacter.combat.removeAttacker(character);
@@ -469,38 +469,38 @@ class World {
     }
 
     globalMessage(
-        source: any,
-        message: any,
+        source: string,
+        message: string,
         colour?: string,
         isGlobal?: boolean,
         withBubble?: boolean
-    ) {
+    ): void {
         this.push(Packets.PushOpcode.Broadcast, {
             message: new Messages.Chat({
                 name: source,
                 text: message,
-                colour: colour,
-                isGlobal: isGlobal,
-                withBubble: withBubble
+                colour,
+                isGlobal,
+                withBubble
             })
         });
     }
 
-    saveAll() {
+    saveAll(): void {
         this.entities.forEachPlayer((player: Player) => {
             player.save();
         });
     }
 
-    isOnline(username: string) {
+    isOnline(username: string): boolean {
         return this.entities.isOnline(username);
     }
 
-    getPlayerByName(username: string) {
+    getPlayerByName(username: string): Player {
         return this.entities.getPlayer(username);
     }
 
-    isFull() {
+    isFull(): boolean {
         return this.getPopulation() >= this.maxPlayers;
     }
 
@@ -512,15 +512,15 @@ class World {
         return this.map.areas;
     }
 
-    getPopulation() {
+    getPopulation(): number {
         return _.size(this.entities.players);
     }
 
-    onPlayerConnection(callback: Function) {
+    onPlayerConnection(callback: Function): void {
         this.playerConnectCallback = callback;
     }
 
-    onPopulationChange(callback: Function) {
+    onPopulationChange(callback: Function): void {
         this.populationCallback = callback;
     }
 }

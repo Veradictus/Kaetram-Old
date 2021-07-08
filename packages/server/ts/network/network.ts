@@ -9,12 +9,13 @@ import Utils from '../util/utils';
 import Connection from './connection';
 import config from '../../config';
 import Entities from '../controllers/entities';
+import WebSocket from './websocket';
 
 class Network {
     private world: World;
     private entities: Entities;
     private database: MongoDB;
-    private socket: any;
+    private socket: WebSocket;
     private region: Region;
     private map: Map;
 
@@ -36,7 +37,7 @@ class Network {
         this.load();
     }
 
-    load() {
+    load(): void {
         this.world.onPlayerConnection((connection: any) => {
             this.handlePlayerConnection(connection);
         });
@@ -51,13 +52,13 @@ class Network {
      * and sends packets to their respective connection.
      */
 
-    parsePackets() {
+    parsePackets(): void {
         /**
          * This parses through the packet pool and sends them
          */
 
-        for (let id in this.packets) {
-            if (this.packets[id].length > 0 && this.packets.hasOwnProperty(id)) {
+        for (let id in this.packets)
+            if (this.packets[id].length > 0) {
                 let conn = this.socket.get(id);
 
                 if (conn) {
@@ -66,10 +67,9 @@ class Network {
                     this.packets[id].id = id;
                 } else this.socket.remove(id);
             }
-        }
     }
 
-    handlePlayerConnection(connection: any) {
+    handlePlayerConnection(connection: Connection): void {
         let clientId = Utils.generateClientId(),
             player = new Player(this.world, this.database, connection, clientId),
             timeDifference = new Date().getTime() - this.getSocketTime(connection);
@@ -93,11 +93,11 @@ class Network {
         );
     }
 
-    handlePopulationChange() {
+    handlePopulationChange(): void {
         this.pushBroadcast(new Messages.Population(this.world.getPopulation()));
     }
 
-    addToPackets(player: Player) {
+    addToPackets(player: Player): void {
         this.packets[player.instance] = [];
     }
 
@@ -109,7 +109,7 @@ class Network {
      * Broadcast a message to everyone in the world.
      */
 
-    pushBroadcast(message: any) {
+    pushBroadcast(message: typeof Messages): void {
         _.each(this.packets, (packet: any) => {
             packet.push(message.serialize());
         });
@@ -119,9 +119,11 @@ class Network {
      * Broadcast a message to everyone with exceptions.
      */
 
-    pushSelectively(message: any, ignores?: any) {
+    pushSelectively(message: typeof Messages, ignores?: string[]): void {
         _.each(this.packets, (packet: any) => {
-            if (ignores.indexOf(packet.id) < 0) packet.push(message.serialize());
+            if (ignores.includes(packet.id)) return;
+
+            packet.push(message.serialize());
         });
     }
 
@@ -129,7 +131,7 @@ class Network {
      * Sends a message to a player.
      */
 
-    pushToPlayer(player: Player, message: any) {
+    pushToPlayer(player: Player, message: any): void {
         if (player && player.instance in this.packets)
             this.packets[player.instance].push(message.serialize());
     }
@@ -138,7 +140,7 @@ class Network {
      * Sends a message to a group of players types.
      */
 
-    pushToPlayers(players: Player, message: any) {
+    pushToPlayers(players: Player, message: any): void {
         _.each(players, (instance: string) => {
             this.pushToPlayer(this.entities.get(instance) as Player, message);
         });
@@ -148,7 +150,7 @@ class Network {
      * Sends a message to all players within a region
      */
 
-    pushToRegion(regionId: string, message: any, ignoreId?: string) {
+    pushToRegion(regionId: string, message: any, ignoreId?: string): void {
         let region = this.region.regions[regionId];
 
         if (!region) return;
@@ -167,7 +169,7 @@ class Network {
      * G  G  G
      */
 
-    pushToAdjacentRegions(regionId: string, message: any, ignoreId?: any) {
+    pushToAdjacentRegions(regionId: string, message: typeof Messages, ignoreId?: string): void {
         this.map.regions.forEachSurroundingRegion(regionId, (id: string) => {
             this.pushToRegion(id, message, ignoreId);
         });
@@ -177,7 +179,7 @@ class Network {
      * Sends a message to an array of player names
      */
 
-    pushToNameArray(names: any, message: any) {
+    pushToNameArray(names: string[], message: typeof Messages): void {
         _.each(names, (name: string) => {
             let player = this.world.getPlayerByName(name);
 
@@ -185,7 +187,7 @@ class Network {
         });
     }
     
-    getSocketTime(connection: Connection) {
+    getSocketTime(connection: Connection): number {
         return this.socket.ips[connection.socket.conn.remoteAddress];
     }
 }

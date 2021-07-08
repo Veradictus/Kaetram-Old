@@ -35,8 +35,9 @@ module.exports = {
         'default-case-last': 'error',
         'dot-notation': 'error',
         'eqeqeq': 'error',
-        'guard-for-in': 'error',
+        'guard-for-in': 'off',
         'max-classes-per-file': 'error',
+		'prefer-const': 'off',
 
         'no-useless-backreference': 'error',
         'no-unsafe-optional-chaining': 'error',

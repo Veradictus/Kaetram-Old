@@ -1,5 +1,3 @@
-/* global module */
-
 import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
@@ -15,6 +13,16 @@ import config from '../../config';
 import log from '../util/log';
 
 const map = path.resolve(__dirname, '../../data/map/world.json');
+
+type Bounds = {
+    startX: number;
+    startY: number;
+    endX: number;
+    endY: number;
+};
+
+type Tile = string | string[];
+type RCallback = (entity: Entity, regionId: string) => void; // region callback
 
 class Region {
     /**
@@ -39,8 +47,8 @@ class Region {
     clientWidth: number;
     clientHeight: number;
 
-    addCallback: Function;
-    incomingCallback: Function;
+    addCallback: RCallback;
+    incomingCallback: RCallback;
 
     constructor(world: World) {
         this.map = world.map;
@@ -79,7 +87,7 @@ class Region {
         this.loadWatcher();
     }
 
-    load() {
+    load(): void {
         this.mapRegions.forEachRegion((regionId: string) => {
             this.regions[regionId] = {
                 entities: {},
@@ -93,15 +101,15 @@ class Region {
         log.info('Finished loading regions!');
     }
 
-    loadWatcher() {
-        fs.watch(map, (_eventType, _filename) => {
+    loadWatcher(): void {
+        fs.watch(map, () => {
             this.update();  
         });
 
         log.info('Finished loading file watcher!');
     }
 
-    update() {
+    update(): void {
         let data = fs.readFileSync(map, {
             encoding: 'utf8',
             flag: 'r'
@@ -127,7 +135,7 @@ class Region {
         } catch (e) { log.error('Could not parse new map file.'); log.debug(e); }
     }
 
-    addEntityToInstance(entity: Entity, player: Player) {
+    addEntityToInstance(entity: Entity, player: Player): void {
         if (!entity) return;
 
         this.add(entity, player.region);
@@ -135,7 +143,7 @@ class Region {
         player.updateRegion();
     }
 
-    createInstance(player: Player, regionId: string) {
+    createInstance(player: Player, regionId: string): void {
         /**
          * We create an instance at the player's current surrounding
          * region IDs. These will have to be disposed of whenever we're done.
@@ -155,7 +163,7 @@ class Region {
         this.push(player);
 
         this.world.push(Packets.PushOpcode.OldRegions, {
-            player: player,
+            player,
             message: new Messages.Region(Packets.RegionOpcode.Update, {
                 id: player.instance,
                 type: 'remove'
@@ -163,7 +171,7 @@ class Region {
         });
     }
 
-    deleteInstance(player: Player) {
+    deleteInstance(player: Player): void {
         player.instanced = false;
 
         this.handle(player);
@@ -176,7 +184,7 @@ class Region {
         });
     }
 
-    parseRegions() {
+    parseRegions(): void {
         if (!this.loaded) return;
 
         this.mapRegions.forEachRegion((regionId: string) => {
@@ -195,7 +203,7 @@ class Region {
      * @param regionId The region we are updating
      */
 
-    updateRegion(regionId: string) {
+    updateRegion(regionId: string): void {
         this.mapRegions.forEachSurroundingRegion(regionId, (id: string) => {
             const region = this.regions[id];
             
@@ -207,7 +215,7 @@ class Region {
         });
     }
 
-    syncRegion(player: Player) {
+    syncRegion(player: Player): void {
         this.handle(player);
         this.push(player);
  
@@ -217,7 +225,7 @@ class Region {
     }
 
     // If `regionId` is not null, we update adjacent regions
-    updateRegions(regionId?: string) {
+    updateRegions(regionId?: string): void {
         if (regionId)
             this.mapRegions.forEachSurroundingRegion(regionId, (id: string) => {
                 const region = this.regions[id];
@@ -239,14 +247,14 @@ class Region {
             });
     }
 
-    sendRegion(player: Player, force?: boolean) {
+    sendRegion(player: Player, force?: boolean): void {
         const regionData = this.getRegionData(player, force);
 
         if (Object.keys(regionData).length > -1)
             player.send(new Messages.Map(Packets.MapOpcode.Data, regionData, force));
     }
 
-    sendTilesetInfo(player: Player) {
+    sendTilesetInfo(player: Player): void {
         let tileCollisions = this.map.collisions,
             polygonCollisions = this.map.polygons,
             tilesetData = {};
@@ -266,7 +274,7 @@ class Region {
         player.send(new Messages.Map(Packets.MapOpcode.Tileset, tilesetData));
     }
 
-    sendDoors(player: Player) {
+    sendDoors(player: Player): void {
         let doors = [];
 
         for (let i in this.doors)
@@ -282,35 +290,35 @@ class Region {
     }
 
     // TODO - Format dynamic tiles to follow same structure as `getRegionData()`
-    getDynamicTiles(player: Player) {
+    getDynamicTiles(player: Player): any {
         const dynamicTiles: any = player.doors.getAllTiles(),
               trees = player.getSurroundingTrees();
 
         // Start with the doors and append afterwards.
 
-        dynamicTiles.indexes.push.apply(dynamicTiles.indexes, trees.indexes);
-        dynamicTiles.data.push.apply(dynamicTiles.data, trees.data);
+        dynamicTiles.indexes = [...dynamicTiles.indexes, trees.indexes];
+        dynamicTiles.data = [...dynamicTiles.data, trees.data];
 
         if (trees.objectData) dynamicTiles.objectData = trees.objectData;
 
         return dynamicTiles;
     }
 
-    sendSpawns(regionId: string) {
+    sendSpawns(regionId: string): void {
         if (!regionId) return;
 
         _.each(this.regions[regionId].incoming, (entity: Entity) => {
             if (!entity || !entity.instance || entity.instanced) return;
 
             this.world.push(Packets.PushOpcode.Region, {
-                regionId: regionId,
+                regionId,
                 message: new Messages.Spawn(entity),
                 ignoreId: entity.isPlayer() ? entity.instance : null
             });
         });
     }
 
-    add(entity: Entity, regionId: string) {
+    add(entity: Entity, regionId: string): string[] {
         const newRegions = [];
 
         if (entity && regionId && regionId in this.regions) {
@@ -335,7 +343,7 @@ class Region {
         return newRegions;
     }
 
-    remove(entity: Entity) {
+    remove(entity: Entity): string[] {
         const oldRegions = [];
 
         if (entity && entity.region) {
@@ -364,7 +372,7 @@ class Region {
         return oldRegions;
     }
 
-    incoming(entity: Entity, regionId: string) {
+    incoming(entity: Entity, regionId: string): void {
         if (!entity || !regionId) return;
 
         const region = this.regions[regionId];
@@ -374,7 +382,7 @@ class Region {
         if (this.incomingCallback) this.incomingCallback(entity, regionId);
     }
 
-    handle(entity: Entity, region?: string) {
+    handle(entity: Entity, region?: string): boolean {
         let regionsChanged = false;
 
         if (!entity) return regionsChanged;
@@ -397,8 +405,8 @@ class Region {
         return regionsChanged;
     }
 
-    push(player: Player) {
-        let entities: any;
+    push(player: Player): void {
+        let entities: string[];
 
         if (!player || !(player.region in this.regions)) return;
 
@@ -409,19 +417,19 @@ class Region {
         });
 
         entities = _.map(entities, (instance: string) => {
-            return parseInt(instance);
+            return instance;
         });
 
         player.send(new Messages.List(entities));
     }
 
-    changeTileAt(player: Player, newTile: any, x: number, y: number) {
+    changeTileAt(player: Player, newTile: Tile, x: number, y: number): void {
         const index = this.gridPositionToIndex(x, y);
 
         player.send(Region.getModify(index, newTile));
     }
 
-    changeGlobalTile(newTile: any, x: number, y: number) {
+    changeGlobalTile(newTile: Tile, x: number, y: number): void {
         const index = this.gridPositionToIndex(x, y);
 
         this.map.data[index] = newTile;
@@ -440,8 +448,10 @@ class Region {
      * @returns A serialized object array of region data.
      */
 
-    getRegionData(player: Player, force?: boolean) {
+    getRegionData(player: Player, force?: boolean): any {
         const data = {};
+
+        console.trace('wut');
 
         if (!player) return data;
 
@@ -463,7 +473,7 @@ class Region {
         return data;
     }
 
-    forEachTile(bounds: any, callback: Function) {
+    forEachTile(bounds: Bounds, callback: Function): void {
         this.forEachGrid(bounds, (x: number, y: number) => {
             let index = this.gridPositionToIndex(x - 1, y),
                 data = this.map.data[index];
@@ -471,8 +481,8 @@ class Region {
             if (!data) return;
 
             let info: any = {
-                position: { x: x, y: y },
-                data: data,
+                position: { x, y },
+                data,
                 animation: this.map.getAnimation(data)
             };
 
@@ -482,13 +492,13 @@ class Region {
         });
     }
 
-    forEachGrid(bounds: any, callback: Function) {
+    forEachGrid(bounds: Bounds, callback: (x: number, y: number) => void): void {
         for (let y = bounds.startY; y < bounds.endY; y++)
             for (let x = bounds.startX; x < bounds.endX; x++)
                 callback(x, y)
     }    
 
-    getRegionBounds(regionId: string) {
+    getRegionBounds(regionId: string): Bounds {
         const regionCoordinates = this.mapRegions.regionIdToCoordinates(regionId);
 
         return {
@@ -499,32 +509,32 @@ class Region {
         };
     }
 
-    static getModify(index: number, newTile: any) {
+    static getModify(index: number, newTile: Tile): typeof Messages.Region {
         return new Messages.Region(Packets.RegionOpcode.Modify, {
-            index: index,
-            newTile: newTile
+            index,
+            newTile
         });
     }
 
-    static instanceToRegionId(instancedRegionId: string) {
+    static instanceToRegionId(instancedRegionId: string): string {
         const region = instancedRegionId.split('-');
 
         return region[0] + '-' + region[1];
     }
 
-    static regionIdToInstance(entity: Entity, regionId: string) {
+    static regionIdToInstance(entity: Entity, regionId: string): string {
         return regionId + '-' + entity.instance;
     }
 
-    gridPositionToIndex(x: number, y: number) {
+    gridPositionToIndex(x: number, y: number): number {
         return y * this.map.width + x + 1;
     }
 
-    onAdd(callback: Function) {
+    onAdd(callback: RCallback): void {
         this.addCallback = callback;
     }
 
-    onIncoming(callback: Function) {
+    onIncoming(callback: RCallback): void {
         this.incomingCallback = callback;
     }
 }

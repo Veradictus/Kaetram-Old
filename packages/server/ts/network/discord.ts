@@ -51,7 +51,7 @@ class Discord {
      * Sends a message to the Discord server using the webhook.
      */
 
-    sendWebhook(source: any, message: any, withArrow?: any) {
+    sendWebhook(source: string, message: string, withArrow?: boolean): void {
         if (!config.discordEnabled) return;
 
         let formattedSource = Utils.formatUsername(source);

@@ -1,5 +1,4 @@
 import log from '../util/log';
-import config from '../../config';
 import Utils from '../util/utils';
 
 import Connection from './connection';
@@ -46,11 +45,11 @@ export default class WebSocket {
             });
 
         this.server = new WS.Server({ port: this.wsPort });
-        this.server.on('connection', (socket: WS.Socket, request: any) => {
+        this.server.on('connection', (socket: WS.Socket, request: http.ServerResponse) => {
             let mappedAddress = request.socket.remoteAddress,
-                remoteAddress = mappedAddress.split('::ffff:')[1];
+                [,remoteAddress] = mappedAddress.split('::ffff:');
 
-            socket.conn = { remoteAddress: remoteAddress };
+            socket.conn = { remoteAddress };
 
             log.info(`Received connection from: ${socket.conn.remoteAddress}.`);
 
@@ -65,7 +64,7 @@ export default class WebSocket {
      * to access the server.
      */
 
-     httpResponse(_request: any, response: any) {
+    httpResponse(_request: http.IncomingMessage, response: http.ServerResponse): void {
         response.writeHead(200, { 'Content-Type': 'text/plain' });
         response.write('This is server, why are you here?');
         response.end();
@@ -133,7 +132,7 @@ export default class WebSocket {
      * @param callback The void function callback
      */
 
-    onReady(callback: () => void) {
+    onReady(callback: () => void): void {
         this.readyCallback = callback;
     }
 
@@ -143,7 +142,7 @@ export default class WebSocket {
      * @param callback The callback containing the Connection that occurs.
      */
 
-    onConnection(callback: (connection: Connection) => void) {
+    onConnection(callback: (connection: Connection) => void): void {
         this.connectionCallback = callback;
     }
 

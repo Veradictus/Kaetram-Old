@@ -1,8 +1,9 @@
-/* global module */
-
 import WebSocket from './websocket';
 import log from '../util/log';
 import WS from 'ws';
+
+type ListenCallback = (data: JSON) => void;
+type CloseCallback = () => void;
 
 class Connection {
     public id: string;
@@ -10,8 +11,8 @@ class Connection {
 
     private server: WebSocket;
 
-    private listenCallback: Function;
-    private closeCallback: Function;
+    private listenCallback: ListenCallback;
+    private closeCallback: CloseCallback;
 
     constructor(id: string, socket: WS, server: WebSocket) {
         this.id = id;
@@ -36,23 +37,23 @@ class Connection {
         });
     }
 
-    listen(callback: Function) {
+    listen(callback: ListenCallback): void {
         this.listenCallback = callback;
     }
 
-    onClose(callback: Function) {
+    onClose(callback: CloseCallback): void {
         this.closeCallback = callback;
     }
 
-    send(message: any) {
+    send(message: JSON): void {
         this.sendUTF8(JSON.stringify(message));
     }
 
-    sendUTF8(data: any) {
-        this.socket.send(data);
+    sendUTF8(message: string): void {
+        this.socket.send(message);
     }
 
-    close(reason?: any) {
+    close(reason?: string): void {
         if (reason) log.info('[Connection] Closing - ' + reason);
 
         this.socket.close();
