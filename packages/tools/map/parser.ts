@@ -127,7 +127,7 @@ export default class Parser {
                 return;
 
             // We skip collisions
-            if (this.map.collisions.indexOf(value) > -1)
+            if (this.map.collisions.includes(value))
                 return;
             
             this.map.plateau[index] = level;

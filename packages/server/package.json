@@ -12,6 +12,7 @@
         "build": "tsc"
     },
     "dependencies": {
+        "@kaetram/common": "workspace:packages/common",
         "bcryptjs": "^2.4.3",
         "camelcase": "^6.0.0",
         "discord.js": "^12.3.1",

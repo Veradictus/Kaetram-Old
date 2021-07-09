@@ -1,5 +1,3 @@
-/* global module */
-
 import _ from 'lodash';
 import Container from '../container';
 import Messages from '../../../../../../network/messages';
@@ -25,7 +23,7 @@ class Inventory extends Container {
         );
     }
 
-    add(item: any) {
+    add(item: any): any {
         if (!this.canHold(item.id, item.count)) {
             this.owner.send(
                 new Messages.Notification(Packets.NotificationOpcode.Text, {

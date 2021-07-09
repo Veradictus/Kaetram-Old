@@ -1,5 +1,3 @@
-/* global module */
-
 import _ from 'lodash';
 
 export default {

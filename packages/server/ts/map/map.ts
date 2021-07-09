@@ -1,5 +1,3 @@
-/* global module */
-
 import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
@@ -210,7 +208,7 @@ class Map {
     }
 
     isObject(object: any) {
-        return this.objects.indexOf(object) > -1;
+        return this.objects.includes(object);
     }
 
     // Transforms an object's `instance` or `id` into position
@@ -243,7 +241,7 @@ class Map {
 
         let tileIndex = this.gridPositionToIndex(x, y);
 
-        return this.collisions.indexOf(tileIndex) > -1;
+        return this.collisions.includes(tileIndex);
     }
 
     /**
@@ -282,7 +280,7 @@ class Map {
     isCollision(rawX: number, rawY: number, gridX: number, gridY: number) {
         let tileIndex = this.gridPositionToIndex(gridX, gridY);
 
-        if (this.collisions.indexOf(tileIndex) > -1)
+        if (this.collisions.includes(tileIndex))
             return rawX > gridX && rawX < gridX + 1 && rawY > gridY && rawY < gridY + 1;
 
         let tileData: any = this.data[tileIndex],

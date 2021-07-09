@@ -1,5 +1,3 @@
-/* global module */
-
 import Items from '@kaetram/server/ts/util/items';
 
 class Equipment {
@@ -15,7 +13,7 @@ class Equipment {
         this.update(id, count, ability, abilityLevel);
     }
 
-    update(id: number, count: number, ability: number, abilityLevel: number) {
+    update(id: number, count: number, ability: number, abilityLevel: number): void {
         this.id = id;
         this.count = count ? count : 0;
         this.ability = !isNaN(ability) ? ability : -1;

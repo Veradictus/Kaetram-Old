@@ -1,5 +1,3 @@
-/* global module */
-
 import _ from 'lodash';
 import Container from '../container';
 import Messages from '../../../../../../network/messages';
@@ -20,13 +18,13 @@ class Bank extends Container {
         counts: Array<number>,
         abilities: Array<number>,
         abilityLevels: Array<number>
-    ) {
+    ): void {
         super.load(ids, counts, abilities, abilityLevels);
 
         this.owner.send(new Messages.Bank(Packets.BankOpcode.Batch, [this.size, this.slots]));
     }
 
-    add(id: number, count: number, ability: number, abilityLevel: number) {
+    add(id: number, count: number, ability: number, abilityLevel: number): any {
         if (!this.canHold(id, count)) {
             this.owner.send(
                 new Messages.Notification(Packets.NotificationOpcode.Text, {
@@ -44,13 +42,13 @@ class Bank extends Container {
         return true;
     }
 
-    remove(id: number, count: number, index: number) {
+    remove(id: number, count: number, index: number): any {
         if (!super.remove(index, id, count)) return;
 
         this.owner.send(
             new Messages.Bank(Packets.BankOpcode.Remove, {
-                index: index,
-                count: count
+                index,
+                count
             })
         );
 

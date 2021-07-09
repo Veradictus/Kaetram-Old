@@ -1,5 +1,3 @@
-/* global module */
-
 import Mob from '../../game/entity/character/mob/mob';
 import Player from '../../game/entity/character/player/player';
 

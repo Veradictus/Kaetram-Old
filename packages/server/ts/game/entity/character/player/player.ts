@@ -1,5 +1,3 @@
-/* global module */
-
 import _ from 'lodash';
 import log from '../../../../util/log';
 import Character from '../character';
@@ -33,6 +31,7 @@ import Trade from './trade';
 import Warp from './warp';
 import Doors from './doors';
 import Friends from './friends';
+import Lumberjacking from './professions/impl/lumberjacking';
 import config from '../../../../../config';
 
 class Player extends Character {
@@ -481,9 +480,9 @@ class Player extends Character {
     }
 
     verifyRights() {
-        if (config.moderators.indexOf(this.username.toLowerCase()) > -1) this.rights = 1;
+        if (config.moderators.includes(this.username.toLowerCase())) this.rights = 1;
 
-        if (config.administrators.indexOf(this.username.toLowerCase()) > -1 || config.offlineMode)
+        if (config.administrators.includes(this.username.toLowerCase()) || config.offlineMode)
             this.rights = 2;
     }
 
@@ -531,7 +530,7 @@ class Player extends Character {
         this.sync();
     }
 
-    heal(amount: number) {
+    heal(amount: number): void {
         /**
          * Passed from the superclass...
          */
@@ -544,7 +543,7 @@ class Player extends Character {
         this.sync();
     }
 
-    healHitPoints(amount: number) {
+    healHitPoints(amount: number): void {
         let type = 'health';
 
         this.hitPoints.heal(amount);
@@ -555,13 +554,13 @@ class Player extends Character {
             this.region,
             new Messages.Heal({
                 id: this.instance,
-                type: type,
-                amount: amount
+                type,
+                amount
             })
         );
     }
 
-    healManaPoints(amount: number) {
+    healManaPoints(amount: number): void {
         let type = 'mana';
 
         this.mana.heal(amount);
@@ -572,13 +571,13 @@ class Player extends Character {
             this.region,
             new Messages.Heal({
                 id: this.instance,
-                type: type,
-                amount: amount
+                type,
+                amount
             })
         );
     }
 
-    eat(id: number) {
+    eat(id: number): void {
         let item = Items.getPlugin(id);
 
         if (!item) return;
@@ -586,11 +585,11 @@ class Player extends Character {
         new item(id).onUse(this);
     }
 
-    updateRegion(force?: boolean) {
+    updateRegion(force?: boolean): void {
         this.world.region.sendRegion(this, force);
     }
 
-    isInvisible(instance: string) {
+    isInvisible(instance: string): boolean {
         let entity = this.world.entities.get(instance);
 
         if (!entity) return false;
@@ -598,11 +597,11 @@ class Player extends Character {
         return super.hasInvisibleId(entity.id) || super.hasInvisible(entity);
     }
 
-    formatInvisibles() {
+    formatInvisibles(): string {
         return this.invisiblesIds.join(' ');
     }
 
-    canEquip(string: string) {
+    canEquip(string: string): boolean {
         let requirement = Items.getLevelRequirement(string);
 
         if (requirement > Constants.MAX_LEVEL) requirement = Constants.MAX_LEVEL;
@@ -615,7 +614,7 @@ class Player extends Character {
         return true;
     }
 
-    die() {
+    die(): void {
         this.dead = true;
 
         if (this.deathCallback) this.deathCallback();
@@ -631,8 +630,8 @@ class Player extends Character {
      * @param animate Do we animate the teleportation?
      */
 
-    teleport(x: number, y: number, isDoor?: boolean, animate?: boolean) {
-        var z = this.map.getPlateauLevel(x, y);
+    teleport(x: number, y: number, isDoor?: boolean, animate?: boolean): void {
+        let z = this.map.getPlateauLevel(x, y);
 
         if (this.teleportCallback) this.teleportCallback(x, y, z, isDoor);
 
@@ -640,9 +639,9 @@ class Player extends Character {
             this.region,
             new Messages.Teleport({
                 id: this.instance,
-                x: x,
-                y: y,
-                z: z,
+                x,
+                y,
+                z,
                 withAnimation: animate
             })
         );
@@ -657,12 +656,14 @@ class Player extends Character {
      * in order to organize data more neatly.
      */
 
-    handleObject(id: string) {
+    handleObject(id: string): void {
         let info = this.globalObjects.getInfo(id);
 
         if (!info) return;
 
-        let data: any;
+        let data: any,
+            message: string,
+            lumberjacking: Lumberjacking;
 
         switch (info.type) {
             case 'sign':
@@ -670,7 +671,7 @@ class Player extends Character {
 
                 if (!data) return;
 
-                let message = this.globalObjects.talk(data.object, this);
+                message = this.globalObjects.talk(data.object, this);
 
                 this.world.push(Packets.PushOpcode.Player, {
                     player: this,
@@ -686,7 +687,7 @@ class Player extends Character {
                 break;
 
             case 'lumberjacking':
-                let lumberjacking = this.professions.getProfession(
+                lumberjacking = this.professions.getProfession(
                     Modules.Professions.Lumberjacking
                 );
 
@@ -696,7 +697,7 @@ class Player extends Character {
         }
     }
 
-    handleDoor(x?: number, y?: number) {
+    handleDoor(x?: number, y?: number): void {
         let door = this.world.getArea(Modules.Areas.Doors).inArea(x, y);
 
         log.debug(`x: ${x} - y: ${y}`);
@@ -709,7 +710,7 @@ class Player extends Character {
         this.teleport(destination.x, destination.y, true);
     }
 
-    incrementCheatScore(amount: number) {
+    incrementCheatScore(amount: number): void {
         if (this.inCombat()) return;
 
         this.cheatScore += amount;
@@ -717,7 +718,7 @@ class Player extends Character {
         if (this.cheatScoreCallback) this.cheatScoreCallback();
     }
 
-    updatePVP(pvp: boolean, permanent?: boolean) {
+    updatePVP(pvp: boolean, permanent?: boolean): void {
         /**
          * No need to update if the state is the same
          */
@@ -735,7 +736,7 @@ class Player extends Character {
         this.sendToAdjacentRegions(this.region, new Messages.PVP(this.instance, this.pvp));
     }
 
-    updateOverlay(overlay: any) {
+    updateOverlay(overlay: Area): void {
         if (this.overlayArea === overlay) return;
 
         this.overlayArea = overlay;
@@ -748,7 +749,7 @@ class Player extends Character {
         this.send(new Messages.Overlay(Packets.OverlayOpcode.Set, overlay.overlayColour));
     }
 
-    updateCamera(camera: any) {
+    updateCamera(camera: Area): void {
         if (this.cameraArea === camera) return;
 
         this.cameraArea = camera;
@@ -770,36 +771,36 @@ class Player extends Character {
         }
     }
 
-    updateMusic(song: string) {
+    updateMusic(song: string): void {
         this.currentSong = song;
 
         this.send(new Messages.Audio(song));
     }
 
-    revertPoints() {
+    revertPoints(): void {
         this.hitPoints.setHitPoints(this.hitPoints.getMaxHitPoints());
         this.mana.setMana(this.mana.getMaxMana());
 
         this.sync();
     }
 
-    applyDamage(damage: number) {
+    applyDamage(damage: number): void {
         this.hitPoints.decrement(damage);
     }
 
-    toggleProfile(state: boolean) {
+    toggleProfile(state: boolean): void {
         this.profileDialogOpen = state;
 
         if (this.profileToggleCallback) this.profileToggleCallback(state);
     }
 
-    toggleInventory(state: boolean) {
+    toggleInventory(state: boolean): void {
         this.inventoryOpen = state;
 
         if (this.inventoryToggleCallback) this.inventoryToggleCallback(state);
     }
 
-    toggleWarp(state: boolean) {
+    toggleWarp(state: boolean): void {
         this.warpOpen = state;
 
         if (this.warpToggleCallback) this.warpToggleCallback(state);
@@ -848,7 +849,7 @@ class Player extends Character {
 
             tiles.indexes.push(index);
             tiles.data.push(this.map.data[index]);
-            tiles.collisions.push(this.map.collisions.indexOf(index) > -1);
+            tiles.collisions.push(this.map.collisions.includes(index));
 
             if (objectId)
                 tiles.objectData[index] = {
@@ -859,7 +860,7 @@ class Player extends Character {
         return tiles;
     }
 
-    getMovementSpeed() {
+    getMovementSpeed(): number {
         let itemMovementSpeed = this.equipment.getMovementSpeed(),
             movementSpeed = itemMovementSpeed || this.defaultMovementSpeed;
 
@@ -877,14 +878,7 @@ class Player extends Character {
      * Setters
      */
 
-    guessPosition(x: number, y: number) {
-        this.potentialPosition = {
-            x: x,
-            y: y
-        };
-    }
-
-    setPosition(x: number, y: number, z?: number, running?: boolean) {
+    setPosition(x: number, y: number, z?: number, running?: boolean): void {
         if (this.dead) return;
 
         super.setPosition(x, y, z);
@@ -897,8 +891,8 @@ class Player extends Character {
 
         let movementInfo: any = {
             id: this.instance,
-            x: x,
-            y: y,
+            x,
+            y,
             forced: false,
             teleport: false
         };
@@ -913,7 +907,7 @@ class Player extends Character {
         );
     }
 
-    setOrientation(orientation: number) {
+    setOrientation(orientation: number): void {
         this.orientation = orientation;
 
         if (this.orientationCallback)
@@ -921,7 +915,7 @@ class Player extends Character {
             this.orientationCallback;
     }
 
-    setFuturePosition(x: number, y: number) {
+    setFuturePosition(x: number, y: number): void {
         /**
          * Most likely will be used for anti-cheating methods
          * of calculating the actual time and duration for the
@@ -929,31 +923,31 @@ class Player extends Character {
          */
 
         this.futurePosition = {
-            x: x,
-            y: y
+            x,
+            y
         };
     }
 
-    loadRegion(regionId: string) {
+    loadRegion(regionId: string): void {
         this.regionsLoaded.push(regionId);
     }
 
-    hasLoadedRegion(region: string) {
-        return this.regionsLoaded.indexOf(region) > -1;
+    hasLoadedRegion(region: string): boolean {
+        return this.regionsLoaded.includes(region);
     }
 
-    hasLoadedLight(light) {
-        return this.lightsLoaded.indexOf(light) > -1;
+    hasLoadedLight(light: string): boolean {
+        return this.lightsLoaded.includes(light);
     }
 
-    timeout() {
+    timeout(): void {
         if (!this.connection) return;
 
         this.connection.sendUTF8('timeout');
         this.connection.close('Player timed out.');
     }
 
-    refreshTimeout() {
+    refreshTimeout(): void {
         clearTimeout(this.disconnectTimeout);
 
         this.disconnectTimeout = setTimeout(() => {
@@ -965,19 +959,19 @@ class Player extends Character {
      * Getters
      */
 
-    hasMaxHitPoints() {
+    hasMaxHitPoints(): boolean {
         return this.getHitPoints() >= this.hitPoints.getMaxHitPoints();
     }
 
-    hasMaxMana() {
+    hasMaxMana(): boolean {
         return this.mana.getMana() >= this.mana.getMaxMana();
     }
 
-    canBeStunned() {
+    canBeStunned(): boolean {
         return true;
     }
 
-    getState() {
+    getState(): any {
         return {
             type: this.type,
             id: this.instance,
@@ -998,11 +992,11 @@ class Player extends Character {
         };
     }
 
-    getRemoteAddress() {
+    getRemoteAddress(): string {
         return this.connection.socket.conn.remoteAddress;
     }
 
-    getSpawn() {
+    getSpawn(): any {
         /**
          * Here we will implement functions from quests and
          * other special events and determine a spawn point.
@@ -1013,13 +1007,15 @@ class Player extends Character {
         return { x: 14 * 32, y: 10 * 32 };
     }
 
-    getHit(target?: Character) {
+    getHit(target?: Character): Hit {
         let weapon = this.equipment.getEquipment(Modules.Equipment.Weapon),
             defaultDamage = Formulas.getDamage(this, target),
             isSpecial = Utils.randomInt(0, 100) < 30 + weapon.getAbilityLevel() * 3;
 
         if (!isSpecial || !this.hasSpecialAttack())
             return new Hit(Modules.Hits.Damage, defaultDamage);
+
+        let multiplier: number, damage: number;
 
         switch (weapon.getAbility()) {
             case Modules.Enchantment.Critical:
@@ -1029,8 +1025,8 @@ class Player extends Character {
                  * out of hand, it's easier to buff than to nerf..
                  */
 
-                let multiplier = 1.0 + weapon.getAbilityLevel(),
-                    damage = defaultDamage * multiplier;
+                multiplier = 1.0 + weapon.getAbilityLevel();
+                damage = defaultDamage * multiplier;
 
                 return new Hit(Modules.Hits.Critical, damage);
 
@@ -1042,13 +1038,13 @@ class Player extends Character {
         }
     }
 
-    isMuted() {
+    isMuted(): boolean {
         let time = new Date().getTime();
 
         return this.mute - time > 0;
     }
 
-    isDead() {
+    isDead(): boolean {
         return this.getHitPoints() < 1 || this.dead;
     }
 
@@ -1056,33 +1052,33 @@ class Player extends Character {
      * Miscellaneous
      */
 
-    send(message: any) {
+    send(message: typeof Messages): void {
         this.world.push(Packets.PushOpcode.Player, {
             player: this,
-            message: message
+            message
         });
     }
 
-    sendToRegion(message: any) {
+    sendToRegion(message: typeof Messages): void {
         this.world.push(Packets.PushOpcode.Region, {
             regionId: this.region,
-            message: message
+            message
         });
     }
 
-    sendToAdjacentRegions(regionId: string, message: any, ignoreId?: string) {
+    sendToAdjacentRegions(regionId: string, message: typeof Messages, ignoreId?: string): void {
         this.world.push(Packets.PushOpcode.Regions, {
-            regionId: regionId,
-            message: message,
-            ignoreId: ignoreId
+            regionId,
+            message,
+            ignoreId
         });
     }
 
-    sendEquipment() {
+    sendEquipment(): void {
         this.send(new Messages.Equipment(Packets.EquipmentOpcode.Batch, this.equipment.getData()));
     }
 
-    sendProfessions() {
+    sendProfessions(): void {
         if (!this.professions) return;
 
         this.send(
@@ -1092,13 +1088,13 @@ class Player extends Character {
         );
     }
 
-    sendToSpawn() {
+    sendToSpawn(): void {
         let position = this.getSpawn();
 
         this.teleport(position.x, position.y);
     }
 
-    sendMessage(playerName: string, message: string) {
+    sendMessage(playerName: string, message: string): void {
         if (config.hubEnabled) {
             this.world.api.sendPrivateMessage(this, playerName, message);
             return;
@@ -1117,11 +1113,11 @@ class Player extends Character {
         this.notify(`[To ${formattedName}]: ${message}`, 'aquamarine');
     }
 
-    sendAnimation(animationId, ignoreId?: string) {
+    sendAnimation(animationId: number, ignoreId?: string): void {
         this.sendToAdjacentRegions(this.region, new Messages.Animation(this.instance, animationId), ignoreId);
     }
 
-    sync() {
+    sync(): void {
         /**
          * Function to be used for syncing up health,
          * mana, exp, and other variables
@@ -1146,7 +1142,7 @@ class Player extends Character {
         this.save();
     }
 
-    popup(title: string, message: string, colour: string) {
+    popup(title: string, message: string, colour: string): void {
         if (!title) return;
 
         title = Utils.parseMessage(title);
@@ -1154,14 +1150,14 @@ class Player extends Character {
 
         this.send(
             new Messages.Notification(Packets.NotificationOpcode.Popup, {
-                title: title,
-                message: message,
-                colour: colour
+                title,
+                message,
+                colour
             })
         );
     }
 
-    notify(message: string, colour?: string) {
+    notify(message: string, colour?: string): void {
         if (!message) return;
 
         // Prevent notify spams
@@ -1171,8 +1167,8 @@ class Player extends Character {
 
         this.send(
             new Messages.Notification(Packets.NotificationOpcode.Text, {
-                message: message,
-                colour: colour
+                message,
+                colour
             })
         );
 
@@ -1184,21 +1180,21 @@ class Player extends Character {
      * show special messages to the player.
      */
 
-    chat(source: string, text: string, colour?: string, isGlobal?: boolean, withBubble?: boolean) {
+    chat(source: string, text: string, colour?: string, isGlobal?: boolean, withBubble?: boolean): void {
         if (!source || !text) return;
 
         this.send(
             new Messages.Chat({
                 name: source,
-                text: text,
-                colour: colour,
-                isGlobal: isGlobal,
-                withBubble: withBubble
+                text,
+                colour,
+                isGlobal,
+                withBubble
             })
         );
     }
 
-    stopMovement(force?: boolean) {
+    stopMovement(force?: boolean): void {
         /**
          * Forcefully stopping the player will simply halt
          * them in between tiles. Should only be used if they are
@@ -1208,18 +1204,18 @@ class Player extends Character {
         this.send(
             new Messages.Movement(Packets.MovementOpcode.Stop, {
                 instance: this.instance,
-                force: force
+                force
             })
         );
     }
 
-    finishedTutorial() {
+    finishedTutorial(): boolean {
         if (!this.quests || !config.tutorialEnabled) return true;
 
         return this.quests.getQuest(0).isFinished();
     }
 
-    finishedAchievement(id: number) {
+    finishedAchievement(id: number): boolean {
         if (!this.quests) return false;
 
         let achievement = this.quests.getAchievement(id);
@@ -1229,7 +1225,7 @@ class Player extends Character {
         return achievement.isFinished();
     }
 
-    finishAchievement(id: number) {
+    finishAchievement(id: number): boolean {
         if (!this.quests) return;
 
         let achievement = this.quests.getAchievement(id);

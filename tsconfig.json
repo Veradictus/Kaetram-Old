@@ -1,22 +1,23 @@
+
 {
     "compilerOptions": {
         "strict": true,
         "forceConsistentCasingInFileNames": true,
-        "importHelpers": true,
+        "importHelpers": false,
         "removeComments": true,
-        "allowJs": true,
-        "inlineSourceMap": true,
+        "sourceMap": true,
         "moduleResolution": "node",
         "resolveJsonModule": true,
         "esModuleInterop": true,
+
+        /** These values should be set to true once refactoring codebase. */
         "noImplicitAny": false,
         "strictNullChecks": false,
-        "composite": true,
-        "rootDir": "./",
+
+        "rootDir": ".",
         "baseUrl": "./packages",
         "paths": {
-            "@kaetram/*": ["./*"]
+            "@kaetram/*": ["*"]
         }
-    },
-    "exclude": ["node_modules", "**/*.spec.ts", "dist"]
+    }
 }

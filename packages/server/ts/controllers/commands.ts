@@ -1,5 +1,3 @@
-/* global module */
-
 import _ from 'lodash';
 import Messages from '../network/messages';
 import Packets from '../network/packets';
@@ -415,7 +413,7 @@ class Commands {
 
             case 'clear':
                 this.player.inventory.forEachSlot((slot) => {
-                    if (slot !== -1) this.player.inventory.remove(slot.id, slot.count);
+                    if (slot.id !== -1) this.player.inventory.remove(slot.id, slot.count);
                 });
 
                 break;

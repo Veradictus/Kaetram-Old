@@ -57,7 +57,7 @@ export default class Equipments {
      * @param data The player data received from the database.
      */
 
-    load(equipmentData) {
+    load(equipmentData): void {
 
         _.each(equipmentData, (value: any, index: string) => {
             let equipment = this.getEquipment(parseInt(index));
@@ -69,18 +69,16 @@ export default class Equipments {
             
     }
 
-    equip(id: number, count: number, ability: number, abilityLevel: number) {
+    equip(id: number, count: number, ability: number, abilityLevel: number): void {
         let type = Items.getType(id),
             equipment = this.getEquipment(type);
 
         if (!equipment || equipment.isEquipped()) return;
         
         equipment.update(id, count, ability, abilityLevel);
-
-        
     }
 
-    unequip(type: number) {
+    unequip(type: number): void {
         let equipment = this.getEquipment(type);
 
         if (!equipment) return;
@@ -90,7 +88,7 @@ export default class Equipments {
         this.player.send(new Messages.Equipment(Packets.EquipmentOpcode.Unequip, [type]));
     }
 
-    getDefense() {
+    getDefense(): number {
         /**
          * TODO - Implement a defense stat based on all the equipped items
          * of the player.
@@ -99,7 +97,7 @@ export default class Equipments {
         return 1;
     }
 
-    getEquipment(type: number) {
+    getEquipment(type: number): Equipment {
         switch (type) {
             case Modules.Equipment.Head:
                 return this.head;
@@ -130,7 +128,7 @@ export default class Equipments {
         }
     }
 
-    getMovementSpeed() {
+    getMovementSpeed(): number {
         return null;
     }
 
@@ -149,13 +147,13 @@ export default class Equipments {
         return data;
     }
 
-    getEquipments() {
+    getEquipments(): Equipment[] {
         return [this.head, this.necklace, this.torso, 
             this.legs, this.ring, this.boots, this.weapon,
             this.quiver];
     }
 
-    forEachEquipment(callback) {
+    forEachEquipment(callback: (equipment: Equipment) => void): void {
         _.each(this.getEquipments(), (equipment: Equipment) => {
             callback(equipment);
         });

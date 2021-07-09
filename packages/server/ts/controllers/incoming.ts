@@ -1,5 +1,3 @@
-/* global module */
-
 import Packets from '../network/packets';
 import _ from 'lodash';
 import Messages from '../network/messages';
@@ -32,7 +30,7 @@ class Incoming {
 
         this.connection.listen((data: any) => {
             let packet = data.shift(),
-                message = data[0];
+                [ message ] = data;
 
             if (!Utils.validPacket(packet)) {
                 log.error('Non-existent packet received: ' + packet + ' data: ');
@@ -143,7 +141,7 @@ class Incoming {
         });
     }
 
-    handleIntro(message: Array<any>) {
+    handleIntro(message: Array<any>): void {
         let loginType = message.shift(),
             username = message.shift().toLowerCase(),
             password = message.shift(),
@@ -548,7 +546,7 @@ class Incoming {
 
                     this.player.inventory.remove(id, slot.count, slot.index);
 
-                    this.player.equipment.equip(string, sCount, ability, abilityLevel);
+                    //this.player.equipment.equip(string, sCount, ability, abilityLevel);
                 } else if (slot.edible) {
                     this.player.inventory.remove(id, 1, slot.index);
 

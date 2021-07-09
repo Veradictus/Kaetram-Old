@@ -1,40 +1,39 @@
-/* global module */
-
 import Points from './points';
+import { VoidCallback } from '@kaetram/common/types/index';
 
 class Mana extends Points {
-    manaCallback: Function;
-    maxManaCallback: Function;
+    manaCallback: VoidCallback;
+    maxManaCallback: VoidCallback;
 
     constructor(mana: number, maxMana: number) {
         super(mana, maxMana);
     }
 
-    setMana(mana: number) {
+    setMana(mana: number): void {
         this.points = mana;
 
         if (this.manaCallback) this.manaCallback();
     }
 
-    setMaxMana(maxMana: number) {
+    setMaxMana(maxMana: number): void {
         this.maxPoints = maxMana;
 
         if (this.maxManaCallback) this.maxManaCallback();
     }
 
-    getMana() {
+    getMana(): number {
         return this.points;
     }
 
-    getMaxMana() {
+    getMaxMana(): number {
         return this.maxPoints;
     }
 
-    onMana(callback: Function) {
+    onMana(callback: VoidCallback): void {
         this.manaCallback = callback;
     }
 
-    onMaxMana(callback: Function) {
+    onMaxMana(callback: VoidCallback): void {
         this.maxManaCallback = callback;
     }
 }

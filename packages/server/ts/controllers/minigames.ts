@@ -14,15 +14,15 @@ class Minigames {
 
         this.load();
     }
-
-    load() {
-        this.minigames['TeamWar'] = new TeamWar(this.world);
+    
+    load(): void {
+        this.minigames.TeamWar = new TeamWar(this.world);
 
         log.info(`Finished loading ${Object.keys(this.minigames).length} minigames.`);
     }
 
-    getTeamWar() {
-        return this.minigames['TeamWar'];
+    getTeamWar(): TeamWar {
+        return this.minigames.TeamWar;
     }
 }
 

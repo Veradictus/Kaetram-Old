@@ -1,5 +1,3 @@
-/* global module */
-
 import Packets from './packets';
 import Utils from '../util/utils';
 
