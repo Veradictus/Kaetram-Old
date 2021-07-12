@@ -14,6 +14,10 @@ import log from '../util/log';
 
 const map = path.resolve(__dirname, '../../data/map/world.json');
 
+type Tile = string | string[];
+type RCallback = (entity: Entity, regionId: string) => void; // region callback
+type TCallback = (tileInfo: TileInfo) => void; // Tile info callback
+
 type Bounds = {
     startX: number;
     startY: number;
@@ -21,8 +25,14 @@ type Bounds = {
     endY: number;
 };
 
-type Tile = string | string[];
-type RCallback = (entity: Entity, regionId: string) => void; // region callback
+type TileInfo = {
+    position: {
+        x: number;
+        y: number;
+    };
+    data: Tile;
+    animation?: string;
+};
 
 class Region {
     /**
@@ -291,17 +301,7 @@ class Region {
 
     // TODO - Format dynamic tiles to follow same structure as `getRegionData()`
     getDynamicTiles(player: Player): any {
-        const dynamicTiles: any = player.doors.getAllTiles(),
-              trees = player.getSurroundingTrees();
-
-        // Start with the doors and append afterwards.
-
-        dynamicTiles.indexes = [...dynamicTiles.indexes, trees.indexes];
-        dynamicTiles.data = [...dynamicTiles.data, trees.data];
-
-        if (trees.objectData) dynamicTiles.objectData = trees.objectData;
-
-        return dynamicTiles;
+        return {};
     }
 
     sendSpawns(regionId: string): void {
@@ -451,21 +451,27 @@ class Region {
     getRegionData(player: Player, force?: boolean): any {
         const data = {};
 
-        console.trace('wut');
-
         if (!player) return data;
+
+        let dynamicTiles = this.getDynamicTiles(player);
 
         this.mapRegions.forEachSurroundingRegion(player.region, (regionId: string) => {
             if (player.hasLoadedRegion(regionId) && !force) return;
+
+            player.loadRegion(regionId);
 
             const bounds = this.getRegionBounds(regionId);
 
             data[regionId] = {
                 region: [],
-                doors: []
+                doors: this.getDoorsInRegion(bounds)
             };
 
-            this.forEachTile(bounds, (tile: any) => {
+            console.log('Region Id: ' + regionId);
+            console.log(bounds);
+            console.log(data[regionId].doors);
+
+            this.forEachTile(bounds, dynamicTiles, (tile: TileInfo) => {
                 data[regionId].region.push(tile);
             });
         });
@@ -473,14 +479,18 @@ class Region {
         return data;
     }
 
-    forEachTile(bounds: Bounds, callback: Function): void {
+    forEachTile(bounds: Bounds, dynamicTiles: any, callback: TCallback): void {
         this.forEachGrid(bounds, (x: number, y: number) => {
             let index = this.gridPositionToIndex(x - 1, y),
                 data = this.map.data[index];
 
             if (!data) return;
 
-            let info: any = {
+            /*if (index in dynamicTiles) {
+
+            }*/
+
+            let info: TileInfo = {
                 position: { x, y },
                 data,
                 animation: this.map.getAnimation(data)
@@ -496,7 +506,25 @@ class Region {
         for (let y = bounds.startY; y < bounds.endY; y++)
             for (let x = bounds.startX; x < bounds.endX; x++)
                 callback(x, y)
-    }    
+    }
+
+    getDoorsInRegion(bounds: Bounds): any {
+        let doors = [];
+
+        _.each(this.doors, (door: any) => {
+            if (!this.doorInBounds(door, bounds)) return;
+
+            doors.push({
+                id: door.id,
+                x: door.x,
+                y: door.y,
+                width: door.width,
+                height: door.height
+            });
+        });
+
+        return doors;
+    }
 
     getRegionBounds(regionId: string): Bounds {
         const regionCoordinates = this.mapRegions.regionIdToCoordinates(regionId);
@@ -507,6 +535,13 @@ class Region {
             endX: regionCoordinates.x + this.map.regionWidth,
             endY: regionCoordinates.y + this.map.regionHeight
         };
+    }
+
+    doorInBounds(door: any, bounds: Bounds): boolean {
+        let x = door.x / this.map.tileSize,
+            y = door.y / this.map.tileSize;
+
+        return x > bounds.startX && y > bounds.startY && x < bounds.endX && y < bounds.endY;
     }
 
     static getModify(index: number, newTile: Tile): typeof Messages.Region {

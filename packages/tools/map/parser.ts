@@ -261,9 +261,8 @@ export default class Parser {
      * @param layer An object layer from Tiled map.
      */
 
-    parseObjectLayer(layer: any) {
-        let name = layer.name,
-            objects = layer.objects;
+    parseObjectLayer(layer: any): void {
+        let { name, objects } = layer;
 
         if (!objects) return;
         if (!(name in this.map.areas))
@@ -280,11 +279,11 @@ export default class Parser {
      * @param info The raw data received from Tiled.
      */
 
-    parseObject(name: string, info: any) {
+    parseObject(name: string, info: any): void {
         let object: any = {
             id: info.id,
             name: info.name,
-            x: info.x,
+            x: info.x + this.map.tileSize,
             y: info.y,
             width: info.width,
             height: info.height,
@@ -354,7 +353,7 @@ export default class Parser {
      * to the server.
      */
 
-    formatData() {
+    formatData(): void {
         _.each(this.map.data, (value, index) => {
             if (!value) this.map.data[index] = 0;
         });
@@ -404,7 +403,7 @@ export default class Parser {
             return;
         }
 
-        for (var i = 0; i < size; i += 4)
+        for (let i = 0; i < size; i += 4)
             layerData.push(inflatedData.readUInt32LE(i));
 
         return layerData;
