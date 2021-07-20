@@ -377,7 +377,7 @@ class Map {
 
         let parsedData: any = Array.isArray(data) ? [] : 0;
 
-        this.forEachTileData(data, (tile: any, index: number) => {
+        this.forEachTileData(data, (tile: any) => {
             if (this.isFlipped(tile)) {
                 tile &= ~(Constants.DIAGONAL_FLAG | Constants.VERTICAL_FLAG | Constants.HORIZONTAL_FLAG);
 

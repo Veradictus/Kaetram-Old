@@ -49,7 +49,7 @@ class GlobalObjects {
         return {
             object: object,
             info: {
-                id: id,
+                id,
                 x: position.x * 16,
                 y: position.y * 16 + 8 // offset for the chat bubble
             }
@@ -60,7 +60,7 @@ class GlobalObjects {
      * Ripped from `npc.js` but with some minor adjustments.
      */
 
-    talk(object: any, player: Player) {
+    talk(object: any, player: Player): string {
         if (player.npcTalk !== object.id) {
             player.npcTalk = object.id;
             player.talkIndex = 0;
