@@ -12,6 +12,7 @@ import Spawns from '../../data/spawns.json';
 import log from '../util/log';
 import Areas from './areas/areas';
 import AreasIndex from './areas/index';
+import Constants from '../util/constants';
 
 let map: any;
 
@@ -303,6 +304,10 @@ class Map {
 
     /* For preventing NPCs from roaming in null areas. */
 
+    forEachTileData(tileData: number | number[], callback: (tileId: number) => void): void {
+        if (Array.isArray(tileData)) _.each(tileData, (tileId: number) => { callback(tileId); });
+        else callback(tileData);
+    }
 
     isEmpty(x: number, y: number) {
         if (this.isOutOfBounds(x, y)) return true;
@@ -310,6 +315,10 @@ class Map {
         let tileIndex = this.gridPositionToIndex(x, y);
 
         return this.data[tileIndex] === 0;
+    }
+
+    isFlipped(tileId: number): boolean {
+        return tileId > Constants.DIAGONAL_FLIP_FLAG;
     }
 
     getX(index: number, width: number) {
@@ -359,6 +368,16 @@ class Map {
                 return _.cloneDeep(this.warps[i]);
 
         return null;
+    }
+
+    getData(index: number): any {
+        let data = this.data[index];
+
+        if (!data) return null;
+
+        this.forEachTileData(data, (tile: number) => {
+            
+        });
     }
 
     getAnimation(tileData: any): any {

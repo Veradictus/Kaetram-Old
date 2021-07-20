@@ -197,7 +197,7 @@ class Player extends Character {
         this.enchant = new Enchant(this);
         this.bank = new Bank(this, 56);
         this.quests = new Quests(this);
-        this.trade = new Trade(this);
+        //this.trade = new Trade(this);
         this.doors = new Doors(this);
         this.warp = new Warp(this);
 

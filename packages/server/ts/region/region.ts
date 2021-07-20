@@ -14,7 +14,7 @@ import log from '../util/log';
 
 const map = path.resolve(__dirname, '../../data/map/world.json');
 
-type Tile = string | string[];
+type Tile = number[] | number;
 type RCallback = (entity: Entity, regionId: string) => void; // region callback
 type TCallback = (tileInfo: TileInfo) => void; // Tile info callback
 
@@ -33,6 +33,11 @@ type TileInfo = {
     data: Tile;
     animation?: string;
 };
+
+type ParsedData = {
+    data: Tile;
+    flipped: number | number[];
+}
 
 class Region {
     /**
@@ -482,7 +487,7 @@ class Region {
     forEachTile(bounds: Bounds, dynamicTiles: any, callback: TCallback): void {
         this.forEachGrid(bounds, (x: number, y: number) => {
             let index = this.gridPositionToIndex(x - 1, y),
-                data = this.map.data[index];
+                data = this.map.getData(index);
 
             if (!data) return;
 

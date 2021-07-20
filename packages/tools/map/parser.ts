@@ -245,7 +245,7 @@ export default class Parser {
      */
 
     parseTileLayerData(data: any) {
-        _.each(data, (value, index) => {
+        _.each(data, (value: number, index: number) => {
             if (value < 1) return;
 
             if (!this.map.data[index]) this.map.data[index] = value;

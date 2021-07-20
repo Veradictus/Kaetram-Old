@@ -5,7 +5,10 @@ let Constants: { [key: string]: any } = {
     MAX_PROFESSION_LEVEL: 100,
     POSITION_OFFSET: 0.75, // Offset due to character collision box
     MOVEMENT_SPEED: 80,
-    TIMEOUT_DURATION: 10 * 60 * 1000 // 10 minutes
+    TIMEOUT_DURATION: 10 * 60 * 1000, // 10 minutes
+    DIAGONAL_FLIP_FLAG: 0x20000000,
+    VERTICAL_FLIP_FLAG: 0x40000000,
+    HORIZONTAL_FLIP_FLAG: 0x80000000
 };
 
 Constants.Messages = {
