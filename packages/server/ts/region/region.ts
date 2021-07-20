@@ -472,10 +472,6 @@ class Region {
                 doors: this.getDoorsInRegion(bounds)
             };
 
-            console.log('Region Id: ' + regionId);
-            console.log(bounds);
-            console.log(data[regionId].doors);
-
             this.forEachTile(bounds, dynamicTiles, (tile: TileInfo) => {
                 data[regionId].region.push(tile);
             });
@@ -490,7 +486,7 @@ class Region {
                 data = this.map.getData(index);
 
             if (!data) return;
-
+            
             /*if (index in dynamicTiles) {
 
             }*/

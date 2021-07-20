@@ -304,9 +304,9 @@ class Map {
 
     /* For preventing NPCs from roaming in null areas. */
 
-    forEachTileData(tileData: number | number[], callback: (tileId: number) => void): void {
-        if (Array.isArray(tileData)) _.each(tileData, (tileId: number) => { callback(tileId); });
-        else callback(tileData);
+    forEachTileData(tileData: number | number[], callback: (tileId: number, index?: number) => void): void {
+        if (Array.isArray(tileData)) _.each(tileData, (tileId: number, index: number) => { callback(tileId, index); });
+        else callback(tileData, -1);
     }
 
     isEmpty(x: number, y: number) {
@@ -318,7 +318,7 @@ class Map {
     }
 
     isFlipped(tileId: number): boolean {
-        return tileId > Constants.DIAGONAL_FLIP_FLAG;
+        return tileId > Constants.DIAGONAL_FLAG;
     }
 
     getX(index: number, width: number) {
@@ -375,21 +375,34 @@ class Map {
 
         if (!data) return null;
 
-        this.forEachTileData(data, (tile: number) => {
-            
+        let parsedData: any = Array.isArray(data) ? [] : 0;
+
+        this.forEachTileData(data, (tile: any, index: number) => {
+            if (this.isFlipped(tile)) {
+                tile &= ~(Constants.DIAGONAL_FLAG | Constants.VERTICAL_FLAG | Constants.HORIZONTAL_FLAG);
+
+                tile = { tileId: tile, flipped: true };
+            }
+
+            if (Array.isArray(data)) parsedData.push(tile);
+            else parsedData = tile;
         });
+
+        return parsedData;
     }
 
     getAnimation(tileData: any): any {
-        if (tileData instanceof Array) {
-            for (let i in tileData)
-                if (tileData[i] in this.animations)
-                    return { tileId: tileData[i], name: this.animations[tileData[i]] };
-        } else
-            if (tileData in this.animations)
-                return { tileId: tileData, name: this.animations[tileData] };
+        let status = null;
 
-        return null;
+
+        this.forEachTileData(tileData, (tile: any) => {
+            if (Map.isDataObject(tile)) tile = tile.tileId;
+            if (!(tile in this.animations)) return;
+
+            status = { tileId: tile, name: this.animations[tile] };
+        });
+
+        return status;
     }
 
     getPositionObject(x: number, y: number) {
@@ -436,6 +449,10 @@ class Map {
 
     getDoors() {
         return this.areas['doors'].areas;
+    }
+
+    static isDataObject(data: any): boolean {
+        return !Array.isArray(data) && typeof data === 'object';
     }
 
     isReady(callback: Function) {
