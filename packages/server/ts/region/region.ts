@@ -483,7 +483,7 @@ class Region {
     forEachTile(bounds: Bounds, dynamicTiles: any, callback: TCallback): void {
         this.forEachGrid(bounds, (x: number, y: number) => {
             let index = this.gridPositionToIndex(x - 1, y),
-                data = this.map.getData(index);
+                data = this.map.getData(index) as any;
 
             if (!data) return;
             

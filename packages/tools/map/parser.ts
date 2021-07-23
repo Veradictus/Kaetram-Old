@@ -420,7 +420,7 @@ export default class Parser {
      * @param offset The offset of the tileIndex.
      */
 
-    getTileId(tileset: any, tile: any, offset = 0) {
+    getTileId(tileset: any, tile: any, offset = 0): number {
         return tileset.firstgid + tile.id + offset;
     }
 

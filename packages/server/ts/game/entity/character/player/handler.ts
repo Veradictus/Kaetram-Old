@@ -248,7 +248,7 @@ class Handler {
     }
 
     detectLights(x: number, y: number) {
-        _.each(this.map.lights, (light) => {
+        _.each(this.map.lights, (light: any) => {
             if (this.map.nearLight(light, x, y) && !this.player.hasLoadedLight(light)) {
                 // Add a half a tile offset so the light is centered on the tile.
 

@@ -18,12 +18,33 @@ let map: any;
 
 const mapDestination = path.resolve(__dirname, '../../data/map/world.json');
 
+type MapArea = { 
+    id: number;
+    name: string;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+
+    // doors
+    destination?: number;
+    
+    // overlay
+    a?: number;
+    b?: number;
+    g?: number;
+    r?: number;
+};
+
+type Animation = { [id: string]: string };
+type Polygon = { [id: string]: Position[] };
+
 type Position = {
     x?: number;
     y?: number;
     gridX?: number;
     gridY?: number;
-}
+};
 
 type TileData = {
     tileId: number;
@@ -47,14 +68,14 @@ class Map {
     tileSize: number;
     version: number;
 
-    data: any[];
+    data: any;
 
-    collisions: any;
-    animations: any;
-    polygons: any;
-    chests: any;
-    lights: any;
-    high: any[];
+    collisions: number[];
+    animations: Animation;
+    polygons: Polygon;
+    chests: MapArea;
+    lights: MapArea;
+    high: { [id: string]: number };
     plateau: any;
     objects: any;
     warps: any;
@@ -90,7 +111,7 @@ class Map {
     }
 
     // Creates and populates map based on resources.
-    create(jsonData?: any): void {
+    create(jsonData?: JSON): void {
         try {
             map = jsonData || JSON.parse(fs.readFileSync(mapDestination, {
                 encoding: 'utf8',
@@ -351,7 +372,7 @@ class Map {
         return this.plateau[index];
     }
 
-    getWarpById(id: number): string {
+    getWarpById(id: number): any {
         let warpName = Object.keys(Modules.Warps)[id];
 
         if (!warpName) return null;
@@ -373,7 +394,7 @@ class Map {
         return null;
     }
 
-    getData(index: number): TileData {
+    getData(index: number): Tile | TileData {
         let data = this.data[index];
 
         if (!data) return null;
@@ -438,22 +459,22 @@ class Map {
         return position.gridX + '-' + position.gridY;
     }
 
-    getObject(x: number, y: number, data: any): number {
+    getObject(x: number, y: number, data: any): Tile {
         let index = this.gridPositionToIndex(x, y) - 1,
             tiles = this.data[index];
 
         if (tiles instanceof Array) for (let i in tiles) if (tiles[i] in data) return tiles[i];
-
+        
         if (tiles in data) return tiles;
 
         return null;
     }
 
-    getTree(x: number, y: number): number {
+    getTree(x: number, y: number): Tile {
         return this.getObject(x, y, this.trees);
     }
 
-    getRock(x: number, y: number): number {
+    getRock(x: number, y: number): Tile {
         return this.getObject(x, y, this.rocks);
     }
 

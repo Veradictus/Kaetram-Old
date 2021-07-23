@@ -374,7 +374,7 @@ class World {
      * `type` - The type of tile we are looking for.
      */
 
-    getSearchTile(type: string, x: number, y: number): boolean {
+    getSearchTile(type: string, x: number, y: number): any {
         switch (type) {
             case 'tree':
                 return this.map.getTree(x, y);
