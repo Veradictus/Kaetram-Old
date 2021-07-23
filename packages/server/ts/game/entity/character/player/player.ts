@@ -276,7 +276,8 @@ class Player extends Character {
         this.connection = null;
     }
 
-    loadReady() {
+    loadReady(): void {
+        this.sendMap();
         this.sendEquipment();
 
         this.loadProfessions();
@@ -1074,6 +1075,14 @@ class Player extends Character {
         });
     }
 
+    sendMap(): void {
+        this.send(new Messages.Map(Packets.MapOpcode.Info, {
+            width: this.map.width,
+            height: this.map.height,
+            version: this.map.version
+        }));
+    }
+
     sendEquipment(): void {
         this.send(new Messages.Equipment(Packets.EquipmentOpcode.Batch, this.equipment.getData()));
     }
@@ -1279,7 +1288,7 @@ class Player extends Character {
     }
 
     inTutorial() {
-        return this.world.map.inTutorialArea(this);
+        return false;
     }
 
     hasAggressionTimer() {

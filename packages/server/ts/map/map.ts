@@ -18,6 +18,23 @@ let map: any;
 
 const mapDestination = path.resolve(__dirname, '../../data/map/world.json');
 
+type Position = {
+    x?: number;
+    y?: number;
+    gridX?: number;
+    gridY?: number;
+}
+
+type TileData = {
+    tileId: number;
+    x: boolean;
+    y: boolean;
+    d: boolean;
+};
+
+type Tile = number | number[];
+type ReadyCallback = () => void;
+
 class Map {
     world: World;
     ready: boolean;
@@ -58,7 +75,7 @@ class Map {
     checksum: string;
 
     readyInterval: any;
-    readyCallback: Function;
+    readyCallback: ReadyCallback;
 
     constructor(world: World) {
         this.world = world;
@@ -73,7 +90,7 @@ class Map {
     }
 
     // Creates and populates map based on resources.
-    create(jsonData?: any) {
+    create(jsonData?: any): void {
         try {
             map = jsonData || JSON.parse(fs.readFileSync(mapDestination, {
                 encoding: 'utf8',
@@ -82,7 +99,7 @@ class Map {
         } catch (e) { log.error('Could not create map file.'); }
     }
 
-    load() {
+    load(): void {
         this.version = map.version || 0;
 
         this.width = map.width;
@@ -134,22 +151,22 @@ class Map {
         }, 50);
     }
 
-    loadAreas() {
+    loadAreas(): void {
 
-        _.each(map.areas, (area: any, key: string) => {
+        _.each(map.areas, (area: Area, key: string) => {
             if (!(key in AreasIndex)) return;
 
             this.areas[key] = new AreasIndex[key](area, this.world);
         });
     }
 
-    loadStaticEntities() {
+    loadStaticEntities(): void {
         this.staticEntities = [];
 
         // Legacy static entities (from Tiled);
         _.each(map.staticEntities, (entity: any, tileIndex) => {
             this.staticEntities.push({
-                tileIndex: tileIndex,
+                tileIndex,
                 type: entity.type,
                 string: entity.key,
                 roaming: entity.roaming
@@ -160,7 +177,7 @@ class Map {
             let tileIndex = this.gridPositionToIndex(data.x, data.y);
 
             this.staticEntities.push({
-                tileIndex: tileIndex,
+                tileIndex,
                 string: data.string,
                 roaming: data.roaming,
                 miniboss: data.miniboss,
@@ -170,7 +187,7 @@ class Map {
         });
     }
 
-    indexToGridPosition(tileIndex: number, offset = 0) {
+    indexToGridPosition(tileIndex: number, offset = 0): Position {
         let x = this.getX(tileIndex, this.width),
             y = Math.floor((tileIndex - 1) / this.width);
 
@@ -180,25 +197,15 @@ class Map {
         };
     }
 
-    gridPositionToIndex(x: number, y: number) {
+    gridPositionToIndex(x: number, y: number): number {
         return y * this.width + x;
     }
 
-    inArea(posX: number, posY: number, x: number, y: number, width: number, height: number) {
+    inArea(posX: number, posY: number, x: number, y: number, width: number, height: number): boolean {
         return posX >= x && posY >= y && posX <= width + x && posY <= height + y;
     }
 
-    inTutorialArea(entity: Entity) {
-        if (entity.gridX === -1 || entity.gridY === -1) return true;
-
-        return (
-            this.inArea(entity.gridX, entity.gridY, 370, 36, 10, 10) ||
-            this.inArea(entity.gridX, entity.gridY, 312, 11, 25, 22) ||
-            this.inArea(entity.gridX, entity.gridY, 399, 18, 20, 15)
-        );
-    }
-
-    nearLight(light: any, x: number, y: number) {
+    nearLight(light: any, x: number, y: number): boolean {
         let diff = Math.round(light.distance / this.tileSize),
             startX = light.x - this.regionWidth - diff,
             startY = light.y - this.regionHeight - diff,
@@ -213,13 +220,13 @@ class Map {
     }
 
     // Transforms an object's `instance` or `id` into position
-    idToPosition(id: string) {
+    idToPosition(id: string): Position {
         let split = id.split('-');
 
         return { gridX: parseInt(split[0]), gridY: parseInt(split[1]) };
     }
 
-    isValidPosition(x: number, y: number) {
+    isValidPosition(x: number, y: number): boolean {
         return (
             Number.isInteger(x) &&
             Number.isInteger(y) &&
@@ -228,16 +235,16 @@ class Map {
         );
     }
 
-    isOutOfBounds(x: number, y: number) {
+    isOutOfBounds(x: number, y: number): boolean {
         return x < 0 || x > this.width || y < 0 || y > this.height;
     }
 
-    isPlateau(index: number) {
+    isPlateau(index: number): boolean {
         return index in this.plateau;
     }
 
-    // To be deprecated...
-    isColliding(x: number, y: number) {
+    // DEPRECATED!
+    isColliding(x: number, y: number): boolean {
         if (this.isOutOfBounds(x, y)) return false;
 
         let tileIndex = this.gridPositionToIndex(x, y);
@@ -249,7 +256,7 @@ class Map {
      * Formats polygon shape to tileIndex and determines if player is in there.
      */
 
-    formatPolygon(gridX: number, gridY: number, polygonShape: any) {
+    formatPolygon(gridX: number, gridY: number, polygonShape: Position[]): Position[] {
         let newPolygon = [];
 
         for (let i in polygonShape)
@@ -261,14 +268,13 @@ class Map {
         return newPolygon;
     }
 
-    isInside(rawX: number, rawY: number, gridX: number, gridY: number, polygonShape: any) {
+    isInside(rawX: number, rawY: number, gridX: number, gridY: number, polygonShape: Position[]): boolean {
         polygonShape = this.formatPolygon(gridX, gridY, polygonShape);
 
         for (let i = 0, j = polygonShape.length - 1; i < polygonShape.length; j = i++) {
             let xi = polygonShape[i].x, yi = polygonShape[i].y,
-                xj = polygonShape[j].x, yj = polygonShape[j].y;
-
-            let intersect = ((yi > rawY) != (yj > rawY)) &&
+                xj = polygonShape[j].x, yj = polygonShape[j].y,
+                intersect = ((yi > rawY) !== (yj > rawY)) &&
                 (rawX < (xj - xi) * (rawY - yi) / (yj - yi) + xi);
 
             if (intersect)
@@ -278,38 +284,33 @@ class Map {
         return false;
     }
 
-    isCollision(rawX: number, rawY: number, gridX: number, gridY: number) {
+    isCollision(rawX: number, rawY: number, gridX: number, gridY: number): boolean {
         let tileIndex = this.gridPositionToIndex(gridX, gridY);
 
         if (this.collisions.includes(tileIndex))
             return rawX > gridX && rawX < gridX + 1 && rawY > gridY && rawY < gridY + 1;
 
-        let tileData: any = this.data[tileIndex],
-            isInside = (tile: any) => {
+        let tileData: Tile = this.data[tileIndex],
+            isInside = (tile: number) => {
                 if (tile in this.polygons)
                     return this.isInside(rawX, rawY, gridX, gridY, this.polygons[tile]);
-            };
+            }, isColliding = false;
 
-        let isColliding = false;
-
-        if (tileData instanceof Array)
-            for (let i in tileData)
-                if (isInside(tileData[i]))
-                    isColliding = true;
-        else
-            isColliding = isInside(tileData);
+        this.forEachTileData(tileData, (tile: number) => {
+            if (isInside(tile)) isColliding = true;
+        });
 
         return isColliding;
     }
 
     /* For preventing NPCs from roaming in null areas. */
 
-    forEachTileData(tileData: number | number[], callback: (tileId: number, index?: number) => void): void {
+    forEachTileData(tileData: Tile, callback: (tileId: number, index?: number) => void): void {
         if (Array.isArray(tileData)) _.each(tileData, (tileId: number, index: number) => { callback(tileId, index); });
         else callback(tileData, -1);
     }
 
-    isEmpty(x: number, y: number) {
+    isEmpty(x: number, y: number): boolean {
         if (this.isOutOfBounds(x, y)) return true;
 
         let tileIndex = this.gridPositionToIndex(x, y);
@@ -321,15 +322,17 @@ class Map {
         return tileId > Constants.DIAGONAL_FLAG;
     }
 
-    getX(index: number, width: number) {
+    getX(index: number, width: number): number {
         if (index === 0) return 0;
 
         return index % width === 0 ? width - 1 : (index % width) - 1;
     }
 
-    getRandomPosition(area: Area) {
-        let pos: any = {},
-            valid = false;
+    getRandomPosition(area: Area): Position {
+        let pos: Position = {
+            x: 0,
+            y: 0
+        }, valid = false;
 
         while (!valid) {
             pos.x = area.x + Utils.randomInt(0, area.width + 1);
@@ -340,7 +343,7 @@ class Map {
         return pos;
     }
 
-    getPlateauLevel(x: number, y: number) {
+    getPlateauLevel(x: number, y: number): number {
         let index = this.gridPositionToIndex(x, y);
 
         if (!this.isPlateau(index)) return 0;
@@ -348,7 +351,7 @@ class Map {
         return this.plateau[index];
     }
 
-    getWarpById(id: number) {
+    getWarpById(id: number): string {
         let warpName = Object.keys(Modules.Warps)[id];
 
         if (!warpName) return null;
@@ -362,7 +365,7 @@ class Map {
         return warp;
     }
 
-    getWarpByName(name: string) {
+    getWarpByName(name: string): any {
         for (let i in this.warps)
             if (this.warps[i].name === name)
                 return _.cloneDeep(this.warps[i]);
@@ -370,7 +373,7 @@ class Map {
         return null;
     }
 
-    getData(index: number): any {
+    getData(index: number): TileData {
         let data = this.data[index];
 
         if (!data) return null;
@@ -379,9 +382,13 @@ class Map {
 
         this.forEachTileData(data, (tile: any) => {
             if (this.isFlipped(tile)) {
+                let x = tile & Constants.HORIZONTAL_FLAG,
+                    y = tile & Constants.VERTICAL_FLAG,
+                    d = tile & Constants.DIAGONAL_FLAG;
+
                 tile &= ~(Constants.DIAGONAL_FLAG | Constants.VERTICAL_FLAG | Constants.HORIZONTAL_FLAG);
 
-                tile = { tileId: tile, flipped: true };
+                tile = { tileId: tile, x, y, d };
             }
 
             if (Array.isArray(data)) parsedData.push(tile);
@@ -391,9 +398,16 @@ class Map {
         return parsedData;
     }
 
-    getAnimation(tileData: any): any {
-        let status = null;
+    getFlipValue(tileId: number): number {
+        if (tileId & Constants.HORIZONTAL_FLAG)
+            return 
 
+
+        return 0;
+    }
+
+    getAnimation(tileData: Tile): any {
+        let status = null;
 
         this.forEachTileData(tileData, (tile: any) => {
             if (Map.isDataObject(tile)) tile = tile.tileId;
@@ -405,9 +419,9 @@ class Map {
         return status;
     }
 
-    getPositionObject(x: number, y: number) {
+    getPositionObject(x: number, y: number): number {
         let index = this.gridPositionToIndex(x, y),
-            tiles: any = this.data[index],
+            tiles: Tile = this.data[index],
             objectId: any;
 
         if (tiles instanceof Array)
@@ -418,15 +432,15 @@ class Map {
         return objectId;
     }
 
-    getObjectId(tileIndex: number) {
+    getObjectId(tileIndex: number): string {
         let position = this.indexToGridPosition(tileIndex + 1);
 
         return position.gridX + '-' + position.gridY;
     }
 
-    getObject(x: number, y: number, data: any) {
+    getObject(x: number, y: number, data: any): number {
         let index = this.gridPositionToIndex(x, y) - 1,
-            tiles: any = this.data[index];
+            tiles = this.data[index];
 
         if (tiles instanceof Array) for (let i in tiles) if (tiles[i] in data) return tiles[i];
 
@@ -435,27 +449,27 @@ class Map {
         return null;
     }
 
-    getTree(x: number, y: number) {
+    getTree(x: number, y: number): number {
         return this.getObject(x, y, this.trees);
     }
 
-    getRock(x: number, y: number) {
+    getRock(x: number, y: number): number {
         return this.getObject(x, y, this.rocks);
     }
 
     getChestAreas(): Areas {
-        return this.areas['chests'];
+        return this.areas.chests;
     }
 
-    getDoors() {
-        return this.areas['doors'].areas;
+    getDoors(): Area[] {
+        return this.areas.doors.areas;
     }
 
-    static isDataObject(data: any): boolean {
+    static isDataObject(data: unknown): boolean {
         return !Array.isArray(data) && typeof data === 'object';
     }
 
-    isReady(callback: Function) {
+    isReady(callback: ReadyCallback): void {
         this.readyCallback = callback;
     }
 }

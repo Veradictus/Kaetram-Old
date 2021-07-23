@@ -213,6 +213,7 @@ class Incoming {
 
         this.player.ready = true;
 
+        // TODO - Move to request basis
         this.world.region.syncRegion(this.player);
 
         this.player.loadReady();
