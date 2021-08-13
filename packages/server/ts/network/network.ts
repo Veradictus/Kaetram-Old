@@ -80,7 +80,7 @@ class Network {
             return;
         }
 
-        this.socket.ips[connection.socket.conn.remoteAddress] = new Date().getTime();
+        this.socket.ips[connection.getRemoteAddress()] = new Date().getTime();
 
         this.addToPackets(player);
 
@@ -188,7 +188,7 @@ class Network {
     }
     
     getSocketTime(connection: Connection): number {
-        return this.socket.ips[connection.socket.conn.remoteAddress];
+        return this.socket.ips[connection.getRemoteAddress()];
     }
 }
 

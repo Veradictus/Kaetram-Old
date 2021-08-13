@@ -45,7 +45,7 @@ export default class WebSocket {
             });
 
         this.server = new WS.Server({ port: this.wsPort });
-        this.server.on('connection', (socket: WS.Socket, request: http.ServerResponse) => {
+        this.server.on('connection', (socket: any, request: http.ServerResponse) => {
             let mappedAddress = request.socket.remoteAddress,
                 [,remoteAddress] = mappedAddress.split('::ffff:');
 

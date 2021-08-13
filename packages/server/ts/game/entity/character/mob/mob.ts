@@ -11,8 +11,6 @@ import Areas from '../../../../map/areas/areas';
 
 class Mob extends Character {
     data: any;
-    hitPoints: number;
-    maxHitPoints: number;
     drops: any;
 
     respawnDelay: number;
@@ -24,20 +22,14 @@ class Mob extends Character {
 
     achievementId: number;
 
-    roaming: boolean;
     maxRoamingDistance: number;
 
     handler: MobHandler;
-
-    alwaysAggressive: boolean;
-
-    lastAttacker: Player;
 
     loadCallback: Function;
     refreshCallback: Function;
     respawnCallback: Function;
     returnCallback: Function;
-    deathCallback: Function;
     forceTalkCallback: Function;
     roamingCallback: Function;
 

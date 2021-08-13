@@ -39,9 +39,7 @@ class MongoDB {
             url = `mongodb://${this.user}:${this.password}@${this.host}:${this.port}/${this.database}`;
 
         let client = new MongoClient(url, {
-            useUnifiedTopology: true,
-            useNewUrlParser: true,
-            wtimeout: 5
+            wtimeoutMS: 5
         });
 
         if (this.connection) {

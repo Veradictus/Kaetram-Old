@@ -1,37 +1,50 @@
+import axios from 'axios';
+import { json, urlencoded } from 'body-parser';
 import express from 'express';
-import bodyParser from 'body-parser';
-import request from 'request';
-import _ from 'lodash';
-import World from '../game/world';
-import APIConstants from '../util/apiconstants';
-import Utils from '../util/utils';
-import Player from '../game/entity/character/player/player';
+
 import config from '../../config';
 import log from '../util/log';
+import Utils from '../util/utils';
 
-class API {
-    /**
-     * API will have a variety of uses. Including communication
-     * between multiple worlds (planned for the future).
-     *
-     * `accessToken` - A randomly generated token that can be used
-     * to verify the validity between the client and the server.
-     * This is a rudimentary security method, but is enough considering
-     * the simplicity of the current API.
-     */
+import APIConstants from '../util/apiconstants';
 
-    world: World;
-    hubConnected: boolean;
+import type Player from '../game/entity/character/player/player';
+import type Mana from '../game/entity/character/player/points/mana';
+import type World from '../game/world';
 
-    constructor(world: World) {
-        this.world = world;
+interface PlayerData {
+    serverId: string;
+    x: number;
+    y: number;
+    experience: number;
+    level: number;
+    hitPoints: number;
+    mana: Mana;
+    pvpKills: number;
+    orientation: number;
+    lastLogin: number;
+    mapVersion: number;
+}
 
+/**
+ * API will have a variety of uses. Including communication
+ * between multiple worlds (planned for the future).
+ *
+ * `accessToken` - A randomly generated token that can be used
+ * to verify the validity between the client and the server.
+ * This is a rudimentary security method, but is enough considering
+ * the simplicity of the current API.
+ */
+export default class API {
+    private hubConnected = false;
+
+    public constructor(private world: World) {
         if (!config.apiEnabled) return;
 
         let app = express();
 
-        app.use(bodyParser.urlencoded({ extended: true }));
-        app.use(bodyParser.json());
+        app.use(urlencoded({ extended: true }));
+        app.use(json());
 
         let router = express.Router();
 
@@ -40,35 +53,35 @@ class API {
         app.use('/', router);
 
         app.listen(config.apiPort, () => {
-            log.notice(config.name + ' API has successfully initialized.');
+            log.notice(`${config.name} API has successfully initialized.`);
         });
     }
 
-    handle(router: express.Router): void {
-        router.get('/', (_request: express.Request, response: express.Response) => {
+    private handle(router: express.Router): void {
+        router.get('/', (_request, response) => {
             response.json({
                 name: config.name,
-                port: config.port, // Sends the server port.
+                port: config.socketioPort, // Sends the server port.
                 gameVersion: config.gver,
                 maxPlayers: config.maxPlayers,
                 playerCount: this.world.getPopulation()
             });
         });
 
-        router.post('/player', (request: express.Request, response: express.Response) => {
+        router.post('/player', (request, response) => {
             this.handlePlayer(request, response);
         });
 
-        router.post('/chat', (request: express.Request, response: express.Response) => {
+        router.post('/chat', (request, response) => {
             this.handleChat(request, response);
         });
 
-        router.get('/players', (request: express.Request, response: express.Response) => {
+        router.get('/players', (request, response) => {
             this.handlePlayers(request, response);
         });
     }
 
-    handlePlayer(request: express.Request, response: express.Response): void {
+    private handlePlayer(request: express.Request, response: express.Response): void {
         if (!this.verifyToken(request.body.accessToken)) {
             this.returnError(
                 response,
@@ -77,33 +90,9 @@ class API {
             );
             return;
         }
-
-        let { username } = request.body;
-
-        if (!username) {
-            this.returnError(
-                response,
-                APIConstants.MALFORMED_PARAMETERS,
-                'No `username` variable received.'
-            );
-            return;
-        }
-
-        if (!this.world.isOnline(username)) {
-            this.returnError(
-                response,
-                APIConstants.PLAYER_NOT_ONLINE,
-                `Player ${username} is not online.`
-            );
-            return;
-        }
-
-        let player = this.world.getPlayerByName(username);
-
-        response.json(this.getPlayerData(player));
     }
 
-    handleChat(request: express.Request, response: express.Response): void {
+    private handleChat(request: express.Request, response: express.Response): void {
         if (!this.verifyToken(request.body.accessToken)) {
             this.returnError(
                 response,
@@ -120,7 +109,7 @@ class API {
         if (username) {
             let player = this.world.getPlayerByName(username);
 
-            if (player) player.chat(source, text, colour);
+            player?.chat(source, text, colour);
 
             response.json({ status: 'success' });
 
@@ -132,8 +121,8 @@ class API {
         response.json({ status: 'success' });
     }
 
-    handlePlayers(request: express.Request, response: express.Response): void {
-        if (!this.verifyToken(request.query.accessToken)) {
+    private handlePlayers(request: express.Request, response: express.Response): void {
+        if (!this.verifyToken(request.query.accessToken as string)) {
             this.returnError(
                 response,
                 APIConstants.MALFORMED_PARAMETERS,
@@ -142,7 +131,7 @@ class API {
             return;
         }
 
-        let players = {};
+        let players: { [username: string]: Partial<PlayerData> } = {};
 
         this.world.entities.forEachPlayer((player: Player) => {
             players[player.username] = this.getPlayerData(player);
@@ -151,100 +140,80 @@ class API {
         response.json(players);
     }
 
-    pingHub(): void {
+    public async pingHub(): Promise<void> {
         let url = this.getUrl('ping'),
             data = {
-                form: {
-                    serverId: config.serverId,
-                    accessToken: config.accessToken,
-                    port: config.apiPort,
-                    remoteServerHost: config.remoteServerHost
-                }
-            };
+                serverId: config.serverId,
+                accessToken: config.accessToken,
+                port: config.apiPort,
+                remoteServerHost: config.remoteServerHost
+            },
+            response = await axios.post(url, data).catch(() => {
+                log.error(`Could not connect to ${config.name} Hub.`);
 
-        request.post(url, data, (_error: any, _response: any, body: any) => {
-            try {
-                let data = JSON.parse(body);
-
-                if (data.status !== 'success') return;
-
-                if (!this.hubConnected) {
-                    log.notice('Connected to Kaetram Hub successfully!');
-                    this.hubConnected = true;
-                }
-            } catch (e) {
-                log.error('Could not connect to Kaetram Hub.');
                 this.hubConnected = false;
+            });
+
+        if (response) {
+            let { data } = response;
+
+            if (data.status === 'success' && !this.hubConnected) {
+                log.notice(`Connected to ${config.name} Hub successfully!`);
+
+                this.hubConnected = true;
             }
-        });
+        }
     }
 
-    sendChat(source: string, text: string, withArrow?: boolean): void {
+    public async sendChat(source: string, text: string, withArrow?: boolean): Promise<void> {
         let url = this.getUrl('chat'),
             data = {
-                form: {
-                    hubAccessToken: config.hubAccessToken,
-                    serverId: config.serverId,
-                    source,
-                    text,
-                    withArrow
-                }
-            };
+                hubAccessToken: config.hubAccessToken,
+                serverId: config.serverId,
+                source,
+                text,
+                withArrow
+            },
+            response = await axios
+                .post(url, data)
+                .catch(() => log.error('Could not send message to hub.'));
 
-        request.post(
-            url,
-            data,
-            (_error: express.ErrorRequestHandler, _response: express.Response, body: string) => {
-                try {
-                    let data = JSON.parse(body);
+        if (response) {
+            let { data } = response;
 
-                    if (data.status === 'error') console.log(data);
+            if (data.status === 'error') console.log(data);
 
-                //TODO - Do something with this?
-                } catch (e) {
-                    log.error('Could not send message to hub.');
-                }
-        });
+            // TODO - Do something with this?
+        }
     }
 
-    sendPrivateMessage(source: Player, target: string, text: string): void {
+    public async sendPrivateMessage(source: Player, target: string, text: string): Promise<void> {
         let url = this.getUrl('privateMessage'),
             data = {
-                form: {
-                    hubAccessToken: config.hubAccessToken,
-                    source: Utils.formatUsername(source.username),
-                    target: Utils.formatUsername(target),
-                    text
-                }
-            };
+                hubAccessToken: config.hubAccessToken,
+                source: Utils.formatUsername(source.username),
+                target: Utils.formatUsername(target),
+                text
+            },
+            response = await axios
+                .post(url, data)
+                .catch(() => log.error('Could not send privateMessage to hub.'));
 
-        request.post(
-            url,
-            data,
-            (_error: express.ErrorRequestHandler, _response: express.Response, body: string) => {
-                try {
-                    let data = JSON.parse(body);
+        if (response) {
+            let { data } = response;
 
-                    if (data.error) {
-                        source.notify(`Player @aquamarine@${target}@white@ is not online.`);
-                        return;
-                    }
-
-                    // No error has occurred.
-
-                    // TODO - Add chat colours/format to config.
-                    source.chat(`[To ${target}]`, text, 'aquamarine');
-                } catch (e) {
-                    log.error('Could not send privateMessage to hub.');
-                }
-        });
+            if (data.error) {
+                source.notify(`Player @aquamarine@${target}@white@ is not online.`);
+                return;
+            }
+        }
     }
 
-    verifyToken(token: string): boolean {
+    private verifyToken(token: string): boolean {
         return token === config.accessToken;
     }
 
-    getPlayerData(player: Player): any {
+    private getPlayerData(player: Player): Partial<PlayerData> {
         if (!player) return {};
 
         return {
@@ -262,20 +231,14 @@ class API {
         };
     }
 
-    getUrl(path: string): string {
-        return `http://${config.hubHost}:${config.hubPort}/${path}`;
+    private getUrl(path: string): string {
+        return `http://${config.host}:${config.hubPort}/${path}`;
     }
 
-    returnError(
-        response: express.Response,
-        error: express.ErrorRequestHandler,
-        message: string
-    ): void {
+    private returnError(response: express.Response, error: APIConstants, message: string): void {
         response.json({
             error,
             message
         });
     }
 }
-
-export default API;

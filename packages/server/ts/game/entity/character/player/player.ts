@@ -49,7 +49,6 @@ class Player extends Character {
 
     public ready: boolean;
 
-    public moving: boolean;
     public potentialPosition: any;
     public futurePosition: any;
     public regionPosition: any;
@@ -80,13 +79,11 @@ class Player extends Character {
     public introduced: boolean;
     public currentSong: string;
     public acceptedTrade: boolean;
-    public invincible: boolean;
     public noDamage: boolean;
     public isGuest: boolean;
 
     public canTalk: boolean;
 
-    public instanced: boolean;
     public visible: boolean;
 
     public talkIndex: number;
@@ -98,7 +95,6 @@ class Player extends Character {
 
     public npcTalk: any;
 
-    public username: string;
     public password: string;
     public email: string;
 
@@ -116,7 +112,7 @@ class Player extends Character {
 
     public nextExperience: number;
     public prevExperience: number;
-    public hitPoints: HitPoints;
+    public playerHitPoints: HitPoints;
     public mana: Mana;
 
     public equipment: Equipments;
@@ -143,7 +139,6 @@ class Player extends Character {
 
     public selectedShopItem: any;
 
-    public deathCallback: Function;
     public teleportCallback: Function;
     public cheatScoreCallback: Function;
     public profileToggleCallback: Function;
@@ -246,7 +241,7 @@ class Player extends Character {
         this.level = Formulas.expToLevel(this.experience);
         this.nextExperience = Formulas.nextExp(this.experience);
         this.prevExperience = Formulas.prevExp(this.experience);
-        this.hitPoints = new HitPoints(data.hitPoints, Formulas.getMaxHitPoints(this.level));
+        this.playerHitPoints = new HitPoints(data.playerHitPoints, Formulas.getMaxHitPoints(this.level));
         this.mana = new Mana(data.mana, Formulas.getMaxMana(this.level));
 
         if (data.invisibleIds) this.invisiblesIds = data.invisibleIds.split(' ');
@@ -440,7 +435,7 @@ class Player extends Character {
             this.connection.close('Player: ' + this.username + ' is banned.');
         }
 
-        if (this.hitPoints.getHitPoints() < 0) this.hitPoints.setHitPoints(this.getMaxHitPoints());
+        if (this.playerHitPoints.getHitPoints() < 0) this.playerHitPoints.setHitPoints(this.getMaxHitPoints());
 
         if (this.mana.getMana() < 0) this.mana.setMana(this.mana.getMaxMana());
 
@@ -454,7 +449,7 @@ class Player extends Character {
             z: this.z,
             kind: this.kind,
             rights: this.rights,
-            hitPoints: this.hitPoints.getData(),
+            hitPoints: this.playerHitPoints.getData(),
             mana: this.mana.getData(),
             experience: this.experience,
             nextExperience: this.nextExperience,
@@ -497,8 +492,8 @@ class Player extends Character {
         this.prevExperience = Formulas.prevExp(this.experience);
 
         if (oldLevel !== this.level) {
-            this.hitPoints.setMaxHitPoints(Formulas.getMaxHitPoints(this.level));
-            this.healHitPoints(this.hitPoints.maxPoints);
+            this.playerHitPoints.setMaxHitPoints(Formulas.getMaxHitPoints(this.level));
+            this.healHitPoints(this.playerHitPoints.maxPoints);
 
             this.updateRegion();
 
@@ -536,9 +531,9 @@ class Player extends Character {
          * Passed from the superclass...
          */
 
-        if (!this.hitPoints || !this.mana) return;
+        if (!this.playerHitPoints || !this.mana) return;
 
-        this.hitPoints.heal(amount);
+        this.playerHitPoints.heal(amount);
         this.mana.heal(amount);
 
         this.sync();
@@ -547,7 +542,7 @@ class Player extends Character {
     healHitPoints(amount: number): void {
         let type = 'health';
 
-        this.hitPoints.heal(amount);
+        this.playerHitPoints.heal(amount);
 
         this.sync();
 
@@ -779,14 +774,14 @@ class Player extends Character {
     }
 
     revertPoints(): void {
-        this.hitPoints.setHitPoints(this.hitPoints.getMaxHitPoints());
+        this.playerHitPoints.setHitPoints(this.playerHitPoints.getMaxHitPoints());
         this.mana.setMana(this.mana.getMaxMana());
 
         this.sync();
     }
 
     applyDamage(damage: number): void {
-        this.hitPoints.decrement(damage);
+        this.playerHitPoints.decrement(damage);
     }
 
     toggleProfile(state: boolean): void {
@@ -816,11 +811,11 @@ class Player extends Character {
     }
 
     getHitPoints() {
-        return this.hitPoints.getHitPoints();
+        return this.playerHitPoints.getHitPoints();
     }
 
     getMaxHitPoints() {
-        return this.hitPoints.getMaxHitPoints();
+        return this.playerHitPoints.getMaxHitPoints();
     }
 
     getTutorial() {
@@ -961,7 +956,7 @@ class Player extends Character {
      */
 
     hasMaxHitPoints(): boolean {
-        return this.getHitPoints() >= this.hitPoints.getMaxHitPoints();
+        return this.getHitPoints() >= this.playerHitPoints.getMaxHitPoints();
     }
 
     hasMaxMana(): boolean {
@@ -986,7 +981,7 @@ class Player extends Character {
             pvpDeaths: this.pvpDeaths,
             attackRange: this.attackRange,
             orientation: this.orientation,
-            hitPoints: this.hitPoints.getData(),
+            hitPoints: this.playerHitPoints.getData(),
             movementSpeed: this.getMovementSpeed(),
             mana: this.mana.getData(),
             equipment: this.equipment.getData()
@@ -994,7 +989,7 @@ class Player extends Character {
     }
 
     getRemoteAddress(): string {
-        return this.connection.socket.conn.remoteAddress;
+        return this.connection.getRemoteAddress();
     }
 
     getSpawn(): any {
@@ -1132,7 +1127,7 @@ class Player extends Character {
          * mana, exp, and other variables
          */
 
-        if (!this.hitPoints || !this.mana) return;
+        if (!this.playerHitPoints || !this.mana) return;
 
         let info = {
             id: this.instance,

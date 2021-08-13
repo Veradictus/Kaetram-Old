@@ -7,7 +7,7 @@ type CloseCallback = () => void;
 
 class Connection {
     public id: string;
-    public socket: WS
+    public socket: any;
 
     private server: WebSocket;
 
@@ -35,6 +35,10 @@ class Connection {
 
             this.server.remove(this.id);
         });
+    }
+
+    getRemoteAddress(): string {
+        return this.socket.conn.remoteAddress;
     }
 
     listen(callback: ListenCallback): void {
