@@ -22,8 +22,7 @@ class Combat {
         this.attackers = {};
     }
 
-    cycle() {
-    }
+    cycle(): void { }
 
     attack(target: Character, hitInfo?: Hit, callback?: Function, force?: boolean) {
         if (!this.canAttack()) return;
@@ -34,9 +33,7 @@ class Combat {
         if (callback) callback();
     }
 
-    stop() {
-
-    }
+    stop() {}
 
     addAttacker(attacker: Character) {
         if (this.hasAttacker(attacker)) return;
